@@ -26,7 +26,7 @@ class OrdemServicoMapper{
 
   static OrdemServicoTableCompanion toCompanion(OrdemServico entity) {
     return OrdemServicoTableCompanion(
-      id: Value(entity.id),
+      id: entity.id == 0 ? Value.absent() : Value(entity.id),
       clienteId: Value(entity.clientes?.id ?? ''),
       formatoId: Value(entity.formato?.id ?? ''),
       material: Value(entity.material),

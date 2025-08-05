@@ -29,12 +29,12 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
   final _corFrenteController = TextEditingController();
   final _corVersoController = TextEditingController();
   final _formatoController = TextEditingController();
-  final _quantidadeFolhaController = NumberEditingController<int>();
-  final _numeracaoInicialController = NumberEditingController<int>();
-  final _numeracaoFinalController = NumberEditingController<int>();
+  final _quantidadeFolhaController = NumberEditingController<int>(value: 0);
+  final _numeracaoInicialController = NumberEditingController<int>(value: 0);
+  final _numeracaoFinalController = NumberEditingController<int>(value: 0);
   final _observacaoController = TextEditingController();
-  final _valorCustoController = NumberEditingController<double>();
-  final _valorTotalController = NumberEditingController<double>();
+  final _valorCustoController = NumberEditingController<double>(value: 0.0);
+  final _valorTotalController = NumberEditingController<double>(value: 0.0);
 
   Clientes? _selectedCliente;
   Formato? _selectedFormato;
@@ -258,7 +258,7 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 final ordem = OrdemServico(
-                                  id: widget.ordemId ?? 0,
+                                  id: widget.ordemId,
                                   clientes: _selectedCliente,
                                   formato: _selectedFormato,
                                   material: _materialController.text,
