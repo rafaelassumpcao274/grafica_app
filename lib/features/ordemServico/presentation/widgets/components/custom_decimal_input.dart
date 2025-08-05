@@ -58,7 +58,7 @@ class _CustomDecimalInputState extends State<CustomDecimalInput> {
       decoration: InputDecoration(
         prefixIcon: widget.icon != null ? Icon(widget.icon) : null,
         prefixText: 'R\$ ',
-        hintText: widget.hintText,
+        labelText: widget.hintText,
         filled: true,
         fillColor: Colors.white,
         border: const OutlineInputBorder(),
