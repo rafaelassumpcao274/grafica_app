@@ -1,0 +1,34 @@
+name: unilith_app
+description: App for control of services  application with Clean Architecture and Riverpod.
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_riverpod: ^2.4.9
+  equatable: ^2.0.5
+  intl: ^0.20.2
+  uuid: ^4.5.1
+  drift: ^2.27.0
+  drift_flutter: ^0.2.4
+  path_provider: ^2.1.5
+  flutter_typeahead: ^5.2.0
+  flutter_keyboard_visibility: ^6.0.0
+  shimmer_animation: ^2.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.5.4
+  drift_dev: ^2.27.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/migrations/change_logs/

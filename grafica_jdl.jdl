@@ -1,0 +1,108 @@
+
+application {
+  config {
+    baseName grafica
+    applicationType monolith
+    packageName br.com.grafica
+    authenticationType jwt
+    prodDatabaseType mysql
+    clientFramework angularX
+    blueprints [generator-jhipster-entity-audit]
+  }
+
+  config(generator-jhipster-entity-audit) {
+    auditFramework javers
+  }
+
+  entities *
+}
+
+@EnableAudit
+entity Fornecedor {
+  descricao String,
+}
+
+@EnableAudit
+entity Formato {
+  descricao String,
+}
+
+@EnableAudit
+entity ViaCores {
+  descricao String required,
+}
+
+@EnableAudit
+entity Papel {
+  descricao String,
+  quantidadePapel Integer
+}
+
+
+@EnableAudit
+entity Uf{
+	descricao String required,
+    sigla String maxlength(2)
+}
+
+@EnableAudit
+entity Cidades {
+  descricao String
+}
+
+@EnableAudit
+entity Clientes {
+  nomeEmpresa String,
+  razaoSocial String,
+  documento String maxlength(14),
+  email String,
+  contato String,
+  telefone String maxlength(11)
+}
+
+@EnableAudit
+entity Enderecos {
+  logradouro String,
+  cep Integer,
+  complemento String,
+  numero Integer
+}
+
+@EnableAudit
+entity Custo {
+  descricao String,
+  valor Double required
+}
+
+
+@EnableAudit
+entity OrdemServico {
+  material String,
+  corFrente String,
+  corVerso String,
+  quantidadeFolha Integer,
+  numeracaoInicial Integer,
+  numeracaoFinal Integer,
+  observacao String
+}
+
+
+
+// Relationships
+relationship OneToMany {
+    Uf to Cidades
+    Custo{id required} to Fornecedor
+    Clientes{id required} to OrdemServico
+    Papel to OrdemServico
+    Formato to OrdemServico
+    ViaCores to OrdemServico
+}
+
+relationship ManyToMany {
+OrdemServico to Custo
+}
+
+relationship OneToOne {
+  Enderecos to Cidades
+  Clientes to Enderecos
+}
