@@ -16,19 +16,43 @@ class $FornecedorTableTable extends FornecedorTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       clientDefault: () => Uuid().v4());
-  static const VerificationMeta _descricaoMeta =
-      const VerificationMeta('descricao');
+  static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
-  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
-      'descricao', aliasedName, false,
+  late final GeneratedColumn<String> nome = GeneratedColumn<String>(
+      'nome', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _precoMeta = const VerificationMeta('preco');
+  static const VerificationMeta _contatoMeta =
+      const VerificationMeta('contato');
   @override
-  late final GeneratedColumn<double> preco = GeneratedColumn<double>(
-      'preco', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+  late final GeneratedColumn<String> contato = GeneratedColumn<String>(
+      'contato', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _telefoneMeta =
+      const VerificationMeta('telefone');
   @override
-  List<GeneratedColumn> get $columns => [id, descricao, preco];
+  late final GeneratedColumn<String> telefone = GeneratedColumn<String>(
+      'telefone', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+      'email', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _observacaoMeta =
+      const VerificationMeta('observacao');
+  @override
+  late final GeneratedColumn<String> observacao = GeneratedColumn<String>(
+      'observacao', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumnWithTypeConverter<TipoServico, String> tipoServico =
+      GeneratedColumn<String>('tipo_servico', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<TipoServico>(
+              $FornecedorTableTable.$convertertipoServico);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, nome, contato, telefone, email, observacao, tipoServico];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -43,17 +67,37 @@ class $FornecedorTableTable extends FornecedorTable
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('descricao')) {
-      context.handle(_descricaoMeta,
-          descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));
-    } else if (isInserting) {
-      context.missing(_descricaoMeta);
-    }
-    if (data.containsKey('preco')) {
+    if (data.containsKey('nome')) {
       context.handle(
-          _precoMeta, preco.isAcceptableOrUnknown(data['preco']!, _precoMeta));
+          _nomeMeta, nome.isAcceptableOrUnknown(data['nome']!, _nomeMeta));
     } else if (isInserting) {
-      context.missing(_precoMeta);
+      context.missing(_nomeMeta);
+    }
+    if (data.containsKey('contato')) {
+      context.handle(_contatoMeta,
+          contato.isAcceptableOrUnknown(data['contato']!, _contatoMeta));
+    } else if (isInserting) {
+      context.missing(_contatoMeta);
+    }
+    if (data.containsKey('telefone')) {
+      context.handle(_telefoneMeta,
+          telefone.isAcceptableOrUnknown(data['telefone']!, _telefoneMeta));
+    } else if (isInserting) {
+      context.missing(_telefoneMeta);
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+          _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
+    } else if (isInserting) {
+      context.missing(_emailMeta);
+    }
+    if (data.containsKey('observacao')) {
+      context.handle(
+          _observacaoMeta,
+          observacao.isAcceptableOrUnknown(
+              data['observacao']!, _observacaoMeta));
+    } else if (isInserting) {
+      context.missing(_observacaoMeta);
     }
     return context;
   }
@@ -66,10 +110,19 @@ class $FornecedorTableTable extends FornecedorTable
     return FornecedorTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      descricao: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}descricao'])!,
-      preco: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}preco'])!,
+      nome: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nome'])!,
+      contato: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}contato'])!,
+      telefone: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}telefone'])!,
+      email: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}email'])!,
+      observacao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}observacao'])!,
+      tipoServico: $FornecedorTableTable.$convertertipoServico.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}tipo_servico'])!),
     );
   }
 
@@ -77,29 +130,53 @@ class $FornecedorTableTable extends FornecedorTable
   $FornecedorTableTable createAlias(String alias) {
     return $FornecedorTableTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<TipoServico, String> $convertertipoServico =
+      const SqliteTipoServicoConverter();
 }
 
 class FornecedorTableData extends DataClass
     implements Insertable<FornecedorTableData> {
   final String id;
-  final String descricao;
-  final double preco;
+  final String nome;
+  final String contato;
+  final String telefone;
+  final String email;
+  final String observacao;
+  final TipoServico tipoServico;
   const FornecedorTableData(
-      {required this.id, required this.descricao, required this.preco});
+      {required this.id,
+      required this.nome,
+      required this.contato,
+      required this.telefone,
+      required this.email,
+      required this.observacao,
+      required this.tipoServico});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    map['descricao'] = Variable<String>(descricao);
-    map['preco'] = Variable<double>(preco);
+    map['nome'] = Variable<String>(nome);
+    map['contato'] = Variable<String>(contato);
+    map['telefone'] = Variable<String>(telefone);
+    map['email'] = Variable<String>(email);
+    map['observacao'] = Variable<String>(observacao);
+    {
+      map['tipo_servico'] = Variable<String>(
+          $FornecedorTableTable.$convertertipoServico.toSql(tipoServico));
+    }
     return map;
   }
 
   FornecedorTableCompanion toCompanion(bool nullToAbsent) {
     return FornecedorTableCompanion(
       id: Value(id),
-      descricao: Value(descricao),
-      preco: Value(preco),
+      nome: Value(nome),
+      contato: Value(contato),
+      telefone: Value(telefone),
+      email: Value(email),
+      observacao: Value(observacao),
+      tipoServico: Value(tipoServico),
     );
   }
 
@@ -108,8 +185,12 @@ class FornecedorTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FornecedorTableData(
       id: serializer.fromJson<String>(json['id']),
-      descricao: serializer.fromJson<String>(json['descricao']),
-      preco: serializer.fromJson<double>(json['preco']),
+      nome: serializer.fromJson<String>(json['nome']),
+      contato: serializer.fromJson<String>(json['contato']),
+      telefone: serializer.fromJson<String>(json['telefone']),
+      email: serializer.fromJson<String>(json['email']),
+      observacao: serializer.fromJson<String>(json['observacao']),
+      tipoServico: serializer.fromJson<TipoServico>(json['tipoServico']),
     );
   }
   @override
@@ -117,23 +198,43 @@ class FornecedorTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'descricao': serializer.toJson<String>(descricao),
-      'preco': serializer.toJson<double>(preco),
+      'nome': serializer.toJson<String>(nome),
+      'contato': serializer.toJson<String>(contato),
+      'telefone': serializer.toJson<String>(telefone),
+      'email': serializer.toJson<String>(email),
+      'observacao': serializer.toJson<String>(observacao),
+      'tipoServico': serializer.toJson<TipoServico>(tipoServico),
     };
   }
 
   FornecedorTableData copyWith(
-          {String? id, String? descricao, double? preco}) =>
+          {String? id,
+          String? nome,
+          String? contato,
+          String? telefone,
+          String? email,
+          String? observacao,
+          TipoServico? tipoServico}) =>
       FornecedorTableData(
         id: id ?? this.id,
-        descricao: descricao ?? this.descricao,
-        preco: preco ?? this.preco,
+        nome: nome ?? this.nome,
+        contato: contato ?? this.contato,
+        telefone: telefone ?? this.telefone,
+        email: email ?? this.email,
+        observacao: observacao ?? this.observacao,
+        tipoServico: tipoServico ?? this.tipoServico,
       );
   FornecedorTableData copyWithCompanion(FornecedorTableCompanion data) {
     return FornecedorTableData(
       id: data.id.present ? data.id.value : this.id,
-      descricao: data.descricao.present ? data.descricao.value : this.descricao,
-      preco: data.preco.present ? data.preco.value : this.preco,
+      nome: data.nome.present ? data.nome.value : this.nome,
+      contato: data.contato.present ? data.contato.value : this.contato,
+      telefone: data.telefone.present ? data.telefone.value : this.telefone,
+      email: data.email.present ? data.email.value : this.email,
+      observacao:
+          data.observacao.present ? data.observacao.value : this.observacao,
+      tipoServico:
+          data.tipoServico.present ? data.tipoServico.value : this.tipoServico,
     );
   }
 
@@ -141,64 +242,105 @@ class FornecedorTableData extends DataClass
   String toString() {
     return (StringBuffer('FornecedorTableData(')
           ..write('id: $id, ')
-          ..write('descricao: $descricao, ')
-          ..write('preco: $preco')
+          ..write('nome: $nome, ')
+          ..write('contato: $contato, ')
+          ..write('telefone: $telefone, ')
+          ..write('email: $email, ')
+          ..write('observacao: $observacao, ')
+          ..write('tipoServico: $tipoServico')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, descricao, preco);
+  int get hashCode =>
+      Object.hash(id, nome, contato, telefone, email, observacao, tipoServico);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FornecedorTableData &&
           other.id == this.id &&
-          other.descricao == this.descricao &&
-          other.preco == this.preco);
+          other.nome == this.nome &&
+          other.contato == this.contato &&
+          other.telefone == this.telefone &&
+          other.email == this.email &&
+          other.observacao == this.observacao &&
+          other.tipoServico == this.tipoServico);
 }
 
 class FornecedorTableCompanion extends UpdateCompanion<FornecedorTableData> {
   final Value<String> id;
-  final Value<String> descricao;
-  final Value<double> preco;
+  final Value<String> nome;
+  final Value<String> contato;
+  final Value<String> telefone;
+  final Value<String> email;
+  final Value<String> observacao;
+  final Value<TipoServico> tipoServico;
   final Value<int> rowid;
   const FornecedorTableCompanion({
     this.id = const Value.absent(),
-    this.descricao = const Value.absent(),
-    this.preco = const Value.absent(),
+    this.nome = const Value.absent(),
+    this.contato = const Value.absent(),
+    this.telefone = const Value.absent(),
+    this.email = const Value.absent(),
+    this.observacao = const Value.absent(),
+    this.tipoServico = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   FornecedorTableCompanion.insert({
     this.id = const Value.absent(),
-    required String descricao,
-    required double preco,
+    required String nome,
+    required String contato,
+    required String telefone,
+    required String email,
+    required String observacao,
+    required TipoServico tipoServico,
     this.rowid = const Value.absent(),
-  })  : descricao = Value(descricao),
-        preco = Value(preco);
+  })  : nome = Value(nome),
+        contato = Value(contato),
+        telefone = Value(telefone),
+        email = Value(email),
+        observacao = Value(observacao),
+        tipoServico = Value(tipoServico);
   static Insertable<FornecedorTableData> custom({
     Expression<String>? id,
-    Expression<String>? descricao,
-    Expression<double>? preco,
+    Expression<String>? nome,
+    Expression<String>? contato,
+    Expression<String>? telefone,
+    Expression<String>? email,
+    Expression<String>? observacao,
+    Expression<String>? tipoServico,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (descricao != null) 'descricao': descricao,
-      if (preco != null) 'preco': preco,
+      if (nome != null) 'nome': nome,
+      if (contato != null) 'contato': contato,
+      if (telefone != null) 'telefone': telefone,
+      if (email != null) 'email': email,
+      if (observacao != null) 'observacao': observacao,
+      if (tipoServico != null) 'tipo_servico': tipoServico,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   FornecedorTableCompanion copyWith(
       {Value<String>? id,
-      Value<String>? descricao,
-      Value<double>? preco,
+      Value<String>? nome,
+      Value<String>? contato,
+      Value<String>? telefone,
+      Value<String>? email,
+      Value<String>? observacao,
+      Value<TipoServico>? tipoServico,
       Value<int>? rowid}) {
     return FornecedorTableCompanion(
       id: id ?? this.id,
-      descricao: descricao ?? this.descricao,
-      preco: preco ?? this.preco,
+      nome: nome ?? this.nome,
+      contato: contato ?? this.contato,
+      telefone: telefone ?? this.telefone,
+      email: email ?? this.email,
+      observacao: observacao ?? this.observacao,
+      tipoServico: tipoServico ?? this.tipoServico,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -209,11 +351,24 @@ class FornecedorTableCompanion extends UpdateCompanion<FornecedorTableData> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (descricao.present) {
-      map['descricao'] = Variable<String>(descricao.value);
+    if (nome.present) {
+      map['nome'] = Variable<String>(nome.value);
     }
-    if (preco.present) {
-      map['preco'] = Variable<double>(preco.value);
+    if (contato.present) {
+      map['contato'] = Variable<String>(contato.value);
+    }
+    if (telefone.present) {
+      map['telefone'] = Variable<String>(telefone.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (observacao.present) {
+      map['observacao'] = Variable<String>(observacao.value);
+    }
+    if (tipoServico.present) {
+      map['tipo_servico'] = Variable<String>(
+          $FornecedorTableTable.$convertertipoServico.toSql(tipoServico.value));
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -225,8 +380,12 @@ class FornecedorTableCompanion extends UpdateCompanion<FornecedorTableData> {
   String toString() {
     return (StringBuffer('FornecedorTableCompanion(')
           ..write('id: $id, ')
-          ..write('descricao: $descricao, ')
-          ..write('preco: $preco, ')
+          ..write('nome: $nome, ')
+          ..write('contato: $contato, ')
+          ..write('telefone: $telefone, ')
+          ..write('email: $email, ')
+          ..write('observacao: $observacao, ')
+          ..write('tipoServico: $tipoServico, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2899,15 +3058,23 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$FornecedorTableTableCreateCompanionBuilder = FornecedorTableCompanion
     Function({
   Value<String> id,
-  required String descricao,
-  required double preco,
+  required String nome,
+  required String contato,
+  required String telefone,
+  required String email,
+  required String observacao,
+  required TipoServico tipoServico,
   Value<int> rowid,
 });
 typedef $$FornecedorTableTableUpdateCompanionBuilder = FornecedorTableCompanion
     Function({
   Value<String> id,
-  Value<String> descricao,
-  Value<double> preco,
+  Value<String> nome,
+  Value<String> contato,
+  Value<String> telefone,
+  Value<String> email,
+  Value<String> observacao,
+  Value<TipoServico> tipoServico,
   Value<int> rowid,
 });
 
@@ -2923,11 +3090,25 @@ class $$FornecedorTableTableFilterComposer
   ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get descricao => $composableBuilder(
-      column: $table.descricao, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get nome => $composableBuilder(
+      column: $table.nome, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get preco => $composableBuilder(
-      column: $table.preco, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get contato => $composableBuilder(
+      column: $table.contato, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get telefone => $composableBuilder(
+      column: $table.telefone, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get email => $composableBuilder(
+      column: $table.email, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<TipoServico, TipoServico, String>
+      get tipoServico => $composableBuilder(
+          column: $table.tipoServico,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 }
 
 class $$FornecedorTableTableOrderingComposer
@@ -2942,11 +3123,23 @@ class $$FornecedorTableTableOrderingComposer
   ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get descricao => $composableBuilder(
-      column: $table.descricao, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get nome => $composableBuilder(
+      column: $table.nome, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get preco => $composableBuilder(
-      column: $table.preco, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get contato => $composableBuilder(
+      column: $table.contato, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get telefone => $composableBuilder(
+      column: $table.telefone, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get email => $composableBuilder(
+      column: $table.email, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tipoServico => $composableBuilder(
+      column: $table.tipoServico, builder: (column) => ColumnOrderings(column));
 }
 
 class $$FornecedorTableTableAnnotationComposer
@@ -2961,11 +3154,24 @@ class $$FornecedorTableTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get descricao =>
-      $composableBuilder(column: $table.descricao, builder: (column) => column);
+  GeneratedColumn<String> get nome =>
+      $composableBuilder(column: $table.nome, builder: (column) => column);
 
-  GeneratedColumn<double> get preco =>
-      $composableBuilder(column: $table.preco, builder: (column) => column);
+  GeneratedColumn<String> get contato =>
+      $composableBuilder(column: $table.contato, builder: (column) => column);
+
+  GeneratedColumn<String> get telefone =>
+      $composableBuilder(column: $table.telefone, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<TipoServico, String> get tipoServico =>
+      $composableBuilder(
+          column: $table.tipoServico, builder: (column) => column);
 }
 
 class $$FornecedorTableTableTableManager extends RootTableManager<
@@ -2996,26 +3202,42 @@ class $$FornecedorTableTableTableManager extends RootTableManager<
               $$FornecedorTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
-            Value<String> descricao = const Value.absent(),
-            Value<double> preco = const Value.absent(),
+            Value<String> nome = const Value.absent(),
+            Value<String> contato = const Value.absent(),
+            Value<String> telefone = const Value.absent(),
+            Value<String> email = const Value.absent(),
+            Value<String> observacao = const Value.absent(),
+            Value<TipoServico> tipoServico = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               FornecedorTableCompanion(
             id: id,
-            descricao: descricao,
-            preco: preco,
+            nome: nome,
+            contato: contato,
+            telefone: telefone,
+            email: email,
+            observacao: observacao,
+            tipoServico: tipoServico,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             Value<String> id = const Value.absent(),
-            required String descricao,
-            required double preco,
+            required String nome,
+            required String contato,
+            required String telefone,
+            required String email,
+            required String observacao,
+            required TipoServico tipoServico,
             Value<int> rowid = const Value.absent(),
           }) =>
               FornecedorTableCompanion.insert(
             id: id,
-            descricao: descricao,
-            preco: preco,
+            nome: nome,
+            contato: contato,
+            telefone: telefone,
+            email: email,
+            observacao: observacao,
+            tipoServico: tipoServico,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

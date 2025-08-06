@@ -64,9 +64,11 @@ class _AutoCompleteSelectorState<T> extends State<AutoCompleteSelector<T>> {
       _controller.text = widget.displayItem(_selectedItem as T);
     }
 
-    // Quando o foco for ganho, rola para o campo
-    _kbSubscription =
-        KeyboardVisibilityController().onChange.listen((bool visible) {
+    _controller.addListener(() {
+      setState(() {}); // Atualiza o ícone de limpeza dinamicamente
+    });
+
+    _kbSubscription = KeyboardVisibilityController().onChange.listen((bool visible) {
       if (visible && _focusNode.hasFocus) {
         Future.delayed(const Duration(milliseconds: 500), () {
           if (_fieldKey.currentContext != null) {
@@ -80,6 +82,7 @@ class _AutoCompleteSelectorState<T> extends State<AutoCompleteSelector<T>> {
       }
     });
   }
+
 
   @override
   void dispose() {
@@ -182,12 +185,26 @@ class _AutoCompleteSelectorState<T> extends State<AutoCompleteSelector<T>> {
                 focusNode: _focusNode,
                 enabled: widget.isEnabled,
                 decoration: InputDecoration(
-                    prefixIcon: widget.prefixIcon,
-                    filled: true,
-                    fillColor:
-                        widget.isEnabled ? Colors.white : Colors.grey.shade200,
-                    border: OutlineInputBorder(),
-                    hintText: widget.placeholder),
+                  prefixIcon: widget.prefixIcon,
+                  suffixIcon: _controller.text.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _controller.clear();
+                        if (!widget.isMultiple) {
+                          _selectedItem = null;
+                          widget.onSelect(null);
+                        }
+                      });
+                    },
+                  )
+                      : null,
+                  filled: true,
+                  fillColor: widget.isEnabled ? Colors.white : Colors.grey.shade200,
+                  border: const OutlineInputBorder(),
+                  hintText: widget.placeholder,
+                ),
                 validator: widget.validator ??
                     (value) {
                       if (widget.isRequired &&

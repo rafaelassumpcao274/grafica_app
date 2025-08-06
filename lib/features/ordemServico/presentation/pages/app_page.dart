@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/pages/fornecedor/edit/fornecedor_form_page.dart';
 
 import '../widgets/cliente/cliente_filter_input.dart';
 import '../widgets/components/custom_fab.dart';
+import '../widgets/fornecedor/fornecedor_filter_input.dart';
 import '../widgets/ordem_servico/ordem_servico_filter_input.dart';
 import 'cliente/edit/client_form_page.dart';
 import 'ordem_servico/edit/ordem_servico_form_page.dart';
@@ -103,61 +105,34 @@ class _AppPageState extends ConsumerState<AppPage>
           ),
         ),
 
-        /// Messages page
-        ListView.builder(
-          reverse: true,
-          itemCount: 2,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    'Hello',
-                    style: theme.textTheme.bodyLarge!.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
-              );
-            }
-            return Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: const EdgeInsets.all(8.0),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  'Hi!',
-                  style: theme.textTheme.bodyLarge!.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                ),
-              ),
-            );
-          },
+        /// Fornecedor page
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(child: FornecedorFilterInput()),
+            ],
+          ),
         ),
+
       ][currentPageIndex],
       floatingActionButton: CustomFloatingActionButton(
         onPressed: () {
-          if (currentPageIndex == 1) {
+          if (currentPageIndex == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const OrdemServicoForm()),
+            );
+
+          } else if (currentPageIndex == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ClientForm()),
             );
-          } else if (currentPageIndex == 0) {
+          } else if (currentPageIndex == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const OrdemServicoForm()),
+              MaterialPageRoute(builder: (context) => const FornecedorForm()),
             );
           }
         },
