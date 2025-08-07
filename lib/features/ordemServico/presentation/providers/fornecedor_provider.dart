@@ -43,6 +43,25 @@ class FornecedorNotifier extends AsyncNotifier<List<Fornecedor>> {
     }
   }
 
+  Future<List<Fornecedor>> getFornecedoresByNome(String nomeParcial) async {
+    print('🔍 Buscando por: "$nomeParcial"');
+
+    try {
+      // CORREÇÃO: Passe o nomeParcial como search parameter
+      final fornecedores = await repository.getFornecedorPaginated(
+        search: nomeParcial,
+        pageSize: 20, // Aumente o limite para pegar mais resultados
+      );
+
+      print('📊 Fornecedores encontrados: ${fornecedores.length}');
+      return fornecedores;
+
+    } catch (e) {
+      print('❌ Erro na busca: $e');
+      rethrow;
+    }
+  }
+
   Future<void> add(Fornecedor fornecedor) async {
     await repository.add(fornecedor);
     await loadOrdemServicos();

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/entities/clientes.dart';
 import '../../../providers/clientes_provider_refactored.dart';
 import '../../../widgets/components/cpf_cnpj_form_field.dart';
+import '../../../widgets/components/custom_text_input.dart';
 
 
 class ClientForm extends ConsumerStatefulWidget {
@@ -80,26 +81,23 @@ class _ClientFormState extends ConsumerState<ClientForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Nome da Empresa',
-                          border: OutlineInputBorder(),
-                        ),
+                      CustomTextInput(
+                        controller: _nameController,
+                        hintText: 'Nome da Empresa',
+                        icon: Icons.domain,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Informe o nome da empresa';
                           }
                           return null;
                         },
-                        controller: _nameController,
                       ),
                       const SizedBox(height: 16.0),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(),
-                        ),
+                      CustomTextInput(
                         controller: _emailController,
+                        hintText: 'E-mail',
+                        icon: Icons.alternate_email,
+
                       ),
                       const SizedBox(height: 16.0),
                       CpfCnpjFormField(

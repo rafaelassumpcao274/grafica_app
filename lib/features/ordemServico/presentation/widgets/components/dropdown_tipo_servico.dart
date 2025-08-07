@@ -26,6 +26,17 @@ class _TipoServicoDropdownState extends State<TipoServicoDropdown> {
   }
 
   @override
+  void didUpdateWidget(covariant TipoServicoDropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.valorInicial != oldWidget.valorInicial) {
+      setState(() {
+        _selecionado = widget.valorInicial;
+      });
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<TipoServico>(
       value: _selecionado,

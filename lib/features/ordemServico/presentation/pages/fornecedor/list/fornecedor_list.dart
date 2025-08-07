@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/enums/TipoServico.dart';
 import 'package:unilith_app/features/ordemServico/presentation/providers/fornecedor_provider.dart';
 
 import '../../../providers/clientes_provider_refactored.dart';
@@ -63,7 +64,7 @@ class _FornecedorListState extends ConsumerState<FornecedorList> {
                   leading: const Icon(Icons.person),
                   title: Text(fornecedor.nome),
                   subtitle:
-                      Text( 'documento não informado'),
+                      Text( fornecedor.tipoServico.label),
                   onTap: () {
                     Navigator.push(
                       context,

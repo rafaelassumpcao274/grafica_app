@@ -42,6 +42,38 @@ class FornecedorRepositoryImpl implements FornecedorRepository {
   }
 
   @override
+  Future<List<Fornecedor>> getFornecedorPaginated({
+    String search = '',
+    int page = 1,
+    int pageSize = 10
+  }) async {
+    final query = db.select(db.fornecedorTable);
+
+    if (search.isNotEmpty) {
+      // Busca mais flexível - tanto por nome quanto por documento
+      query.where((tbl) =>
+      tbl.nome.like('%$search%') |
+      tbl.tipoServico.like('%$search%') );
+    }
+
+    // Ordena por nome para melhor UX
+    query.orderBy([(tbl) => OrderingTerm.asc(tbl.nome)]);
+
+    query.limit(pageSize, offset: (page - 1) * pageSize);
+
+    final result = await query.get();
+    return result.map((data) => Fornecedor(
+        id: data.id,
+        nome: data.nome,
+        contato: data.contato,
+        telefone: data.telefone,
+        email: data.email,
+        observacao: data.observacao,
+        tipoServico: data.tipoServico
+    )).toList();
+  }
+
+  @override
   Future<void> update(Fornecedor entity) async {
     await db.update(db.fornecedorTable).replace(
       FornecedorTableCompanion(

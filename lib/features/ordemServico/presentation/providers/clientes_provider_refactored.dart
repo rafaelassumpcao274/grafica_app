@@ -32,7 +32,7 @@ class ClientesNotifier extends StateNotifier<List<Clientes>> {
       // CORREÇÃO: Passe o nomeParcial como search parameter
       final clientes = await repository.getClientesPaginated(
         search: nomeParcial,
-        pageSize: 50, // Aumente o limite para pegar mais resultados
+        pageSize: 20, // Aumente o limite para pegar mais resultados
       );
       
       print('📊 Clientes encontrados: ${clientes.length}'); // Debug

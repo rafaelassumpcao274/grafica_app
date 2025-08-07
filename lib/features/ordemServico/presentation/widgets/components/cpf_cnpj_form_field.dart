@@ -54,6 +54,7 @@ class CpfCnpjFormField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label ?? 'Documento (CPF/CNPJ)',
         border: const OutlineInputBorder(),
+        prefix: Icon(Icons.article_outlined)
       ),
       validator: validator ??
           (value) {

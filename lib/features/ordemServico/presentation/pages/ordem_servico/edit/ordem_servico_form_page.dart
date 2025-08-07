@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/fornecedor_custo_autocomplete.dart';
 
 
 import '../../../../domain/entities/clientes.dart';
@@ -243,6 +244,8 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                           controller: _observacaoController,
                           maxLines: 3,
                         ),
+                        const SizedBox(height: 16.0),
+                        FornecedorCustoAutocomplete(controller:_observacaoController ),
                         const SizedBox(height: 16.0),
                         SizedBox(
                           width: double.infinity,
