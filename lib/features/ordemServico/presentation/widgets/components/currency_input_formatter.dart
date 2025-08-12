@@ -20,8 +20,9 @@ class CurrencyInputFormatter extends TextInputFormatter {
     }
 
     // Converte para decimal (divide por 100)
-    final value = double.parse(digitsOnly) / 100;
-    final newText = formatter.format(value);
+    double value = double.parse(newValue.text);
+    final formatter = NumberFormat("#,##0.00", "pt_BR");
+    String newText = formatter.format(value/100);
 
     return TextEditingValue(
       text: newText,

@@ -3022,6 +3022,296 @@ class OrdemServicoTableCompanion
   }
 }
 
+class $FornecedorOrdemServicoTableTable extends FornecedorOrdemServicoTable
+    with
+        TableInfo<$FornecedorOrdemServicoTableTable,
+            FornecedorOrdemServicoTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FornecedorOrdemServicoTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      clientDefault: () => Uuid().v4());
+  static const VerificationMeta _ordemServicoIdMeta =
+      const VerificationMeta('ordemServicoId');
+  @override
+  late final GeneratedColumn<int> ordemServicoId = GeneratedColumn<int>(
+      'ordem_servico_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES ordem_servico_table (id)'));
+  static const VerificationMeta _fornecedorIdMeta =
+      const VerificationMeta('fornecedorId');
+  @override
+  late final GeneratedColumn<String> fornecedorId = GeneratedColumn<String>(
+      'fornecedor_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES fornecedor_table (id)'));
+  static const VerificationMeta _custoMeta = const VerificationMeta('custo');
+  @override
+  late final GeneratedColumn<double> custo = GeneratedColumn<double>(
+      'custo', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, ordemServicoId, fornecedorId, custo];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fornecedor_ordem_servico_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<FornecedorOrdemServicoTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('ordem_servico_id')) {
+      context.handle(
+          _ordemServicoIdMeta,
+          ordemServicoId.isAcceptableOrUnknown(
+              data['ordem_servico_id']!, _ordemServicoIdMeta));
+    } else if (isInserting) {
+      context.missing(_ordemServicoIdMeta);
+    }
+    if (data.containsKey('fornecedor_id')) {
+      context.handle(
+          _fornecedorIdMeta,
+          fornecedorId.isAcceptableOrUnknown(
+              data['fornecedor_id']!, _fornecedorIdMeta));
+    } else if (isInserting) {
+      context.missing(_fornecedorIdMeta);
+    }
+    if (data.containsKey('custo')) {
+      context.handle(
+          _custoMeta, custo.isAcceptableOrUnknown(data['custo']!, _custoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FornecedorOrdemServicoTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FornecedorOrdemServicoTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      ordemServicoId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ordem_servico_id'])!,
+      fornecedorId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fornecedor_id'])!,
+      custo: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}custo'])!,
+    );
+  }
+
+  @override
+  $FornecedorOrdemServicoTableTable createAlias(String alias) {
+    return $FornecedorOrdemServicoTableTable(attachedDatabase, alias);
+  }
+}
+
+class FornecedorOrdemServicoTableData extends DataClass
+    implements Insertable<FornecedorOrdemServicoTableData> {
+  final String id;
+  final int ordemServicoId;
+  final String fornecedorId;
+  final double custo;
+  const FornecedorOrdemServicoTableData(
+      {required this.id,
+      required this.ordemServicoId,
+      required this.fornecedorId,
+      required this.custo});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['ordem_servico_id'] = Variable<int>(ordemServicoId);
+    map['fornecedor_id'] = Variable<String>(fornecedorId);
+    map['custo'] = Variable<double>(custo);
+    return map;
+  }
+
+  FornecedorOrdemServicoTableCompanion toCompanion(bool nullToAbsent) {
+    return FornecedorOrdemServicoTableCompanion(
+      id: Value(id),
+      ordemServicoId: Value(ordemServicoId),
+      fornecedorId: Value(fornecedorId),
+      custo: Value(custo),
+    );
+  }
+
+  factory FornecedorOrdemServicoTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FornecedorOrdemServicoTableData(
+      id: serializer.fromJson<String>(json['id']),
+      ordemServicoId: serializer.fromJson<int>(json['ordemServicoId']),
+      fornecedorId: serializer.fromJson<String>(json['fornecedorId']),
+      custo: serializer.fromJson<double>(json['custo']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'ordemServicoId': serializer.toJson<int>(ordemServicoId),
+      'fornecedorId': serializer.toJson<String>(fornecedorId),
+      'custo': serializer.toJson<double>(custo),
+    };
+  }
+
+  FornecedorOrdemServicoTableData copyWith(
+          {String? id,
+          int? ordemServicoId,
+          String? fornecedorId,
+          double? custo}) =>
+      FornecedorOrdemServicoTableData(
+        id: id ?? this.id,
+        ordemServicoId: ordemServicoId ?? this.ordemServicoId,
+        fornecedorId: fornecedorId ?? this.fornecedorId,
+        custo: custo ?? this.custo,
+      );
+  FornecedorOrdemServicoTableData copyWithCompanion(
+      FornecedorOrdemServicoTableCompanion data) {
+    return FornecedorOrdemServicoTableData(
+      id: data.id.present ? data.id.value : this.id,
+      ordemServicoId: data.ordemServicoId.present
+          ? data.ordemServicoId.value
+          : this.ordemServicoId,
+      fornecedorId: data.fornecedorId.present
+          ? data.fornecedorId.value
+          : this.fornecedorId,
+      custo: data.custo.present ? data.custo.value : this.custo,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FornecedorOrdemServicoTableData(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('fornecedorId: $fornecedorId, ')
+          ..write('custo: $custo')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, ordemServicoId, fornecedorId, custo);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FornecedorOrdemServicoTableData &&
+          other.id == this.id &&
+          other.ordemServicoId == this.ordemServicoId &&
+          other.fornecedorId == this.fornecedorId &&
+          other.custo == this.custo);
+}
+
+class FornecedorOrdemServicoTableCompanion
+    extends UpdateCompanion<FornecedorOrdemServicoTableData> {
+  final Value<String> id;
+  final Value<int> ordemServicoId;
+  final Value<String> fornecedorId;
+  final Value<double> custo;
+  final Value<int> rowid;
+  const FornecedorOrdemServicoTableCompanion({
+    this.id = const Value.absent(),
+    this.ordemServicoId = const Value.absent(),
+    this.fornecedorId = const Value.absent(),
+    this.custo = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FornecedorOrdemServicoTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int ordemServicoId,
+    required String fornecedorId,
+    this.custo = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : ordemServicoId = Value(ordemServicoId),
+        fornecedorId = Value(fornecedorId);
+  static Insertable<FornecedorOrdemServicoTableData> custom({
+    Expression<String>? id,
+    Expression<int>? ordemServicoId,
+    Expression<String>? fornecedorId,
+    Expression<double>? custo,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ordemServicoId != null) 'ordem_servico_id': ordemServicoId,
+      if (fornecedorId != null) 'fornecedor_id': fornecedorId,
+      if (custo != null) 'custo': custo,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FornecedorOrdemServicoTableCompanion copyWith(
+      {Value<String>? id,
+      Value<int>? ordemServicoId,
+      Value<String>? fornecedorId,
+      Value<double>? custo,
+      Value<int>? rowid}) {
+    return FornecedorOrdemServicoTableCompanion(
+      id: id ?? this.id,
+      ordemServicoId: ordemServicoId ?? this.ordemServicoId,
+      fornecedorId: fornecedorId ?? this.fornecedorId,
+      custo: custo ?? this.custo,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (ordemServicoId.present) {
+      map['ordem_servico_id'] = Variable<int>(ordemServicoId.value);
+    }
+    if (fornecedorId.present) {
+      map['fornecedor_id'] = Variable<String>(fornecedorId.value);
+    }
+    if (custo.present) {
+      map['custo'] = Variable<double>(custo.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FornecedorOrdemServicoTableCompanion(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('fornecedorId: $fornecedorId, ')
+          ..write('custo: $custo, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3037,6 +3327,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CustoTableTable custoTable = $CustoTableTable(this);
   late final $OrdemServicoTableTable ordemServicoTable =
       $OrdemServicoTableTable(this);
+  late final $FornecedorOrdemServicoTableTable fornecedorOrdemServicoTable =
+      $FornecedorOrdemServicoTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3051,7 +3343,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         clientesTable,
         enderecosTable,
         custoTable,
-        ordemServicoTable
+        ordemServicoTable,
+        fornecedorOrdemServicoTable
       ];
 }
 
@@ -3077,6 +3370,32 @@ typedef $$FornecedorTableTableUpdateCompanionBuilder = FornecedorTableCompanion
   Value<TipoServico> tipoServico,
   Value<int> rowid,
 });
+
+final class $$FornecedorTableTableReferences extends BaseReferences<
+    _$AppDatabase, $FornecedorTableTable, FornecedorTableData> {
+  $$FornecedorTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$FornecedorOrdemServicoTableTable,
+          List<FornecedorOrdemServicoTableData>>
+      _fornecedorOrdemServicoTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.fornecedorOrdemServicoTable,
+              aliasName: $_aliasNameGenerator(db.fornecedorTable.id,
+                  db.fornecedorOrdemServicoTable.fornecedorId));
+
+  $$FornecedorOrdemServicoTableTableProcessedTableManager
+      get fornecedorOrdemServicoTableRefs {
+    final manager = $$FornecedorOrdemServicoTableTableTableManager(
+            $_db, $_db.fornecedorOrdemServicoTable)
+        .filter(
+            (f) => f.fornecedorId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult
+        .readTableOrNull(_fornecedorOrdemServicoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
 
 class $$FornecedorTableTableFilterComposer
     extends Composer<_$AppDatabase, $FornecedorTableTable> {
@@ -3109,6 +3428,30 @@ class $$FornecedorTableTableFilterComposer
       get tipoServico => $composableBuilder(
           column: $table.tipoServico,
           builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  Expression<bool> fornecedorOrdemServicoTableRefs(
+      Expression<bool> Function(
+              $$FornecedorOrdemServicoTableTableFilterComposer f)
+          f) {
+    final $$FornecedorOrdemServicoTableTableFilterComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.fornecedorOrdemServicoTable,
+            getReferencedColumn: (t) => t.fornecedorId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$FornecedorOrdemServicoTableTableFilterComposer(
+                  $db: $db,
+                  $table: $db.fornecedorOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$FornecedorTableTableOrderingComposer
@@ -3172,6 +3515,30 @@ class $$FornecedorTableTableAnnotationComposer
   GeneratedColumnWithTypeConverter<TipoServico, String> get tipoServico =>
       $composableBuilder(
           column: $table.tipoServico, builder: (column) => column);
+
+  Expression<T> fornecedorOrdemServicoTableRefs<T extends Object>(
+      Expression<T> Function(
+              $$FornecedorOrdemServicoTableTableAnnotationComposer a)
+          f) {
+    final $$FornecedorOrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.fornecedorOrdemServicoTable,
+            getReferencedColumn: (t) => t.fornecedorId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$FornecedorOrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.fornecedorOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$FornecedorTableTableTableManager extends RootTableManager<
@@ -3183,12 +3550,9 @@ class $$FornecedorTableTableTableManager extends RootTableManager<
     $$FornecedorTableTableAnnotationComposer,
     $$FornecedorTableTableCreateCompanionBuilder,
     $$FornecedorTableTableUpdateCompanionBuilder,
-    (
-      FornecedorTableData,
-      BaseReferences<_$AppDatabase, $FornecedorTableTable, FornecedorTableData>
-    ),
+    (FornecedorTableData, $$FornecedorTableTableReferences),
     FornecedorTableData,
-    PrefetchHooks Function()> {
+    PrefetchHooks Function({bool fornecedorOrdemServicoTableRefs})> {
   $$FornecedorTableTableTableManager(
       _$AppDatabase db, $FornecedorTableTable table)
       : super(TableManagerState(
@@ -3241,9 +3605,40 @@ class $$FornecedorTableTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map((e) => (
+                    e.readTable(table),
+                    $$FornecedorTableTableReferences(db, table, e)
+                  ))
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({fornecedorOrdemServicoTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (fornecedorOrdemServicoTableRefs)
+                  db.fornecedorOrdemServicoTable
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (fornecedorOrdemServicoTableRefs)
+                    await $_getPrefetchedData<
+                            FornecedorTableData,
+                            $FornecedorTableTable,
+                            FornecedorOrdemServicoTableData>(
+                        currentTable: table,
+                        referencedTable: $$FornecedorTableTableReferences
+                            ._fornecedorOrdemServicoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$FornecedorTableTableReferences(db, table, p0)
+                                .fornecedorOrdemServicoTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.fornecedorId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
@@ -3256,12 +3651,9 @@ typedef $$FornecedorTableTableProcessedTableManager = ProcessedTableManager<
     $$FornecedorTableTableAnnotationComposer,
     $$FornecedorTableTableCreateCompanionBuilder,
     $$FornecedorTableTableUpdateCompanionBuilder,
-    (
-      FornecedorTableData,
-      BaseReferences<_$AppDatabase, $FornecedorTableTable, FornecedorTableData>
-    ),
+    (FornecedorTableData, $$FornecedorTableTableReferences),
     FornecedorTableData,
-    PrefetchHooks Function()>;
+    PrefetchHooks Function({bool fornecedorOrdemServicoTableRefs})>;
 typedef $$FormatoTableTableCreateCompanionBuilder = FormatoTableCompanion
     Function({
   Value<String> id,
@@ -4673,6 +5065,25 @@ final class $$OrdemServicoTableTableReferences extends BaseReferences<
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: [item]));
   }
+
+  static MultiTypedResultKey<$FornecedorOrdemServicoTableTable,
+          List<FornecedorOrdemServicoTableData>>
+      _fornecedorOrdemServicoTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.fornecedorOrdemServicoTable,
+              aliasName: $_aliasNameGenerator(db.ordemServicoTable.id,
+                  db.fornecedorOrdemServicoTable.ordemServicoId));
+
+  $$FornecedorOrdemServicoTableTableProcessedTableManager
+      get fornecedorOrdemServicoTableRefs {
+    final manager = $$FornecedorOrdemServicoTableTableTableManager(
+            $_db, $_db.fornecedorOrdemServicoTable)
+        .filter((f) => f.ordemServicoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult
+        .readTableOrNull(_fornecedorOrdemServicoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$OrdemServicoTableTableFilterComposer
@@ -4764,6 +5175,30 @@ class $$OrdemServicoTableTableFilterComposer
                   $removeJoinBuilderFromRootComposer,
             ));
     return composer;
+  }
+
+  Expression<bool> fornecedorOrdemServicoTableRefs(
+      Expression<bool> Function(
+              $$FornecedorOrdemServicoTableTableFilterComposer f)
+          f) {
+    final $$FornecedorOrdemServicoTableTableFilterComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.fornecedorOrdemServicoTable,
+            getReferencedColumn: (t) => t.ordemServicoId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$FornecedorOrdemServicoTableTableFilterComposer(
+                  $db: $db,
+                  $table: $db.fornecedorOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
   }
 }
 
@@ -4941,6 +5376,30 @@ class $$OrdemServicoTableTableAnnotationComposer
             ));
     return composer;
   }
+
+  Expression<T> fornecedorOrdemServicoTableRefs<T extends Object>(
+      Expression<T> Function(
+              $$FornecedorOrdemServicoTableTableAnnotationComposer a)
+          f) {
+    final $$FornecedorOrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.fornecedorOrdemServicoTable,
+            getReferencedColumn: (t) => t.ordemServicoId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$FornecedorOrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.fornecedorOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$OrdemServicoTableTableTableManager extends RootTableManager<
@@ -4954,7 +5413,10 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
     $$OrdemServicoTableTableUpdateCompanionBuilder,
     (OrdemServicoTableData, $$OrdemServicoTableTableReferences),
     OrdemServicoTableData,
-    PrefetchHooks Function({bool clienteId, bool formatoId})> {
+    PrefetchHooks Function(
+        {bool clienteId,
+        bool formatoId,
+        bool fornecedorOrdemServicoTableRefs})> {
   $$OrdemServicoTableTableTableManager(
       _$AppDatabase db, $OrdemServicoTableTable table)
       : super(TableManagerState(
@@ -5037,10 +5499,16 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
                     $$OrdemServicoTableTableReferences(db, table, e)
                   ))
               .toList(),
-          prefetchHooksCallback: ({clienteId = false, formatoId = false}) {
+          prefetchHooksCallback: (
+              {clienteId = false,
+              formatoId = false,
+              fornecedorOrdemServicoTableRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [],
+              explicitlyWatchedTables: [
+                if (fornecedorOrdemServicoTableRefs)
+                  db.fornecedorOrdemServicoTable
+              ],
               addJoins: <
                   T extends TableManagerState<
                       dynamic,
@@ -5080,7 +5548,23 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
                 return state;
               },
               getPrefetchedDataCallback: (items) async {
-                return [];
+                return [
+                  if (fornecedorOrdemServicoTableRefs)
+                    await $_getPrefetchedData<
+                            OrdemServicoTableData,
+                            $OrdemServicoTableTable,
+                            FornecedorOrdemServicoTableData>(
+                        currentTable: table,
+                        referencedTable: $$OrdemServicoTableTableReferences
+                            ._fornecedorOrdemServicoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$OrdemServicoTableTableReferences(db, table, p0)
+                                .fornecedorOrdemServicoTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.ordemServicoId == item.id),
+                        typedResults: items)
+                ];
               },
             );
           },
@@ -5098,7 +5582,370 @@ typedef $$OrdemServicoTableTableProcessedTableManager = ProcessedTableManager<
     $$OrdemServicoTableTableUpdateCompanionBuilder,
     (OrdemServicoTableData, $$OrdemServicoTableTableReferences),
     OrdemServicoTableData,
-    PrefetchHooks Function({bool clienteId, bool formatoId})>;
+    PrefetchHooks Function(
+        {bool clienteId,
+        bool formatoId,
+        bool fornecedorOrdemServicoTableRefs})>;
+typedef $$FornecedorOrdemServicoTableTableCreateCompanionBuilder
+    = FornecedorOrdemServicoTableCompanion Function({
+  Value<String> id,
+  required int ordemServicoId,
+  required String fornecedorId,
+  Value<double> custo,
+  Value<int> rowid,
+});
+typedef $$FornecedorOrdemServicoTableTableUpdateCompanionBuilder
+    = FornecedorOrdemServicoTableCompanion Function({
+  Value<String> id,
+  Value<int> ordemServicoId,
+  Value<String> fornecedorId,
+  Value<double> custo,
+  Value<int> rowid,
+});
+
+final class $$FornecedorOrdemServicoTableTableReferences extends BaseReferences<
+    _$AppDatabase,
+    $FornecedorOrdemServicoTableTable,
+    FornecedorOrdemServicoTableData> {
+  $$FornecedorOrdemServicoTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $OrdemServicoTableTable _ordemServicoIdTable(_$AppDatabase db) =>
+      db.ordemServicoTable.createAlias($_aliasNameGenerator(
+          db.fornecedorOrdemServicoTable.ordemServicoId,
+          db.ordemServicoTable.id));
+
+  $$OrdemServicoTableTableProcessedTableManager get ordemServicoId {
+    final $_column = $_itemColumn<int>('ordem_servico_id')!;
+
+    final manager =
+        $$OrdemServicoTableTableTableManager($_db, $_db.ordemServicoTable)
+            .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ordemServicoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $FornecedorTableTable _fornecedorIdTable(_$AppDatabase db) =>
+      db.fornecedorTable.createAlias($_aliasNameGenerator(
+          db.fornecedorOrdemServicoTable.fornecedorId, db.fornecedorTable.id));
+
+  $$FornecedorTableTableProcessedTableManager get fornecedorId {
+    final $_column = $_itemColumn<String>('fornecedor_id')!;
+
+    final manager =
+        $$FornecedorTableTableTableManager($_db, $_db.fornecedorTable)
+            .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_fornecedorIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$FornecedorOrdemServicoTableTableFilterComposer
+    extends Composer<_$AppDatabase, $FornecedorOrdemServicoTableTable> {
+  $$FornecedorOrdemServicoTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get custo => $composableBuilder(
+      column: $table.custo, builder: (column) => ColumnFilters(column));
+
+  $$OrdemServicoTableTableFilterComposer get ordemServicoId {
+    final $$OrdemServicoTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableFilterComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$FornecedorTableTableFilterComposer get fornecedorId {
+    final $$FornecedorTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.fornecedorId,
+        referencedTable: $db.fornecedorTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FornecedorTableTableFilterComposer(
+              $db: $db,
+              $table: $db.fornecedorTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$FornecedorOrdemServicoTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $FornecedorOrdemServicoTableTable> {
+  $$FornecedorOrdemServicoTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get custo => $composableBuilder(
+      column: $table.custo, builder: (column) => ColumnOrderings(column));
+
+  $$OrdemServicoTableTableOrderingComposer get ordemServicoId {
+    final $$OrdemServicoTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$FornecedorTableTableOrderingComposer get fornecedorId {
+    final $$FornecedorTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.fornecedorId,
+        referencedTable: $db.fornecedorTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FornecedorTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.fornecedorTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$FornecedorOrdemServicoTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FornecedorOrdemServicoTableTable> {
+  $$FornecedorOrdemServicoTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get custo =>
+      $composableBuilder(column: $table.custo, builder: (column) => column);
+
+  $$OrdemServicoTableTableAnnotationComposer get ordemServicoId {
+    final $$OrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.ordemServicoId,
+            referencedTable: $db.ordemServicoTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$OrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.ordemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return composer;
+  }
+
+  $$FornecedorTableTableAnnotationComposer get fornecedorId {
+    final $$FornecedorTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.fornecedorId,
+        referencedTable: $db.fornecedorTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FornecedorTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.fornecedorTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$FornecedorOrdemServicoTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $FornecedorOrdemServicoTableTable,
+    FornecedorOrdemServicoTableData,
+    $$FornecedorOrdemServicoTableTableFilterComposer,
+    $$FornecedorOrdemServicoTableTableOrderingComposer,
+    $$FornecedorOrdemServicoTableTableAnnotationComposer,
+    $$FornecedorOrdemServicoTableTableCreateCompanionBuilder,
+    $$FornecedorOrdemServicoTableTableUpdateCompanionBuilder,
+    (
+      FornecedorOrdemServicoTableData,
+      $$FornecedorOrdemServicoTableTableReferences
+    ),
+    FornecedorOrdemServicoTableData,
+    PrefetchHooks Function({bool ordemServicoId, bool fornecedorId})> {
+  $$FornecedorOrdemServicoTableTableTableManager(
+      _$AppDatabase db, $FornecedorOrdemServicoTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FornecedorOrdemServicoTableTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FornecedorOrdemServicoTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FornecedorOrdemServicoTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<int> ordemServicoId = const Value.absent(),
+            Value<String> fornecedorId = const Value.absent(),
+            Value<double> custo = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              FornecedorOrdemServicoTableCompanion(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            fornecedorId: fornecedorId,
+            custo: custo,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            required int ordemServicoId,
+            required String fornecedorId,
+            Value<double> custo = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              FornecedorOrdemServicoTableCompanion.insert(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            fornecedorId: fornecedorId,
+            custo: custo,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$FornecedorOrdemServicoTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {ordemServicoId = false, fornecedorId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (ordemServicoId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.ordemServicoId,
+                    referencedTable:
+                        $$FornecedorOrdemServicoTableTableReferences
+                            ._ordemServicoIdTable(db),
+                    referencedColumn:
+                        $$FornecedorOrdemServicoTableTableReferences
+                            ._ordemServicoIdTable(db)
+                            .id,
+                  ) as T;
+                }
+                if (fornecedorId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.fornecedorId,
+                    referencedTable:
+                        $$FornecedorOrdemServicoTableTableReferences
+                            ._fornecedorIdTable(db),
+                    referencedColumn:
+                        $$FornecedorOrdemServicoTableTableReferences
+                            ._fornecedorIdTable(db)
+                            .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$FornecedorOrdemServicoTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $FornecedorOrdemServicoTableTable,
+    FornecedorOrdemServicoTableData,
+    $$FornecedorOrdemServicoTableTableFilterComposer,
+    $$FornecedorOrdemServicoTableTableOrderingComposer,
+    $$FornecedorOrdemServicoTableTableAnnotationComposer,
+    $$FornecedorOrdemServicoTableTableCreateCompanionBuilder,
+    $$FornecedorOrdemServicoTableTableUpdateCompanionBuilder,
+    (
+      FornecedorOrdemServicoTableData,
+      $$FornecedorOrdemServicoTableTableReferences
+    ),
+    FornecedorOrdemServicoTableData,
+    PrefetchHooks Function({bool ordemServicoId, bool fornecedorId})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5123,4 +5970,8 @@ class $AppDatabaseManager {
       $$CustoTableTableTableManager(_db, _db.custoTable);
   $$OrdemServicoTableTableTableManager get ordemServicoTable =>
       $$OrdemServicoTableTableTableManager(_db, _db.ordemServicoTable);
+  $$FornecedorOrdemServicoTableTableTableManager
+      get fornecedorOrdemServicoTable =>
+          $$FornecedorOrdemServicoTableTableTableManager(
+              _db, _db.fornecedorOrdemServicoTable);
 }

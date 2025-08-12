@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
+
+import 'currency_input_formatter.dart';
 
 class SelectableListWithInput<T> extends StatefulWidget {
   final String title;
@@ -10,6 +14,9 @@ class SelectableListWithInput<T> extends StatefulWidget {
   final void Function(List<SelectableItem<T>>) onChanged;
   final String placeholder;
 
+  /// NOVO: permite definir uma lista inicial de itens já selecionados
+  final List<SelectableItem<T>> initialSelected;
+
   const SelectableListWithInput({
     super.key,
     required this.title,
@@ -18,6 +25,7 @@ class SelectableListWithInput<T> extends StatefulWidget {
     required this.itemBuilder,
     required this.onChanged,
     this.placeholder = "Selecione um item",
+    this.initialSelected = const [],
   });
 
   @override
@@ -34,7 +42,19 @@ class SelectableItem<T> {
 
 class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>> {
   final TextEditingController _controller = TextEditingController();
-  final List<SelectableItem<T>> _selectedItems = [];
+  late List<SelectableItem<T>> _selectedItems;
+  final NumberFormat formatoBR = NumberFormat.currency(
+    locale: 'pt_BR',
+    symbol: '',
+    decimalDigits: 2,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    // Carrega lista inicial
+    _selectedItems = List.from(widget.initialSelected);
+  }
 
   void _onItemSelected(T item) {
     if (_selectedItems.any((e) => e.item == item)) return;
@@ -58,6 +78,7 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
     });
     widget.onChanged(_selectedItems);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,17 +123,27 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
                     const SizedBox(width: 8),
                     Expanded(
                       flex: 4,
-                      child: TextFormField(
+                      child:
+                      TextFormField(
                         initialValue: selectedItem.input,
-                        decoration: const InputDecoration(
-                          hintText: "Digite valor",
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: false,
+                        ),
+                        decoration: InputDecoration(
+                          prefixText: 'R\$ ',
+                          labelText: "Digite o Valor",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: const OutlineInputBorder(),
                         ),
                         onChanged: (val) =>
                             _updateInput(selectedItem, val.trim()),
-                      ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          CurrencyInputFormatter(),
+                        ],
+                      )
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
@@ -128,3 +159,4 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
     );
   }
 }
+

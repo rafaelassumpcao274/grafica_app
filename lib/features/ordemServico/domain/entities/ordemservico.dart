@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
 
 
 import 'clientes.dart';
@@ -19,7 +20,9 @@ class OrdemServico extends Equatable {
   final double valorCusto;
   final double valorTotal;
 
-  const OrdemServico( {
+  final List<FornecedorOrdemServico> fornecedores;
+
+  OrdemServico({
     int? id,
     required this.material,
     required this.corFrente,
@@ -33,7 +36,8 @@ class OrdemServico extends Equatable {
     this.formato,
     this.valorCusto = 0.0,
     this.valorTotal = 0.0,
-  }) : id = id ?? 0;
+    List<FornecedorOrdemServico>? fornecedores,
+  })  : id = id ?? 0, fornecedores = fornecedores ?? [];
 
   OrdemServico copyWith({
     String? material,
@@ -48,6 +52,7 @@ class OrdemServico extends Equatable {
     Formato? formato, 
     double? valorCusto,
     double? valorTotal,
+    List<FornecedorOrdemServico>? fornecedores
   }) {
     return  OrdemServico(
       id: id,
@@ -63,6 +68,7 @@ class OrdemServico extends Equatable {
       formato: formato,
       valorCusto: valorCusto ?? this.valorCusto,
       valorTotal: valorTotal ?? this.valorTotal,
+      fornecedores: fornecedores ?? this.fornecedores
     );
   }
 
@@ -81,5 +87,6 @@ class OrdemServico extends Equatable {
         , possuiNumeracao,
         valorCusto,
         valorTotal,
+        fornecedores
       ];
 }

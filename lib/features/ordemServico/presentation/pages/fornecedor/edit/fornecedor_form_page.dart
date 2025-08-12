@@ -130,11 +130,6 @@ class _FornecedorFormState extends ConsumerState<FornecedorForm> {
                           TelefoneInput(
                             controller: _telefoneController,
                           ),
-                          CustomTextInput(
-                            controller: _telefoneController,
-                            hintText: 'Telefone',
-                            icon: Icons.phone,
-                          ),
                           const SizedBox(height: 16.0),
                           TipoServicoDropdown(
                             valorInicial: tipoSelecionado,

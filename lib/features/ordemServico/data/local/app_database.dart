@@ -7,6 +7,7 @@ import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
 import 'package:unilith_app/features/ordemServico/data/local/seed/formato_seed.dart';
 import 'package:unilith_app/features/ordemServico/data/local/seed/papel_seed.dart';
+import 'package:unilith_app/features/ordemServico/data/local/tables/fornecedor_ordem_servico.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/enums/TipoServico.dart';
 import 'config/sqlite_date_time_converter.dart';
@@ -44,6 +45,7 @@ LazyDatabase _openConnection() {
   EnderecosTable,
   CustoTable,
   OrdemServicoTable,
+  FornecedorOrdemServicoTable
 ])
 class AppDatabase extends _$AppDatabase {
   // ignore: use_super_parameters

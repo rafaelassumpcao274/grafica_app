@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/fornecedor_custo_autocomplete.dart';
 
 
 import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/formato.dart';
 import '../../../../domain/entities/ordemservico.dart';
+import '../../../providers/fornecedor_custo_provider.dart';
 import '../../../providers/ordemservico_provider.dart';
 import '../../../widgets/cliente/cliente_autocomplete.dart';
 import '../../../widgets/components/custom_decimal_input.dart';
@@ -70,11 +72,15 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
       builder: (context, ref, _) {
         final asyncNotifier = ref.watch(ordemServicoProvider);
         final ordemNotifier = ref.watch(ordemServicoProvider.notifier);
+        final fornecedorAsyncNotifier = ref.watch(fornecedorCustoProvider);
+        final fornecedorNotifier = ref.watch(fornecedorCustoProvider.notifier);
         return asyncNotifier.when(
           data: (ordemServicoNotifier) {
             if (!_loaded && widget.ordemId != null) {
               _loaded = true;
               ordemNotifier.getById(widget.ordemId!).then((ordem) {
+                ref.read(fornecedorCustoProvider.notifier).clear();
+                ref.invalidate(fornecedorCustoProvider);
                 if (ordem != null) {
                   setState(() {
                     _materialController.text = ordem.material ?? '';
@@ -94,6 +100,14 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                     _formatoController.text = ordem.formato?.descricao ?? '';
                     _valorCustoController.text = ordem.valorCusto.toString();
                     _valorTotalController.text = ordem.valorTotal.toString();
+                    ref.read(fornecedorCustoProvider.notifier).setFornecedores(ordem.fornecedores);
+
+                    if(ordem.fornecedores.isNotEmpty){
+                      final total = ref.read(fornecedorCustoProvider.notifier).totalCusto;
+
+                      _valorCustoController.text = total.toString();
+
+                    }
                   });
                 }
               });
@@ -199,9 +213,12 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                           ),
                         ],
                         const SizedBox(height: 16.0),
+                        FornecedorCustoAutocomplete(),
+                        const SizedBox(height: 16.0),
                         CustomDecimalInput(
                           controller: _valorCustoController,
                           hintText: 'Valor Custo',
+                          enabled: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Informe um valor';
@@ -245,8 +262,6 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                           maxLines: 3,
                         ),
                         const SizedBox(height: 16.0),
-                        FornecedorCustoAutocomplete(controller:_observacaoController ),
-                        const SizedBox(height: 16.0),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -260,6 +275,7 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
+                                final fornecedoresSelecionados = ref.read(fornecedorCustoProvider);
                                 final ordem = OrdemServico(
                                   id: widget.ordemId,
                                   clientes: _selectedCliente,
@@ -275,8 +291,9 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                                   numeracaoFinal:
                                       _numeracaoFinalController.number!,
                                   observacao: _observacaoController.text,
-                                  valorCusto: _valorCustoController.number!, 
-                                  valorTotal: _valorTotalController.number!, 
+                                  valorCusto: _valorCustoController.number!,
+                                  valorTotal: _valorTotalController.number!,
+                                  fornecedores: fornecedoresSelecionados
                                 );
                                 if (widget.ordemId != null) {
                                   await ordemNotifier.updateOS(ordem);
