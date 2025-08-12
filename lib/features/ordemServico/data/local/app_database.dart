@@ -18,10 +18,7 @@ import 'tables/formato_table.dart';
 import 'tables/viacores_table.dart';
 import 'tables/papel_table.dart';
 import 'tables/uf_table.dart';
-import 'tables/cidades_table.dart';
 import 'tables/clientes_table.dart';
-import 'tables/enderecos_table.dart';
-import 'tables/custo_table.dart';
 import 'tables/ordemservico_table.dart';
 
 part 'app_database.g.dart';
@@ -40,10 +37,7 @@ LazyDatabase _openConnection() {
   ViaCoresTable,
   PapelTable,
   UfTable,
-  CidadesTable,
   ClientesTable,
-  EnderecosTable,
-  CustoTable,
   OrdemServicoTable,
   FornecedorOrdemServicoTable
 ])
@@ -87,9 +81,9 @@ class AppDatabase extends _$AppDatabase {
     for (final formato in formatoSeed) {
       await db.into(db.formatoTable).insert(formato);
     }
-    for (final papel in papelSeed) {
-      await db.into(db.papelTable).insert(papel);
-    }
+    // for (final papel in papelSeed) {
+    //   await db.into(db.papelTable).insert(papel);
+    // }
     // for (final cores in viacoresSeed) {
     //   await db.into(db.viaCoresTable).insert(cores);
     // }
