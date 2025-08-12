@@ -9,7 +9,7 @@ import 'autocomplete_selector.dart';
 class FormatoAutocomplete extends ConsumerStatefulWidget {
   final void Function(Formato cliente)? onSelected;
   final TextEditingController? controller;
-  final String labelText = 'Formato';
+  final String labelText = 'Formato do Papel';
   final String hintText = 'Digite o Formato';
   final Formato? initialValue;
   final bool enabled;
