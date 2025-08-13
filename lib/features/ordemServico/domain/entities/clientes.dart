@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/documento.dart';
+import 'package:unilith_app/features/ordemServico/presentation/core/formatter/document_formatter.dart';
 import 'package:uuid/uuid.dart';
 
 class Clientes extends Equatable {
@@ -8,15 +10,20 @@ class Clientes extends Equatable {
   final String? email;
   final String? contato;
   final String? telefone;
+  Documento doc;
 
   Clientes({
     String? id,
-    required this.nomeEmpresa,
-    required this.documento,
+     String? nomeEmpresa,
+     String? documento,
      this.email,
      this.contato,
      this.telefone,
-  }) : id = id ?? const Uuid().v4();
+     Documento? doc,
+  }) : id = id ?? const Uuid().v4(),this.nomeEmpresa = nomeEmpresa ?? "",this.documento = documento ?? '',doc = doc ?? new Documento("");
+
+  static Clientes  empty() => new Clientes();
+
 
   Clientes copyWith({
     String? nomeEmpresa,
@@ -25,6 +32,7 @@ class Clientes extends Equatable {
     String? email,
     String? contato,
     String? telefone,
+    Documento? doc,
   }) {
     return Clientes(
       id: id,
@@ -32,10 +40,20 @@ class Clientes extends Equatable {
       documento: documento ?? this.documento,
       email: email ?? this.email,
       contato: contato ?? this.contato,
-      telefone: telefone ?? this.telefone,
+      telefone: telefone ?? this.telefone, doc: doc?? this.doc,
     );
   }
 
   @override
   List<Object?> get props =>
-      [id, nomeEmpresa,  documento, email, contato, telefone];}
+      [id, nomeEmpresa,  documento, email, contato, telefone];
+
+
+  String getDocumentFormatted() => DocumentFormatter.formatter(documento);
+
+  @override
+  String toString() => nomeEmpresa;
+
+}
+
+

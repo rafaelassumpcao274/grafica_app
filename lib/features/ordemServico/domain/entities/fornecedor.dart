@@ -44,4 +44,7 @@ class Fornecedor extends Equatable {
 
   @override
   List<Object?> get props => [id, nome,tipoServico,contato,telefone,email,observacao];
+
+  @override
+  String toString() => nome;
 }

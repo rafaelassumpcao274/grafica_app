@@ -62,7 +62,7 @@ class _ClientListState extends ConsumerState<ClientList> {
                   leading: const Icon(Icons.person),
                   title: Text(cliente.nomeEmpresa),
                   subtitle:
-                      Text(cliente.documento ?? 'documento não informado'),
+                      Text(cliente.getDocumentFormatted() ?? 'documento não informado'),
                   onTap: () {
                     Navigator.push(
                       context,

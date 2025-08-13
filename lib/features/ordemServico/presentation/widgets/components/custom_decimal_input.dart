@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import 'currency_input_formatter.dart';
+import '../../core/formatter/currency_input_formatter.dart';
 
 
 class CustomDecimalInput extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 
-import 'currency_input_formatter.dart';
+import '../../core/formatter/currency_input_formatter.dart';
 
 class SelectableListWithInput<T> extends StatefulWidget {
   final String title;

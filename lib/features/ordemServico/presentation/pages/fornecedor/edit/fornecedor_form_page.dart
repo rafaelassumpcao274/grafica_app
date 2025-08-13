@@ -6,7 +6,6 @@ import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/enums/TipoServico.dart' show TipoServico;
 import '../../../../domain/entities/fornecedor.dart';
 import '../../../providers/clientes_provider_refactored.dart';
-import '../../../widgets/components/cpf_cnpj_form_field.dart';
 import '../../../widgets/components/custom_text_input.dart';
 import '../../../widgets/components/dropdown_tipo_servico.dart';
 import '../../../widgets/components/telefone_input.dart';

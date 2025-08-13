@@ -19,4 +19,8 @@ class Formato extends Equatable {
 
   @override
   List<Object?> get props => [id, descricao];
+
+
+  @override
+  String toString() => descricao;
 }
