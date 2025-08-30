@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/currency.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/fornecedor_custo_autocomplete.dart';
-
 
 import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/formato.dart';
@@ -19,6 +19,7 @@ import '../../../widgets/number_editing_controller.dart';
 
 class OrdemServicoForm extends ConsumerStatefulWidget {
   final int? ordemId;
+
   const OrdemServicoForm({super.key, this.ordemId});
 
   @override
@@ -38,6 +39,12 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
   final _observacaoController = TextEditingController();
   final _valorCustoController = NumberEditingController<double>(value: 0.0);
   final _valorTotalController = NumberEditingController<double>(value: 0.0);
+  final _tamanhoImagemController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Clientes? _selectedCliente;
   Formato? _selectedFormato;
@@ -56,12 +63,14 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
     _formatoController.dispose();
     _valorCustoController.dispose();
     _valorTotalController.dispose();
+    _tamanhoImagemController.dispose();
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
   }
 
   bool _loaded = false;
@@ -72,8 +81,10 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
       builder: (context, ref, _) {
         final asyncNotifier = ref.watch(ordemServicoProvider);
         final ordemNotifier = ref.watch(ordemServicoProvider.notifier);
-        final fornecedorAsyncNotifier = ref.watch(fornecedorCustoProvider);
-        final fornecedorNotifier = ref.watch(fornecedorCustoProvider.notifier);
+        final fornecedorNotifier = ref.read(fornecedorCustoProvider.notifier);
+        final fornecedores = ref.watch(fornecedorCustoProvider);
+        final total = fornecedores.fold(0.0, (a, b) => a + b.custo);
+
         return asyncNotifier.when(
           data: (ordemServicoNotifier) {
             if (!_loaded && widget.ordemId != null) {
@@ -98,15 +109,20 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                     _clienteController.text = ordem.clientes?.nomeEmpresa ?? '';
                     _selectedFormato = ordem.formato;
                     _formatoController.text = ordem.formato?.descricao ?? '';
-                    _valorCustoController.text = ordem.valorCusto.toString();
-                    _valorTotalController.text = ordem.valorTotal.toString();
-                    ref.read(fornecedorCustoProvider.notifier).setFornecedores(ordem.fornecedores);
+                    _tamanhoImagemController.text =
+                        ordem.tamanhoImagem.toString() ?? '';
+                    _valorCustoController.text =
+                        Currency(ordem.valorCusto.toString()).toString();
+                    _valorTotalController.text =
+                        Currency(ordem.valorTotal.toString()).toString();
+                    _tamanhoImagemController.text =
+                        ordem.tamanhoImagem.toString() ?? '';
+                    ref.invalidate(fornecedorCustoProvider);
 
-                    if(ordem.fornecedores.isNotEmpty){
-                      final total = ref.read(fornecedorCustoProvider.notifier).totalCusto;
-
-                      _valorCustoController.text = total.toString();
-
+                    if (ordem.fornecedores.isNotEmpty) {
+                      ref
+                          .read(fornecedorCustoProvider.notifier)
+                          .setFornecedores(ordem.fornecedores);
                     }
                   });
                 }
@@ -216,7 +232,7 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                         FornecedorCustoAutocomplete(),
                         const SizedBox(height: 16.0),
                         CustomDecimalInput(
-                          controller: _valorCustoController,
+                          controller: _valorCustoController..text = Currency(total.toString()).toString(),
                           hintText: 'Valor Custo',
                           enabled: false,
                           validator: (value) {
@@ -275,26 +291,30 @@ class _OrdemServicoFormState extends ConsumerState<OrdemServicoForm> {
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                final fornecedoresSelecionados = ref.read(fornecedorCustoProvider);
+                                final fornecedoresSelecionados =
+                                    ref.read(fornecedorCustoProvider);
                                 final ordem = OrdemServico(
-                                  id: widget.ordemId,
-                                  clientes: _selectedCliente,
-                                  formato: _selectedFormato,
-                                  material: _materialController.text,
-                                  corFrente: _corFrenteController.text,
-                                  corVerso: _corVersoController.text,
-                                  quantidadeFolha:
-                                      _quantidadeFolhaController.number!,
-                                  possuiNumeracao: possuiNumeracao,
-                                  numeracaoInicial:
-                                      _numeracaoInicialController.number!,
-                                  numeracaoFinal:
-                                      _numeracaoFinalController.number!,
-                                  observacao: _observacaoController.text,
-                                  valorCusto: _valorCustoController.number!,
-                                  valorTotal: _valorTotalController.number!,
-                                  fornecedores: fornecedoresSelecionados
-                                );
+                                    id: widget.ordemId,
+                                    clientes: _selectedCliente,
+                                    formato: _selectedFormato,
+                                    material: _materialController.text,
+                                    corFrente: _corFrenteController.text,
+                                    corVerso: _corVersoController.text,
+                                    quantidadeFolha:
+                                        _quantidadeFolhaController.number!,
+                                    possuiNumeracao: possuiNumeracao,
+                                    numeracaoInicial:
+                                        _numeracaoInicialController.number!,
+                                    numeracaoFinal:
+                                        _numeracaoFinalController.number!,
+                                    observacao: _observacaoController.text,
+                                    valorCusto: fornecedorNotifier.totalCusto,
+                                    valorTotal:
+                                        Currency(_valorTotalController.text)
+                                            .toDouble(),
+                                    fornecedores: fornecedoresSelecionados,
+                                    tamanhoImagem: new Tamanho(
+                                        _tamanhoImagemController.text));
                                 if (widget.ordemId != null) {
                                   await ordemNotifier.updateOS(ordem);
                                 } else {

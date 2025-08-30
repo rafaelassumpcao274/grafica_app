@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
 
 
 import '../../../domain/entities/fornecedorOrdemServico.dart';
@@ -93,6 +94,7 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         clientes: ClientesMapper.toEntity(clienteData),
         formato: FormatoMapper.toEntity(formatoData),
         fornecedores: fornecedoresPorOrdem[ordemData.id] ?? [],
+        tamanhoImagem: new Tamanho(ordemData.tamanhoImagem)
       );
     }).toList();
   }
@@ -143,6 +145,7 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
           valorCusto: Value(ordemServico.valorCusto),
           valorTotal: Value(ordemServico.valorTotal),
           observacao: Value(ordemServico.observacao),
+          tamanhoImagem: Value(ordemServico.tamanhoImagem.toString())
         ),
       );
 
@@ -153,12 +156,12 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
 
       // 3️⃣ Insere fornecedores novos
       if (ordemServico.fornecedores.isNotEmpty) {
-        for (final fornecedor in ordemServico.fornecedores) {
+        for (final fornecedorOrdem in ordemServico.fornecedores) {
           await db.into(db.fornecedorOrdemServicoTable).insert(
             FornecedorOrdemServicoTableCompanion.insert(
               ordemServicoId: ordemServico.id,
-              fornecedorId: fornecedor.id,
-              custo: Value(fornecedor.custo),
+              fornecedorId: fornecedorOrdem.fornecedor!.id,
+              custo: Value(fornecedorOrdem.custo),
             ),
           );
         }

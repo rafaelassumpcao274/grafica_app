@@ -1696,6 +1696,12 @@ class $OrdemServicoTableTable extends OrdemServicoTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: Constant(0.0));
+  static const VerificationMeta _tamanhoImagemMeta =
+      const VerificationMeta('tamanhoImagem');
+  @override
+  late final GeneratedColumn<String> tamanhoImagem = GeneratedColumn<String>(
+      'tamanho_imagem', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumnWithTypeConverter<DateTime, String> createdAt =
       GeneratedColumn<String>('created_at', aliasedName, false,
@@ -1718,6 +1724,7 @@ class $OrdemServicoTableTable extends OrdemServicoTable
         observacao,
         valorCusto,
         valorTotal,
+        tamanhoImagem,
         createdAt
       ];
   @override
@@ -1812,6 +1819,14 @@ class $OrdemServicoTableTable extends OrdemServicoTable
           valorTotal.isAcceptableOrUnknown(
               data['valor_total']!, _valorTotalMeta));
     }
+    if (data.containsKey('tamanho_imagem')) {
+      context.handle(
+          _tamanhoImagemMeta,
+          tamanhoImagem.isAcceptableOrUnknown(
+              data['tamanho_imagem']!, _tamanhoImagemMeta));
+    } else if (isInserting) {
+      context.missing(_tamanhoImagemMeta);
+    }
     return context;
   }
 
@@ -1847,6 +1862,8 @@ class $OrdemServicoTableTable extends OrdemServicoTable
           .read(DriftSqlType.double, data['${effectivePrefix}valor_custo'])!,
       valorTotal: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}valor_total'])!,
+      tamanhoImagem: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tamanho_imagem'])!,
       createdAt: $OrdemServicoTableTable.$convertercreatedAt.fromSql(
           attachedDatabase.typeMapping.read(
               DriftSqlType.string, data['${effectivePrefix}created_at'])!),
@@ -1877,6 +1894,7 @@ class OrdemServicoTableData extends DataClass
   final String observacao;
   final double valorCusto;
   final double valorTotal;
+  final String tamanhoImagem;
   final DateTime createdAt;
   const OrdemServicoTableData(
       {required this.id,
@@ -1892,6 +1910,7 @@ class OrdemServicoTableData extends DataClass
       required this.observacao,
       required this.valorCusto,
       required this.valorTotal,
+      required this.tamanhoImagem,
       required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1911,6 +1930,7 @@ class OrdemServicoTableData extends DataClass
     map['observacao'] = Variable<String>(observacao);
     map['valor_custo'] = Variable<double>(valorCusto);
     map['valor_total'] = Variable<double>(valorTotal);
+    map['tamanho_imagem'] = Variable<String>(tamanhoImagem);
     {
       map['created_at'] = Variable<String>(
           $OrdemServicoTableTable.$convertercreatedAt.toSql(createdAt));
@@ -1935,6 +1955,7 @@ class OrdemServicoTableData extends DataClass
       observacao: Value(observacao),
       valorCusto: Value(valorCusto),
       valorTotal: Value(valorTotal),
+      tamanhoImagem: Value(tamanhoImagem),
       createdAt: Value(createdAt),
     );
   }
@@ -1956,6 +1977,7 @@ class OrdemServicoTableData extends DataClass
       observacao: serializer.fromJson<String>(json['observacao']),
       valorCusto: serializer.fromJson<double>(json['valorCusto']),
       valorTotal: serializer.fromJson<double>(json['valorTotal']),
+      tamanhoImagem: serializer.fromJson<String>(json['tamanhoImagem']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -1976,6 +1998,7 @@ class OrdemServicoTableData extends DataClass
       'observacao': serializer.toJson<String>(observacao),
       'valorCusto': serializer.toJson<double>(valorCusto),
       'valorTotal': serializer.toJson<double>(valorTotal),
+      'tamanhoImagem': serializer.toJson<String>(tamanhoImagem),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -1994,6 +2017,7 @@ class OrdemServicoTableData extends DataClass
           String? observacao,
           double? valorCusto,
           double? valorTotal,
+          String? tamanhoImagem,
           DateTime? createdAt}) =>
       OrdemServicoTableData(
         id: id ?? this.id,
@@ -2009,6 +2033,7 @@ class OrdemServicoTableData extends DataClass
         observacao: observacao ?? this.observacao,
         valorCusto: valorCusto ?? this.valorCusto,
         valorTotal: valorTotal ?? this.valorTotal,
+        tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem,
         createdAt: createdAt ?? this.createdAt,
       );
   OrdemServicoTableData copyWithCompanion(OrdemServicoTableCompanion data) {
@@ -2037,6 +2062,9 @@ class OrdemServicoTableData extends DataClass
           data.valorCusto.present ? data.valorCusto.value : this.valorCusto,
       valorTotal:
           data.valorTotal.present ? data.valorTotal.value : this.valorTotal,
+      tamanhoImagem: data.tamanhoImagem.present
+          ? data.tamanhoImagem.value
+          : this.tamanhoImagem,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -2057,6 +2085,7 @@ class OrdemServicoTableData extends DataClass
           ..write('observacao: $observacao, ')
           ..write('valorCusto: $valorCusto, ')
           ..write('valorTotal: $valorTotal, ')
+          ..write('tamanhoImagem: $tamanhoImagem, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -2077,6 +2106,7 @@ class OrdemServicoTableData extends DataClass
       observacao,
       valorCusto,
       valorTotal,
+      tamanhoImagem,
       createdAt);
   @override
   bool operator ==(Object other) =>
@@ -2095,6 +2125,7 @@ class OrdemServicoTableData extends DataClass
           other.observacao == this.observacao &&
           other.valorCusto == this.valorCusto &&
           other.valorTotal == this.valorTotal &&
+          other.tamanhoImagem == this.tamanhoImagem &&
           other.createdAt == this.createdAt);
 }
 
@@ -2113,6 +2144,7 @@ class OrdemServicoTableCompanion
   final Value<String> observacao;
   final Value<double> valorCusto;
   final Value<double> valorTotal;
+  final Value<String> tamanhoImagem;
   final Value<DateTime> createdAt;
   const OrdemServicoTableCompanion({
     this.id = const Value.absent(),
@@ -2128,6 +2160,7 @@ class OrdemServicoTableCompanion
     this.observacao = const Value.absent(),
     this.valorCusto = const Value.absent(),
     this.valorTotal = const Value.absent(),
+    this.tamanhoImagem = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   OrdemServicoTableCompanion.insert({
@@ -2144,6 +2177,7 @@ class OrdemServicoTableCompanion
     required String observacao,
     this.valorCusto = const Value.absent(),
     this.valorTotal = const Value.absent(),
+    required String tamanhoImagem,
     this.createdAt = const Value.absent(),
   })  : clienteId = Value(clienteId),
         material = Value(material),
@@ -2152,7 +2186,8 @@ class OrdemServicoTableCompanion
         quantidadeFolha = Value(quantidadeFolha),
         numeracaoInicial = Value(numeracaoInicial),
         numeracaoFinal = Value(numeracaoFinal),
-        observacao = Value(observacao);
+        observacao = Value(observacao),
+        tamanhoImagem = Value(tamanhoImagem);
   static Insertable<OrdemServicoTableData> custom({
     Expression<int>? id,
     Expression<String>? clienteId,
@@ -2167,6 +2202,7 @@ class OrdemServicoTableCompanion
     Expression<String>? observacao,
     Expression<double>? valorCusto,
     Expression<double>? valorTotal,
+    Expression<String>? tamanhoImagem,
     Expression<String>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -2183,6 +2219,7 @@ class OrdemServicoTableCompanion
       if (observacao != null) 'observacao': observacao,
       if (valorCusto != null) 'valor_custo': valorCusto,
       if (valorTotal != null) 'valor_total': valorTotal,
+      if (tamanhoImagem != null) 'tamanho_imagem': tamanhoImagem,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -2201,6 +2238,7 @@ class OrdemServicoTableCompanion
       Value<String>? observacao,
       Value<double>? valorCusto,
       Value<double>? valorTotal,
+      Value<String>? tamanhoImagem,
       Value<DateTime>? createdAt}) {
     return OrdemServicoTableCompanion(
       id: id ?? this.id,
@@ -2216,6 +2254,7 @@ class OrdemServicoTableCompanion
       observacao: observacao ?? this.observacao,
       valorCusto: valorCusto ?? this.valorCusto,
       valorTotal: valorTotal ?? this.valorTotal,
+      tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -2262,6 +2301,9 @@ class OrdemServicoTableCompanion
     if (valorTotal.present) {
       map['valor_total'] = Variable<double>(valorTotal.value);
     }
+    if (tamanhoImagem.present) {
+      map['tamanho_imagem'] = Variable<String>(tamanhoImagem.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(
           $OrdemServicoTableTable.$convertercreatedAt.toSql(createdAt.value));
@@ -2285,6 +2327,7 @@ class OrdemServicoTableCompanion
           ..write('observacao: $observacao, ')
           ..write('valorCusto: $valorCusto, ')
           ..write('valorTotal: $valorTotal, ')
+          ..write('tamanhoImagem: $tamanhoImagem, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -3831,6 +3874,7 @@ typedef $$OrdemServicoTableTableCreateCompanionBuilder
   required String observacao,
   Value<double> valorCusto,
   Value<double> valorTotal,
+  required String tamanhoImagem,
   Value<DateTime> createdAt,
 });
 typedef $$OrdemServicoTableTableUpdateCompanionBuilder
@@ -3848,6 +3892,7 @@ typedef $$OrdemServicoTableTableUpdateCompanionBuilder
   Value<String> observacao,
   Value<double> valorCusto,
   Value<double> valorTotal,
+  Value<String> tamanhoImagem,
   Value<DateTime> createdAt,
 });
 
@@ -3951,6 +3996,9 @@ class $$OrdemServicoTableTableFilterComposer
 
   ColumnFilters<double> get valorTotal => $composableBuilder(
       column: $table.valorTotal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tamanhoImagem => $composableBuilder(
+      column: $table.tamanhoImagem, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<DateTime, DateTime, String> get createdAt =>
       $composableBuilder(
@@ -4068,6 +4116,10 @@ class $$OrdemServicoTableTableOrderingComposer
   ColumnOrderings<double> get valorTotal => $composableBuilder(
       column: $table.valorTotal, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get tamanhoImagem => $composableBuilder(
+      column: $table.tamanhoImagem,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -4153,6 +4205,9 @@ class $$OrdemServicoTableTableAnnotationComposer
 
   GeneratedColumn<double> get valorTotal => $composableBuilder(
       column: $table.valorTotal, builder: (column) => column);
+
+  GeneratedColumn<String> get tamanhoImagem => $composableBuilder(
+      column: $table.tamanhoImagem, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<DateTime, String> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -4263,6 +4318,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             Value<String> observacao = const Value.absent(),
             Value<double> valorCusto = const Value.absent(),
             Value<double> valorTotal = const Value.absent(),
+            Value<String> tamanhoImagem = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
           }) =>
               OrdemServicoTableCompanion(
@@ -4279,6 +4335,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             observacao: observacao,
             valorCusto: valorCusto,
             valorTotal: valorTotal,
+            tamanhoImagem: tamanhoImagem,
             createdAt: createdAt,
           ),
           createCompanionCallback: ({
@@ -4295,6 +4352,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             required String observacao,
             Value<double> valorCusto = const Value.absent(),
             Value<double> valorTotal = const Value.absent(),
+            required String tamanhoImagem,
             Value<DateTime> createdAt = const Value.absent(),
           }) =>
               OrdemServicoTableCompanion.insert(
@@ -4311,6 +4369,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             observacao: observacao,
             valorCusto: valorCusto,
             valorTotal: valorTotal,
+            tamanhoImagem: tamanhoImagem,
             createdAt: createdAt,
           ),
           withReferenceMapper: (p0) => p0

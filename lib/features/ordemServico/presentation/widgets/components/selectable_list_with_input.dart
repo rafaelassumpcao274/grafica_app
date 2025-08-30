@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/currency.dart';
 
 import '../../core/formatter/currency_input_formatter.dart';
 
@@ -35,7 +36,7 @@ class SelectableListWithInput<T> extends StatefulWidget {
 
 class SelectableItem<T> {
   final T item;
-  String? input;
+  Currency? input;
 
   SelectableItem({required this.item, this.input});
 }
@@ -43,18 +44,20 @@ class SelectableItem<T> {
 class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>> {
   final TextEditingController _controller = TextEditingController();
   late List<SelectableItem<T>> _selectedItems;
-  final NumberFormat formatoBR = NumberFormat.currency(
-    locale: 'pt_BR',
-    symbol: '',
-    decimalDigits: 2,
-  );
+  final Map<SelectableItem<T>, TextEditingController> _controllers = {};
+
 
   @override
   void initState() {
     super.initState();
-    // Carrega lista inicial
     _selectedItems = List.from(widget.initialSelected);
+    for (var item in _selectedItems) {
+      _controllers[item] = TextEditingController(
+        text: item.input?.toString() ?? '',
+      );
+    }
   }
+
 
   void _onItemSelected(T item) {
     if (_selectedItems.any((e) => e.item == item)) return;
@@ -74,10 +77,28 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
 
   void _updateInput(SelectableItem<T> selectedItem, String value) {
     setState(() {
-      selectedItem.input = value;
+      selectedItem.input = Currency(value);
     });
     widget.onChanged(_selectedItems);
   }
+
+  @override
+  void didUpdateWidget(covariant SelectableListWithInput<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.initialSelected != oldWidget.initialSelected) {
+      _selectedItems = List.from(widget.initialSelected);
+      for (var item in _selectedItems) {
+        _controllers.putIfAbsent(
+          item,
+              () => TextEditingController(text: item.input?.toString() ?? ''),
+        );
+        _controllers[item]!.text = item.input?.toString() ?? '';
+      }
+      setState(() {});
+    }
+  }
+
 
 
   @override
@@ -125,11 +146,8 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
                       flex: 4,
                       child:
                       TextFormField(
-                        initialValue: selectedItem.input,
-                        keyboardType: TextInputType.numberWithOptions(
-                          decimal: true,
-                          signed: false,
-                        ),
+                        controller: _controllers[selectedItem],
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                           prefixText: 'R\$ ',
                           labelText: "Digite o Valor",
@@ -137,13 +155,13 @@ class _SelectableListWithInputState<T> extends State<SelectableListWithInput<T>>
                           fillColor: Colors.white,
                           border: const OutlineInputBorder(),
                         ),
-                        onChanged: (val) =>
-                            _updateInput(selectedItem, val.trim()),
+                        onChanged: (val) => _updateInput(selectedItem, val.trim()),
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           CurrencyInputFormatter(),
                         ],
                       )
+
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),

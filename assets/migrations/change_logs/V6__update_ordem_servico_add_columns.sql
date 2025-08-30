@@ -1,0 +1,1 @@
+ALTER TABLE ordem_servico_table ADD COLUMN tamanho_imagem TEXT  DEFAULT "";

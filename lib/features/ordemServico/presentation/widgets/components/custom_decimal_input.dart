@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:unilith_app/features/ordemServico/domain/vos/currency.dart';
 
 import '../../core/formatter/currency_input_formatter.dart';
 
@@ -26,11 +27,7 @@ class CustomDecimalInput extends StatefulWidget {
 }
 
 class _CustomDecimalInputState extends State<CustomDecimalInput> {
-  final NumberFormat formatoBR = NumberFormat.currency(
-    locale: 'pt_BR',
-    symbol: '',
-    decimalDigits: 2,
-  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,7 @@ class _CustomDecimalInputState extends State<CustomDecimalInput> {
             }
 
             try {
-              formatoBR.parse(value);
+              Currency(value);
               return null;
             } catch (_) {
               return 'Valor inválido';

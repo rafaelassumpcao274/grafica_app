@@ -39,6 +39,7 @@ class OrdemServicoMapper{
       observacao: Value(entity.observacao),
       valorCusto: Value(entity.valorCusto),
       valorTotal: Value(entity.valorTotal),
+      tamanhoImagem: Value(entity.tamanhoImagem.toString()),
     );
   }
 

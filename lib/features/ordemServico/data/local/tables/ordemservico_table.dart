@@ -19,6 +19,7 @@ class OrdemServicoTable extends Table {
   TextColumn get observacao => text()();
   RealColumn get valorCusto => real().withDefault(Constant(0.0))();
   RealColumn get valorTotal => real().withDefault(Constant(0.0))();
+  TextColumn get tamanhoImagem => text()();
 TextColumn get createdAt => text()
     .map(const SqliteDateTimeConverter())
     .withDefault(const Constant('CURRENT_TIMESTAMP'))();

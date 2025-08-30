@@ -29,7 +29,7 @@ class FornecedorNotifier extends AsyncNotifier<List<Fornecedor>> {
     return await repository.getFornecedores();
   }
 
-  Future<void> loadOrdemServicos() async {
+  Future<void> loadFornecedor() async {
      state = AsyncValue.data(await repository.getFornecedores());
   }
 
@@ -64,17 +64,17 @@ class FornecedorNotifier extends AsyncNotifier<List<Fornecedor>> {
 
   Future<void> add(Fornecedor fornecedor) async {
     await repository.add(fornecedor);
-    await loadOrdemServicos();
+    await loadFornecedor();
   }
 
   Future<void> updateFornecedor( Fornecedor fornecedor) async {
     await repository.update(fornecedor);
-    await loadOrdemServicos();
+    await loadFornecedor();
   }
 
   Future<void> delete(String id) async {
     await repository.delete(id);
-    await loadOrdemServicos();
+    await loadFornecedor();
   }
 }
 

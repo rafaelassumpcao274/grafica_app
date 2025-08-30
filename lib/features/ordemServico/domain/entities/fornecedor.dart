@@ -47,4 +47,15 @@ class Fornecedor extends Equatable {
 
   @override
   String toString() => nome;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is Fornecedor &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, id);
 }
