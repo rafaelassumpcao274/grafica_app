@@ -47,8 +47,10 @@ class _PapelAutocompleteState extends ConsumerState<PapelAutocomplete> {
               controller: widget.controller ?? controller,
               focusNode: focusNode,
               decoration: InputDecoration(
-                labelText: 'UF',
-                hintText: 'Digite a sigla da UF',
+                labelText: 'Papel',
+                hintText: 'Digite o nome do papel',
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(),
               ),
             );

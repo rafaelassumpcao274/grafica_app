@@ -1,4 +1,4 @@
-import '../../../domain/entities/viacores.dart';
+import '../../../domain/entities/via_cores.dart';
 import '../../../domain/repositories/viacores_repository.dart';
 import '../app_database.dart';
 import 'package:drift/drift.dart';

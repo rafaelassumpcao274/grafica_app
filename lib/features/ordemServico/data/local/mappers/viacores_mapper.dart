@@ -1,6 +1,6 @@
 
 
-import '../../../domain/entities/viacores.dart';
+import '../../../domain/entities/via_cores.dart';
 import 'package:drift/drift.dart';
 import '../app_database.dart';
 

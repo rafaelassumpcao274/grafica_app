@@ -52,8 +52,6 @@ class OrdemServicoNotifier extends AsyncNotifier<List<OrdemServico>> {
   }
 
 
-
-
   Future<void> delete(int id) async {
     await repository.delete(id);
     await loadOrdemServicos();

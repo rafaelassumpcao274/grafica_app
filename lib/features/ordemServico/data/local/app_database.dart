@@ -7,7 +7,9 @@ import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
 import 'package:unilith_app/features/ordemServico/data/local/seed/formato_seed.dart';
 import 'package:unilith_app/features/ordemServico/data/local/seed/papel_seed.dart';
+import 'package:unilith_app/features/ordemServico/data/local/seed/viacores_seed.dart';
 import 'package:unilith_app/features/ordemServico/data/local/tables/fornecedor_ordem_servico.dart';
+import 'package:unilith_app/features/ordemServico/data/local/tables/vias_ordem_servico.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/enums/TipoServico.dart';
 import 'config/sqlite_date_time_converter.dart';
@@ -39,7 +41,8 @@ LazyDatabase _openConnection() {
   UfTable,
   ClientesTable,
   OrdemServicoTable,
-  FornecedorOrdemServicoTable
+  FornecedorOrdemServicoTable,
+  ViaCoresOrdemServicoTable
 ])
 class AppDatabase extends _$AppDatabase {
   // ignore: use_super_parameters
@@ -81,12 +84,12 @@ class AppDatabase extends _$AppDatabase {
     for (final formato in formatoSeed) {
       await db.into(db.formatoTable).insert(formato);
     }
-    // for (final papel in papelSeed) {
-    //   await db.into(db.papelTable).insert(papel);
-    // }
-    // for (final cores in viacoresSeed) {
-    //   await db.into(db.viaCoresTable).insert(cores);
-    // }
+    for (final papel in papelSeed) {
+      await db.into(db.papelTable).insert(papel);
+    }
+    for (final cores in viacoresSeed) {
+      await db.into(db.viaCoresTable).insert(cores);
+    }
     // for (final uf in ufSeed) {
     //   await db.into(db.ufTable).insert(uf);
     // }

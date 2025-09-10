@@ -69,6 +69,8 @@ class _FornecedorCustoAutocompleteState extends ConsumerState<FornecedorCustoAut
                   focusNode: focusNode,
                   decoration: InputDecoration(
                     hintText: "Informe o Fornecedor",
+                    filled: true,
+                    fillColor: Colors.white,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.clear),

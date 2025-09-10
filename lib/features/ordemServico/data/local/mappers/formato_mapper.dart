@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 import '../../../domain/entities/formato.dart' show Formato;

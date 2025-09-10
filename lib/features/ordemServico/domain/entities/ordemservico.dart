@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/papel.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/viaCoresOrdemServico.dart';
 import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
 
 
@@ -10,6 +12,7 @@ class OrdemServico extends Equatable {
   final int id;
   final Clientes? clientes;
   final Formato? formato;
+  final Papel? papel;
   final String material;
   final String corFrente;
   final String corVerso;
@@ -23,6 +26,7 @@ class OrdemServico extends Equatable {
   final Tamanho? tamanhoImagem;
 
   final List<FornecedorOrdemServico> fornecedores;
+  final List<ViaCoresOrdemServico> vias;
 
   OrdemServico({
     int? id,
@@ -36,11 +40,13 @@ class OrdemServico extends Equatable {
     required this.observacao,
     this.clientes,
     this.formato,
+    this.papel,
     this.valorCusto = 0.0,
     this.valorTotal = 0.0,
     List<FornecedorOrdemServico>? fornecedores,
+    List<ViaCoresOrdemServico>? vias,
     Tamanho? tamanhoImagem
-  })  : id = id ?? 0, fornecedores = fornecedores ?? [],tamanhoImagem = tamanhoImagem;
+  })  : id = id ?? 0, fornecedores = fornecedores ?? [],tamanhoImagem = tamanhoImagem,vias = vias ?? [];
 
   OrdemServico copyWith({
     String? material,
@@ -53,9 +59,11 @@ class OrdemServico extends Equatable {
     String? observacao,
     Clientes? clientes,
     Formato? formato, 
+    Papel? papel,
     double? valorCusto,
     double? valorTotal,
     List<FornecedorOrdemServico>? fornecedores,
+    List<ViaCoresOrdemServico>? vias,
     Tamanho? tamanhoImagem
   }) {
     return  OrdemServico(
@@ -70,9 +78,11 @@ class OrdemServico extends Equatable {
       observacao: observacao ?? this.observacao,
       clientes: clientes,
       formato: formato,
+      papel: papel,
       valorCusto: valorCusto ?? this.valorCusto,
       valorTotal: valorTotal ?? this.valorTotal,
       fornecedores: fornecedores ?? this.fornecedores,
+      vias: vias ?? this.vias,
         tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem
     );
   }
@@ -82,6 +92,7 @@ class OrdemServico extends Equatable {
         id,
         clientes,
         formato,
+    papel,
         material,
         corFrente,
         corVerso,
@@ -93,6 +104,7 @@ class OrdemServico extends Equatable {
         valorCusto,
         valorTotal,
         fornecedores,
+        vias,
     tamanhoImagem
       ];
 }

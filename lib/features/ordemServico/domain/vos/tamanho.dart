@@ -13,6 +13,10 @@ class Tamanho extends ValueObject {
   }
 
   static (double, double) _parseDimension(String value) {
+    if(value.isEmpty || value == 'null'){
+      return (0.0,0.0);
+    }
+
     final parts = value.toLowerCase().split('x');
     if (parts.length != 2) {
       throw ArgumentError('Formato inválido. Use o padrão AlturaXlargura, ex: "15x21".');

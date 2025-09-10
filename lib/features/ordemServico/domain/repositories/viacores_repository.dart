@@ -1,4 +1,4 @@
-import '../entities/viacores.dart';
+import '../entities/via_cores.dart';
 
 abstract class ViaCoresRepository {
   Future<List<ViaCores>> getViaCores();

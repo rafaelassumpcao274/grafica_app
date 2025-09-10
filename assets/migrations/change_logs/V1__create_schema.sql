@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS ordem_servico_table (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   cliente_id TEXT NOT NULL,
   formato_id TEXT,
+  papel_id TEXT,
   material TEXT NOT NULL,
   cor_frente TEXT NOT NULL,
   cor_verso TEXT NOT NULL,
@@ -32,17 +33,11 @@ CREATE TABLE IF NOT EXISTS ordem_servico_table (
   observacao TEXT NOT NULL,
   
   FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+  FOREIGN KEY (papel_id) REFERENCES papel(id),
   FOREIGN KEY (formato_id) REFERENCES formato(id)
 );
 
-
-CREATE TABLE IF NOT EXISTS uf (
-  id TEXT NOT NULL PRIMARY KEY,
-  descricao TEXT NOT NULL,
-  sigla TEXT NOT NULL CHECK (length(sigla) = 2)
-);
-
-CREATE TABLE IF NOT EXISTS via_cores (
+CREATE TABLE IF NOT EXISTS via_cores_table (
   id TEXT NOT NULL PRIMARY KEY,
   descricao TEXT NOT NULL
 );

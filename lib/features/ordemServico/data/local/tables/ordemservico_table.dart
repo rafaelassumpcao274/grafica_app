@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:unilith_app/features/ordemServico/data/local/tables/papel_table.dart';
 
 import '../config/sqlite_date_time_converter.dart';
 import 'clientes_table.dart';
@@ -9,6 +10,7 @@ class OrdemServicoTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get clienteId => text().references(ClientesTable, #id)();
   TextColumn get formatoId => text().references(FormatoTable,#id).nullable()();
+  TextColumn get papelId => text().references(PapelTable,#id).nullable()();
   TextColumn get material => text()();
   TextColumn get corFrente => text()();
   TextColumn get corVerso => text()();

@@ -1628,6 +1628,15 @@ class $OrdemServicoTableTable extends OrdemServicoTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES formato_table (id)'));
+  static const VerificationMeta _papelIdMeta =
+      const VerificationMeta('papelId');
+  @override
+  late final GeneratedColumn<String> papelId = GeneratedColumn<String>(
+      'papel_id', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES papel_table (id)'));
   static const VerificationMeta _materialMeta =
       const VerificationMeta('material');
   @override
@@ -1714,6 +1723,7 @@ class $OrdemServicoTableTable extends OrdemServicoTable
         id,
         clienteId,
         formatoId,
+        papelId,
         material,
         corFrente,
         corVerso,
@@ -1750,6 +1760,10 @@ class $OrdemServicoTableTable extends OrdemServicoTable
     if (data.containsKey('formato_id')) {
       context.handle(_formatoIdMeta,
           formatoId.isAcceptableOrUnknown(data['formato_id']!, _formatoIdMeta));
+    }
+    if (data.containsKey('papel_id')) {
+      context.handle(_papelIdMeta,
+          papelId.isAcceptableOrUnknown(data['papel_id']!, _papelIdMeta));
     }
     if (data.containsKey('material')) {
       context.handle(_materialMeta,
@@ -1842,6 +1856,8 @@ class $OrdemServicoTableTable extends OrdemServicoTable
           .read(DriftSqlType.string, data['${effectivePrefix}cliente_id'])!,
       formatoId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}formato_id']),
+      papelId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}papel_id']),
       material: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}material'])!,
       corFrente: attachedDatabase.typeMapping
@@ -1884,6 +1900,7 @@ class OrdemServicoTableData extends DataClass
   final int id;
   final String clienteId;
   final String? formatoId;
+  final String? papelId;
   final String material;
   final String corFrente;
   final String corVerso;
@@ -1900,6 +1917,7 @@ class OrdemServicoTableData extends DataClass
       {required this.id,
       required this.clienteId,
       this.formatoId,
+      this.papelId,
       required this.material,
       required this.corFrente,
       required this.corVerso,
@@ -1919,6 +1937,9 @@ class OrdemServicoTableData extends DataClass
     map['cliente_id'] = Variable<String>(clienteId);
     if (!nullToAbsent || formatoId != null) {
       map['formato_id'] = Variable<String>(formatoId);
+    }
+    if (!nullToAbsent || papelId != null) {
+      map['papel_id'] = Variable<String>(papelId);
     }
     map['material'] = Variable<String>(material);
     map['cor_frente'] = Variable<String>(corFrente);
@@ -1945,6 +1966,9 @@ class OrdemServicoTableData extends DataClass
       formatoId: formatoId == null && nullToAbsent
           ? const Value.absent()
           : Value(formatoId),
+      papelId: papelId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(papelId),
       material: Value(material),
       corFrente: Value(corFrente),
       corVerso: Value(corVerso),
@@ -1967,6 +1991,7 @@ class OrdemServicoTableData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       clienteId: serializer.fromJson<String>(json['clienteId']),
       formatoId: serializer.fromJson<String?>(json['formatoId']),
+      papelId: serializer.fromJson<String?>(json['papelId']),
       material: serializer.fromJson<String>(json['material']),
       corFrente: serializer.fromJson<String>(json['corFrente']),
       corVerso: serializer.fromJson<String>(json['corVerso']),
@@ -1988,6 +2013,7 @@ class OrdemServicoTableData extends DataClass
       'id': serializer.toJson<int>(id),
       'clienteId': serializer.toJson<String>(clienteId),
       'formatoId': serializer.toJson<String?>(formatoId),
+      'papelId': serializer.toJson<String?>(papelId),
       'material': serializer.toJson<String>(material),
       'corFrente': serializer.toJson<String>(corFrente),
       'corVerso': serializer.toJson<String>(corVerso),
@@ -2007,6 +2033,7 @@ class OrdemServicoTableData extends DataClass
           {int? id,
           String? clienteId,
           Value<String?> formatoId = const Value.absent(),
+          Value<String?> papelId = const Value.absent(),
           String? material,
           String? corFrente,
           String? corVerso,
@@ -2023,6 +2050,7 @@ class OrdemServicoTableData extends DataClass
         id: id ?? this.id,
         clienteId: clienteId ?? this.clienteId,
         formatoId: formatoId.present ? formatoId.value : this.formatoId,
+        papelId: papelId.present ? papelId.value : this.papelId,
         material: material ?? this.material,
         corFrente: corFrente ?? this.corFrente,
         corVerso: corVerso ?? this.corVerso,
@@ -2041,6 +2069,7 @@ class OrdemServicoTableData extends DataClass
       id: data.id.present ? data.id.value : this.id,
       clienteId: data.clienteId.present ? data.clienteId.value : this.clienteId,
       formatoId: data.formatoId.present ? data.formatoId.value : this.formatoId,
+      papelId: data.papelId.present ? data.papelId.value : this.papelId,
       material: data.material.present ? data.material.value : this.material,
       corFrente: data.corFrente.present ? data.corFrente.value : this.corFrente,
       corVerso: data.corVerso.present ? data.corVerso.value : this.corVerso,
@@ -2075,6 +2104,7 @@ class OrdemServicoTableData extends DataClass
           ..write('id: $id, ')
           ..write('clienteId: $clienteId, ')
           ..write('formatoId: $formatoId, ')
+          ..write('papelId: $papelId, ')
           ..write('material: $material, ')
           ..write('corFrente: $corFrente, ')
           ..write('corVerso: $corVerso, ')
@@ -2096,6 +2126,7 @@ class OrdemServicoTableData extends DataClass
       id,
       clienteId,
       formatoId,
+      papelId,
       material,
       corFrente,
       corVerso,
@@ -2115,6 +2146,7 @@ class OrdemServicoTableData extends DataClass
           other.id == this.id &&
           other.clienteId == this.clienteId &&
           other.formatoId == this.formatoId &&
+          other.papelId == this.papelId &&
           other.material == this.material &&
           other.corFrente == this.corFrente &&
           other.corVerso == this.corVerso &&
@@ -2134,6 +2166,7 @@ class OrdemServicoTableCompanion
   final Value<int> id;
   final Value<String> clienteId;
   final Value<String?> formatoId;
+  final Value<String?> papelId;
   final Value<String> material;
   final Value<String> corFrente;
   final Value<String> corVerso;
@@ -2150,6 +2183,7 @@ class OrdemServicoTableCompanion
     this.id = const Value.absent(),
     this.clienteId = const Value.absent(),
     this.formatoId = const Value.absent(),
+    this.papelId = const Value.absent(),
     this.material = const Value.absent(),
     this.corFrente = const Value.absent(),
     this.corVerso = const Value.absent(),
@@ -2167,6 +2201,7 @@ class OrdemServicoTableCompanion
     this.id = const Value.absent(),
     required String clienteId,
     this.formatoId = const Value.absent(),
+    this.papelId = const Value.absent(),
     required String material,
     required String corFrente,
     required String corVerso,
@@ -2192,6 +2227,7 @@ class OrdemServicoTableCompanion
     Expression<int>? id,
     Expression<String>? clienteId,
     Expression<String>? formatoId,
+    Expression<String>? papelId,
     Expression<String>? material,
     Expression<String>? corFrente,
     Expression<String>? corVerso,
@@ -2209,6 +2245,7 @@ class OrdemServicoTableCompanion
       if (id != null) 'id': id,
       if (clienteId != null) 'cliente_id': clienteId,
       if (formatoId != null) 'formato_id': formatoId,
+      if (papelId != null) 'papel_id': papelId,
       if (material != null) 'material': material,
       if (corFrente != null) 'cor_frente': corFrente,
       if (corVerso != null) 'cor_verso': corVerso,
@@ -2228,6 +2265,7 @@ class OrdemServicoTableCompanion
       {Value<int>? id,
       Value<String>? clienteId,
       Value<String?>? formatoId,
+      Value<String?>? papelId,
       Value<String>? material,
       Value<String>? corFrente,
       Value<String>? corVerso,
@@ -2244,6 +2282,7 @@ class OrdemServicoTableCompanion
       id: id ?? this.id,
       clienteId: clienteId ?? this.clienteId,
       formatoId: formatoId ?? this.formatoId,
+      papelId: papelId ?? this.papelId,
       material: material ?? this.material,
       corFrente: corFrente ?? this.corFrente,
       corVerso: corVerso ?? this.corVerso,
@@ -2270,6 +2309,9 @@ class OrdemServicoTableCompanion
     }
     if (formatoId.present) {
       map['formato_id'] = Variable<String>(formatoId.value);
+    }
+    if (papelId.present) {
+      map['papel_id'] = Variable<String>(papelId.value);
     }
     if (material.present) {
       map['material'] = Variable<String>(material.value);
@@ -2317,6 +2359,7 @@ class OrdemServicoTableCompanion
           ..write('id: $id, ')
           ..write('clienteId: $clienteId, ')
           ..write('formatoId: $formatoId, ')
+          ..write('papelId: $papelId, ')
           ..write('material: $material, ')
           ..write('corFrente: $corFrente, ')
           ..write('corVerso: $corVerso, ')
@@ -2624,6 +2667,291 @@ class FornecedorOrdemServicoTableCompanion
   }
 }
 
+class $ViaCoresOrdemServicoTableTable extends ViaCoresOrdemServicoTable
+    with
+        TableInfo<$ViaCoresOrdemServicoTableTable,
+            ViaCoresOrdemServicoTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ViaCoresOrdemServicoTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      clientDefault: () => Uuid().v4());
+  static const VerificationMeta _ordemServicoIdMeta =
+      const VerificationMeta('ordemServicoId');
+  @override
+  late final GeneratedColumn<int> ordemServicoId = GeneratedColumn<int>(
+      'ordem_servico_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES ordem_servico_table (id)'));
+  static const VerificationMeta _viaCoresIdMeta =
+      const VerificationMeta('viaCoresId');
+  @override
+  late final GeneratedColumn<String> viaCoresId = GeneratedColumn<String>(
+      'via_cores_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES via_cores_table (id)'));
+  static const VerificationMeta _ordemMeta = const VerificationMeta('ordem');
+  @override
+  late final GeneratedColumn<int> ordem = GeneratedColumn<int>(
+      'ordem', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns => [id, ordemServicoId, viaCoresId, ordem];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'via_cores_ordem_servico_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<ViaCoresOrdemServicoTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('ordem_servico_id')) {
+      context.handle(
+          _ordemServicoIdMeta,
+          ordemServicoId.isAcceptableOrUnknown(
+              data['ordem_servico_id']!, _ordemServicoIdMeta));
+    } else if (isInserting) {
+      context.missing(_ordemServicoIdMeta);
+    }
+    if (data.containsKey('via_cores_id')) {
+      context.handle(
+          _viaCoresIdMeta,
+          viaCoresId.isAcceptableOrUnknown(
+              data['via_cores_id']!, _viaCoresIdMeta));
+    } else if (isInserting) {
+      context.missing(_viaCoresIdMeta);
+    }
+    if (data.containsKey('ordem')) {
+      context.handle(
+          _ordemMeta, ordem.isAcceptableOrUnknown(data['ordem']!, _ordemMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ViaCoresOrdemServicoTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ViaCoresOrdemServicoTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      ordemServicoId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ordem_servico_id'])!,
+      viaCoresId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}via_cores_id'])!,
+      ordem: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ordem'])!,
+    );
+  }
+
+  @override
+  $ViaCoresOrdemServicoTableTable createAlias(String alias) {
+    return $ViaCoresOrdemServicoTableTable(attachedDatabase, alias);
+  }
+}
+
+class ViaCoresOrdemServicoTableData extends DataClass
+    implements Insertable<ViaCoresOrdemServicoTableData> {
+  final String id;
+  final int ordemServicoId;
+  final String viaCoresId;
+  final int ordem;
+  const ViaCoresOrdemServicoTableData(
+      {required this.id,
+      required this.ordemServicoId,
+      required this.viaCoresId,
+      required this.ordem});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['ordem_servico_id'] = Variable<int>(ordemServicoId);
+    map['via_cores_id'] = Variable<String>(viaCoresId);
+    map['ordem'] = Variable<int>(ordem);
+    return map;
+  }
+
+  ViaCoresOrdemServicoTableCompanion toCompanion(bool nullToAbsent) {
+    return ViaCoresOrdemServicoTableCompanion(
+      id: Value(id),
+      ordemServicoId: Value(ordemServicoId),
+      viaCoresId: Value(viaCoresId),
+      ordem: Value(ordem),
+    );
+  }
+
+  factory ViaCoresOrdemServicoTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ViaCoresOrdemServicoTableData(
+      id: serializer.fromJson<String>(json['id']),
+      ordemServicoId: serializer.fromJson<int>(json['ordemServicoId']),
+      viaCoresId: serializer.fromJson<String>(json['viaCoresId']),
+      ordem: serializer.fromJson<int>(json['ordem']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'ordemServicoId': serializer.toJson<int>(ordemServicoId),
+      'viaCoresId': serializer.toJson<String>(viaCoresId),
+      'ordem': serializer.toJson<int>(ordem),
+    };
+  }
+
+  ViaCoresOrdemServicoTableData copyWith(
+          {String? id, int? ordemServicoId, String? viaCoresId, int? ordem}) =>
+      ViaCoresOrdemServicoTableData(
+        id: id ?? this.id,
+        ordemServicoId: ordemServicoId ?? this.ordemServicoId,
+        viaCoresId: viaCoresId ?? this.viaCoresId,
+        ordem: ordem ?? this.ordem,
+      );
+  ViaCoresOrdemServicoTableData copyWithCompanion(
+      ViaCoresOrdemServicoTableCompanion data) {
+    return ViaCoresOrdemServicoTableData(
+      id: data.id.present ? data.id.value : this.id,
+      ordemServicoId: data.ordemServicoId.present
+          ? data.ordemServicoId.value
+          : this.ordemServicoId,
+      viaCoresId:
+          data.viaCoresId.present ? data.viaCoresId.value : this.viaCoresId,
+      ordem: data.ordem.present ? data.ordem.value : this.ordem,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ViaCoresOrdemServicoTableData(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('viaCoresId: $viaCoresId, ')
+          ..write('ordem: $ordem')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, ordemServicoId, viaCoresId, ordem);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ViaCoresOrdemServicoTableData &&
+          other.id == this.id &&
+          other.ordemServicoId == this.ordemServicoId &&
+          other.viaCoresId == this.viaCoresId &&
+          other.ordem == this.ordem);
+}
+
+class ViaCoresOrdemServicoTableCompanion
+    extends UpdateCompanion<ViaCoresOrdemServicoTableData> {
+  final Value<String> id;
+  final Value<int> ordemServicoId;
+  final Value<String> viaCoresId;
+  final Value<int> ordem;
+  final Value<int> rowid;
+  const ViaCoresOrdemServicoTableCompanion({
+    this.id = const Value.absent(),
+    this.ordemServicoId = const Value.absent(),
+    this.viaCoresId = const Value.absent(),
+    this.ordem = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ViaCoresOrdemServicoTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int ordemServicoId,
+    required String viaCoresId,
+    this.ordem = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : ordemServicoId = Value(ordemServicoId),
+        viaCoresId = Value(viaCoresId);
+  static Insertable<ViaCoresOrdemServicoTableData> custom({
+    Expression<String>? id,
+    Expression<int>? ordemServicoId,
+    Expression<String>? viaCoresId,
+    Expression<int>? ordem,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ordemServicoId != null) 'ordem_servico_id': ordemServicoId,
+      if (viaCoresId != null) 'via_cores_id': viaCoresId,
+      if (ordem != null) 'ordem': ordem,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ViaCoresOrdemServicoTableCompanion copyWith(
+      {Value<String>? id,
+      Value<int>? ordemServicoId,
+      Value<String>? viaCoresId,
+      Value<int>? ordem,
+      Value<int>? rowid}) {
+    return ViaCoresOrdemServicoTableCompanion(
+      id: id ?? this.id,
+      ordemServicoId: ordemServicoId ?? this.ordemServicoId,
+      viaCoresId: viaCoresId ?? this.viaCoresId,
+      ordem: ordem ?? this.ordem,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (ordemServicoId.present) {
+      map['ordem_servico_id'] = Variable<int>(ordemServicoId.value);
+    }
+    if (viaCoresId.present) {
+      map['via_cores_id'] = Variable<String>(viaCoresId.value);
+    }
+    if (ordem.present) {
+      map['ordem'] = Variable<int>(ordem.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ViaCoresOrdemServicoTableCompanion(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('viaCoresId: $viaCoresId, ')
+          ..write('ordem: $ordem, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2638,6 +2966,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $OrdemServicoTableTable(this);
   late final $FornecedorOrdemServicoTableTable fornecedorOrdemServicoTable =
       $FornecedorOrdemServicoTableTable(this);
+  late final $ViaCoresOrdemServicoTableTable viaCoresOrdemServicoTable =
+      $ViaCoresOrdemServicoTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2650,7 +2980,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         ufTable,
         clientesTable,
         ordemServicoTable,
-        fornecedorOrdemServicoTable
+        fornecedorOrdemServicoTable,
+        viaCoresOrdemServicoTable
       ];
 }
 
@@ -3189,6 +3520,31 @@ typedef $$ViaCoresTableTableUpdateCompanionBuilder = ViaCoresTableCompanion
   Value<int> rowid,
 });
 
+final class $$ViaCoresTableTableReferences extends BaseReferences<_$AppDatabase,
+    $ViaCoresTableTable, ViaCoresTableData> {
+  $$ViaCoresTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ViaCoresOrdemServicoTableTable,
+      List<ViaCoresOrdemServicoTableData>> _viaCoresOrdemServicoTableRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.viaCoresOrdemServicoTable,
+          aliasName: $_aliasNameGenerator(
+              db.viaCoresTable.id, db.viaCoresOrdemServicoTable.viaCoresId));
+
+  $$ViaCoresOrdemServicoTableTableProcessedTableManager
+      get viaCoresOrdemServicoTableRefs {
+    final manager = $$ViaCoresOrdemServicoTableTableTableManager(
+            $_db, $_db.viaCoresOrdemServicoTable)
+        .filter((f) => f.viaCoresId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult
+        .readTableOrNull(_viaCoresOrdemServicoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
 class $$ViaCoresTableTableFilterComposer
     extends Composer<_$AppDatabase, $ViaCoresTableTable> {
   $$ViaCoresTableTableFilterComposer({
@@ -3203,6 +3559,30 @@ class $$ViaCoresTableTableFilterComposer
 
   ColumnFilters<String> get descricao => $composableBuilder(
       column: $table.descricao, builder: (column) => ColumnFilters(column));
+
+  Expression<bool> viaCoresOrdemServicoTableRefs(
+      Expression<bool> Function(
+              $$ViaCoresOrdemServicoTableTableFilterComposer f)
+          f) {
+    final $$ViaCoresOrdemServicoTableTableFilterComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.viaCoresOrdemServicoTable,
+            getReferencedColumn: (t) => t.viaCoresId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$ViaCoresOrdemServicoTableTableFilterComposer(
+                  $db: $db,
+                  $table: $db.viaCoresOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$ViaCoresTableTableOrderingComposer
@@ -3235,6 +3615,30 @@ class $$ViaCoresTableTableAnnotationComposer
 
   GeneratedColumn<String> get descricao =>
       $composableBuilder(column: $table.descricao, builder: (column) => column);
+
+  Expression<T> viaCoresOrdemServicoTableRefs<T extends Object>(
+      Expression<T> Function(
+              $$ViaCoresOrdemServicoTableTableAnnotationComposer a)
+          f) {
+    final $$ViaCoresOrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.viaCoresOrdemServicoTable,
+            getReferencedColumn: (t) => t.viaCoresId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$ViaCoresOrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.viaCoresOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$ViaCoresTableTableTableManager extends RootTableManager<
@@ -3246,12 +3650,9 @@ class $$ViaCoresTableTableTableManager extends RootTableManager<
     $$ViaCoresTableTableAnnotationComposer,
     $$ViaCoresTableTableCreateCompanionBuilder,
     $$ViaCoresTableTableUpdateCompanionBuilder,
-    (
-      ViaCoresTableData,
-      BaseReferences<_$AppDatabase, $ViaCoresTableTable, ViaCoresTableData>
-    ),
+    (ViaCoresTableData, $$ViaCoresTableTableReferences),
     ViaCoresTableData,
-    PrefetchHooks Function()> {
+    PrefetchHooks Function({bool viaCoresOrdemServicoTableRefs})> {
   $$ViaCoresTableTableTableManager(_$AppDatabase db, $ViaCoresTableTable table)
       : super(TableManagerState(
           db: db,
@@ -3283,9 +3684,37 @@ class $$ViaCoresTableTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map((e) => (
+                    e.readTable(table),
+                    $$ViaCoresTableTableReferences(db, table, e)
+                  ))
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({viaCoresOrdemServicoTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (viaCoresOrdemServicoTableRefs) db.viaCoresOrdemServicoTable
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (viaCoresOrdemServicoTableRefs)
+                    await $_getPrefetchedData<ViaCoresTableData,
+                            $ViaCoresTableTable, ViaCoresOrdemServicoTableData>(
+                        currentTable: table,
+                        referencedTable: $$ViaCoresTableTableReferences
+                            ._viaCoresOrdemServicoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ViaCoresTableTableReferences(db, table, p0)
+                                .viaCoresOrdemServicoTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.viaCoresId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
@@ -3298,12 +3727,9 @@ typedef $$ViaCoresTableTableProcessedTableManager = ProcessedTableManager<
     $$ViaCoresTableTableAnnotationComposer,
     $$ViaCoresTableTableCreateCompanionBuilder,
     $$ViaCoresTableTableUpdateCompanionBuilder,
-    (
-      ViaCoresTableData,
-      BaseReferences<_$AppDatabase, $ViaCoresTableTable, ViaCoresTableData>
-    ),
+    (ViaCoresTableData, $$ViaCoresTableTableReferences),
     ViaCoresTableData,
-    PrefetchHooks Function()>;
+    PrefetchHooks Function({bool viaCoresOrdemServicoTableRefs})>;
 typedef $$PapelTableTableCreateCompanionBuilder = PapelTableCompanion Function({
   Value<String> id,
   required String descricao,
@@ -3316,6 +3742,29 @@ typedef $$PapelTableTableUpdateCompanionBuilder = PapelTableCompanion Function({
   Value<int> quantidadePapel,
   Value<int> rowid,
 });
+
+final class $$PapelTableTableReferences
+    extends BaseReferences<_$AppDatabase, $PapelTableTable, PapelTableData> {
+  $$PapelTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$OrdemServicoTableTable,
+      List<OrdemServicoTableData>> _ordemServicoTableRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.ordemServicoTable,
+          aliasName: $_aliasNameGenerator(
+              db.papelTable.id, db.ordemServicoTable.papelId));
+
+  $$OrdemServicoTableTableProcessedTableManager get ordemServicoTableRefs {
+    final manager =
+        $$OrdemServicoTableTableTableManager($_db, $_db.ordemServicoTable)
+            .filter((f) => f.papelId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_ordemServicoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
 
 class $$PapelTableTableFilterComposer
     extends Composer<_$AppDatabase, $PapelTableTable> {
@@ -3335,6 +3784,27 @@ class $$PapelTableTableFilterComposer
   ColumnFilters<int> get quantidadePapel => $composableBuilder(
       column: $table.quantidadePapel,
       builder: (column) => ColumnFilters(column));
+
+  Expression<bool> ordemServicoTableRefs(
+      Expression<bool> Function($$OrdemServicoTableTableFilterComposer f) f) {
+    final $$OrdemServicoTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.papelId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableFilterComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$PapelTableTableOrderingComposer
@@ -3374,6 +3844,28 @@ class $$PapelTableTableAnnotationComposer
 
   GeneratedColumn<int> get quantidadePapel => $composableBuilder(
       column: $table.quantidadePapel, builder: (column) => column);
+
+  Expression<T> ordemServicoTableRefs<T extends Object>(
+      Expression<T> Function($$OrdemServicoTableTableAnnotationComposer a) f) {
+    final $$OrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.ordemServicoTable,
+            getReferencedColumn: (t) => t.papelId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$OrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.ordemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$PapelTableTableTableManager extends RootTableManager<
@@ -3385,12 +3877,9 @@ class $$PapelTableTableTableManager extends RootTableManager<
     $$PapelTableTableAnnotationComposer,
     $$PapelTableTableCreateCompanionBuilder,
     $$PapelTableTableUpdateCompanionBuilder,
-    (
-      PapelTableData,
-      BaseReferences<_$AppDatabase, $PapelTableTable, PapelTableData>
-    ),
+    (PapelTableData, $$PapelTableTableReferences),
     PapelTableData,
-    PrefetchHooks Function()> {
+    PrefetchHooks Function({bool ordemServicoTableRefs})> {
   $$PapelTableTableTableManager(_$AppDatabase db, $PapelTableTable table)
       : super(TableManagerState(
           db: db,
@@ -3426,9 +3915,37 @@ class $$PapelTableTableTableManager extends RootTableManager<
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map((e) => (
+                    e.readTable(table),
+                    $$PapelTableTableReferences(db, table, e)
+                  ))
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({ordemServicoTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (ordemServicoTableRefs) db.ordemServicoTable
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (ordemServicoTableRefs)
+                    await $_getPrefetchedData<PapelTableData, $PapelTableTable,
+                            OrdemServicoTableData>(
+                        currentTable: table,
+                        referencedTable: $$PapelTableTableReferences
+                            ._ordemServicoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$PapelTableTableReferences(db, table, p0)
+                                .ordemServicoTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.papelId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
@@ -3441,12 +3958,9 @@ typedef $$PapelTableTableProcessedTableManager = ProcessedTableManager<
     $$PapelTableTableAnnotationComposer,
     $$PapelTableTableCreateCompanionBuilder,
     $$PapelTableTableUpdateCompanionBuilder,
-    (
-      PapelTableData,
-      BaseReferences<_$AppDatabase, $PapelTableTable, PapelTableData>
-    ),
+    (PapelTableData, $$PapelTableTableReferences),
     PapelTableData,
-    PrefetchHooks Function()>;
+    PrefetchHooks Function({bool ordemServicoTableRefs})>;
 typedef $$UfTableTableCreateCompanionBuilder = UfTableCompanion Function({
   Value<String> id,
   required String descricao,
@@ -3864,6 +4378,7 @@ typedef $$OrdemServicoTableTableCreateCompanionBuilder
   Value<int> id,
   required String clienteId,
   Value<String?> formatoId,
+  Value<String?> papelId,
   required String material,
   required String corFrente,
   required String corVerso,
@@ -3882,6 +4397,7 @@ typedef $$OrdemServicoTableTableUpdateCompanionBuilder
   Value<int> id,
   Value<String> clienteId,
   Value<String?> formatoId,
+  Value<String?> papelId,
   Value<String> material,
   Value<String> corFrente,
   Value<String> corVerso,
@@ -3931,6 +4447,21 @@ final class $$OrdemServicoTableTableReferences extends BaseReferences<
         manager.$state.copyWith(prefetchedData: [item]));
   }
 
+  static $PapelTableTable _papelIdTable(_$AppDatabase db) =>
+      db.papelTable.createAlias(
+          $_aliasNameGenerator(db.ordemServicoTable.papelId, db.papelTable.id));
+
+  $$PapelTableTableProcessedTableManager? get papelId {
+    final $_column = $_itemColumn<String>('papel_id');
+    if ($_column == null) return null;
+    final manager = $$PapelTableTableTableManager($_db, $_db.papelTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_papelIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
   static MultiTypedResultKey<$FornecedorOrdemServicoTableTable,
           List<FornecedorOrdemServicoTableData>>
       _fornecedorOrdemServicoTableRefsTable(_$AppDatabase db) =>
@@ -3946,6 +4477,25 @@ final class $$OrdemServicoTableTableReferences extends BaseReferences<
 
     final cache = $_typedResult
         .readTableOrNull(_fornecedorOrdemServicoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$ViaCoresOrdemServicoTableTable,
+      List<ViaCoresOrdemServicoTableData>> _viaCoresOrdemServicoTableRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.viaCoresOrdemServicoTable,
+          aliasName: $_aliasNameGenerator(db.ordemServicoTable.id,
+              db.viaCoresOrdemServicoTable.ordemServicoId));
+
+  $$ViaCoresOrdemServicoTableTableProcessedTableManager
+      get viaCoresOrdemServicoTableRefs {
+    final manager = $$ViaCoresOrdemServicoTableTableTableManager(
+            $_db, $_db.viaCoresOrdemServicoTable)
+        .filter((f) => f.ordemServicoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult
+        .readTableOrNull(_viaCoresOrdemServicoTableRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -4045,6 +4595,26 @@ class $$OrdemServicoTableTableFilterComposer
     return composer;
   }
 
+  $$PapelTableTableFilterComposer get papelId {
+    final $$PapelTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.papelId,
+        referencedTable: $db.papelTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$PapelTableTableFilterComposer(
+              $db: $db,
+              $table: $db.papelTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
   Expression<bool> fornecedorOrdemServicoTableRefs(
       Expression<bool> Function(
               $$FornecedorOrdemServicoTableTableFilterComposer f)
@@ -4061,6 +4631,30 @@ class $$OrdemServicoTableTableFilterComposer
                 $$FornecedorOrdemServicoTableTableFilterComposer(
                   $db: $db,
                   $table: $db.fornecedorOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
+
+  Expression<bool> viaCoresOrdemServicoTableRefs(
+      Expression<bool> Function(
+              $$ViaCoresOrdemServicoTableTableFilterComposer f)
+          f) {
+    final $$ViaCoresOrdemServicoTableTableFilterComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.viaCoresOrdemServicoTable,
+            getReferencedColumn: (t) => t.ordemServicoId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$ViaCoresOrdemServicoTableTableFilterComposer(
+                  $db: $db,
+                  $table: $db.viaCoresOrdemServicoTable,
                   $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                   joinBuilder: joinBuilder,
                   $removeJoinBuilderFromRootComposer:
@@ -4162,6 +4756,26 @@ class $$OrdemServicoTableTableOrderingComposer
             ));
     return composer;
   }
+
+  $$PapelTableTableOrderingComposer get papelId {
+    final $$PapelTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.papelId,
+        referencedTable: $db.papelTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$PapelTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.papelTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
 }
 
 class $$OrdemServicoTableTableAnnotationComposer
@@ -4252,6 +4866,26 @@ class $$OrdemServicoTableTableAnnotationComposer
     return composer;
   }
 
+  $$PapelTableTableAnnotationComposer get papelId {
+    final $$PapelTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.papelId,
+        referencedTable: $db.papelTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$PapelTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.papelTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
   Expression<T> fornecedorOrdemServicoTableRefs<T extends Object>(
       Expression<T> Function(
               $$FornecedorOrdemServicoTableTableAnnotationComposer a)
@@ -4275,6 +4909,30 @@ class $$OrdemServicoTableTableAnnotationComposer
                 ));
     return f(composer);
   }
+
+  Expression<T> viaCoresOrdemServicoTableRefs<T extends Object>(
+      Expression<T> Function(
+              $$ViaCoresOrdemServicoTableTableAnnotationComposer a)
+          f) {
+    final $$ViaCoresOrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.viaCoresOrdemServicoTable,
+            getReferencedColumn: (t) => t.ordemServicoId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$ViaCoresOrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.viaCoresOrdemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$OrdemServicoTableTableTableManager extends RootTableManager<
@@ -4291,7 +4949,9 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
     PrefetchHooks Function(
         {bool clienteId,
         bool formatoId,
-        bool fornecedorOrdemServicoTableRefs})> {
+        bool papelId,
+        bool fornecedorOrdemServicoTableRefs,
+        bool viaCoresOrdemServicoTableRefs})> {
   $$OrdemServicoTableTableTableManager(
       _$AppDatabase db, $OrdemServicoTableTable table)
       : super(TableManagerState(
@@ -4308,6 +4968,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> clienteId = const Value.absent(),
             Value<String?> formatoId = const Value.absent(),
+            Value<String?> papelId = const Value.absent(),
             Value<String> material = const Value.absent(),
             Value<String> corFrente = const Value.absent(),
             Value<String> corVerso = const Value.absent(),
@@ -4325,6 +4986,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             id: id,
             clienteId: clienteId,
             formatoId: formatoId,
+            papelId: papelId,
             material: material,
             corFrente: corFrente,
             corVerso: corVerso,
@@ -4342,6 +5004,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required String clienteId,
             Value<String?> formatoId = const Value.absent(),
+            Value<String?> papelId = const Value.absent(),
             required String material,
             required String corFrente,
             required String corVerso,
@@ -4359,6 +5022,7 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
             id: id,
             clienteId: clienteId,
             formatoId: formatoId,
+            papelId: papelId,
             material: material,
             corFrente: corFrente,
             corVerso: corVerso,
@@ -4381,12 +5045,15 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
           prefetchHooksCallback: (
               {clienteId = false,
               formatoId = false,
-              fornecedorOrdemServicoTableRefs = false}) {
+              papelId = false,
+              fornecedorOrdemServicoTableRefs = false,
+              viaCoresOrdemServicoTableRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
                 if (fornecedorOrdemServicoTableRefs)
-                  db.fornecedorOrdemServicoTable
+                  db.fornecedorOrdemServicoTable,
+                if (viaCoresOrdemServicoTableRefs) db.viaCoresOrdemServicoTable
               ],
               addJoins: <
                   T extends TableManagerState<
@@ -4423,6 +5090,16 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
                         .id,
                   ) as T;
                 }
+                if (papelId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.papelId,
+                    referencedTable:
+                        $$OrdemServicoTableTableReferences._papelIdTable(db),
+                    referencedColumn:
+                        $$OrdemServicoTableTableReferences._papelIdTable(db).id,
+                  ) as T;
+                }
 
                 return state;
               },
@@ -4439,6 +5116,21 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
                         managerFromTypedResult: (p0) =>
                             $$OrdemServicoTableTableReferences(db, table, p0)
                                 .fornecedorOrdemServicoTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.ordemServicoId == item.id),
+                        typedResults: items),
+                  if (viaCoresOrdemServicoTableRefs)
+                    await $_getPrefetchedData<
+                            OrdemServicoTableData,
+                            $OrdemServicoTableTable,
+                            ViaCoresOrdemServicoTableData>(
+                        currentTable: table,
+                        referencedTable: $$OrdemServicoTableTableReferences
+                            ._viaCoresOrdemServicoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$OrdemServicoTableTableReferences(db, table, p0)
+                                .viaCoresOrdemServicoTableRefs,
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems
                                 .where((e) => e.ordemServicoId == item.id),
@@ -4464,7 +5156,9 @@ typedef $$OrdemServicoTableTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function(
         {bool clienteId,
         bool formatoId,
-        bool fornecedorOrdemServicoTableRefs})>;
+        bool papelId,
+        bool fornecedorOrdemServicoTableRefs,
+        bool viaCoresOrdemServicoTableRefs})>;
 typedef $$FornecedorOrdemServicoTableTableCreateCompanionBuilder
     = FornecedorOrdemServicoTableCompanion Function({
   Value<String> id,
@@ -4825,6 +5519,359 @@ typedef $$FornecedorOrdemServicoTableTableProcessedTableManager = ProcessedTable
     ),
     FornecedorOrdemServicoTableData,
     PrefetchHooks Function({bool ordemServicoId, bool fornecedorId})>;
+typedef $$ViaCoresOrdemServicoTableTableCreateCompanionBuilder
+    = ViaCoresOrdemServicoTableCompanion Function({
+  Value<String> id,
+  required int ordemServicoId,
+  required String viaCoresId,
+  Value<int> ordem,
+  Value<int> rowid,
+});
+typedef $$ViaCoresOrdemServicoTableTableUpdateCompanionBuilder
+    = ViaCoresOrdemServicoTableCompanion Function({
+  Value<String> id,
+  Value<int> ordemServicoId,
+  Value<String> viaCoresId,
+  Value<int> ordem,
+  Value<int> rowid,
+});
+
+final class $$ViaCoresOrdemServicoTableTableReferences extends BaseReferences<
+    _$AppDatabase,
+    $ViaCoresOrdemServicoTableTable,
+    ViaCoresOrdemServicoTableData> {
+  $$ViaCoresOrdemServicoTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $OrdemServicoTableTable _ordemServicoIdTable(_$AppDatabase db) =>
+      db.ordemServicoTable.createAlias($_aliasNameGenerator(
+          db.viaCoresOrdemServicoTable.ordemServicoId,
+          db.ordemServicoTable.id));
+
+  $$OrdemServicoTableTableProcessedTableManager get ordemServicoId {
+    final $_column = $_itemColumn<int>('ordem_servico_id')!;
+
+    final manager =
+        $$OrdemServicoTableTableTableManager($_db, $_db.ordemServicoTable)
+            .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ordemServicoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $ViaCoresTableTable _viaCoresIdTable(_$AppDatabase db) =>
+      db.viaCoresTable.createAlias($_aliasNameGenerator(
+          db.viaCoresOrdemServicoTable.viaCoresId, db.viaCoresTable.id));
+
+  $$ViaCoresTableTableProcessedTableManager get viaCoresId {
+    final $_column = $_itemColumn<String>('via_cores_id')!;
+
+    final manager = $$ViaCoresTableTableTableManager($_db, $_db.viaCoresTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_viaCoresIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$ViaCoresOrdemServicoTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ViaCoresOrdemServicoTableTable> {
+  $$ViaCoresOrdemServicoTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ordem => $composableBuilder(
+      column: $table.ordem, builder: (column) => ColumnFilters(column));
+
+  $$OrdemServicoTableTableFilterComposer get ordemServicoId {
+    final $$OrdemServicoTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableFilterComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ViaCoresTableTableFilterComposer get viaCoresId {
+    final $$ViaCoresTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.viaCoresId,
+        referencedTable: $db.viaCoresTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ViaCoresTableTableFilterComposer(
+              $db: $db,
+              $table: $db.viaCoresTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ViaCoresOrdemServicoTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ViaCoresOrdemServicoTableTable> {
+  $$ViaCoresOrdemServicoTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ordem => $composableBuilder(
+      column: $table.ordem, builder: (column) => ColumnOrderings(column));
+
+  $$OrdemServicoTableTableOrderingComposer get ordemServicoId {
+    final $$OrdemServicoTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ViaCoresTableTableOrderingComposer get viaCoresId {
+    final $$ViaCoresTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.viaCoresId,
+        referencedTable: $db.viaCoresTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ViaCoresTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.viaCoresTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ViaCoresOrdemServicoTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ViaCoresOrdemServicoTableTable> {
+  $$ViaCoresOrdemServicoTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get ordem =>
+      $composableBuilder(column: $table.ordem, builder: (column) => column);
+
+  $$OrdemServicoTableTableAnnotationComposer get ordemServicoId {
+    final $$OrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.ordemServicoId,
+            referencedTable: $db.ordemServicoTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$OrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.ordemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return composer;
+  }
+
+  $$ViaCoresTableTableAnnotationComposer get viaCoresId {
+    final $$ViaCoresTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.viaCoresId,
+        referencedTable: $db.viaCoresTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ViaCoresTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.viaCoresTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ViaCoresOrdemServicoTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ViaCoresOrdemServicoTableTable,
+    ViaCoresOrdemServicoTableData,
+    $$ViaCoresOrdemServicoTableTableFilterComposer,
+    $$ViaCoresOrdemServicoTableTableOrderingComposer,
+    $$ViaCoresOrdemServicoTableTableAnnotationComposer,
+    $$ViaCoresOrdemServicoTableTableCreateCompanionBuilder,
+    $$ViaCoresOrdemServicoTableTableUpdateCompanionBuilder,
+    (ViaCoresOrdemServicoTableData, $$ViaCoresOrdemServicoTableTableReferences),
+    ViaCoresOrdemServicoTableData,
+    PrefetchHooks Function({bool ordemServicoId, bool viaCoresId})> {
+  $$ViaCoresOrdemServicoTableTableTableManager(
+      _$AppDatabase db, $ViaCoresOrdemServicoTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ViaCoresOrdemServicoTableTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ViaCoresOrdemServicoTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ViaCoresOrdemServicoTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<int> ordemServicoId = const Value.absent(),
+            Value<String> viaCoresId = const Value.absent(),
+            Value<int> ordem = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ViaCoresOrdemServicoTableCompanion(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            viaCoresId: viaCoresId,
+            ordem: ordem,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            required int ordemServicoId,
+            required String viaCoresId,
+            Value<int> ordem = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ViaCoresOrdemServicoTableCompanion.insert(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            viaCoresId: viaCoresId,
+            ordem: ordem,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ViaCoresOrdemServicoTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {ordemServicoId = false, viaCoresId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (ordemServicoId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.ordemServicoId,
+                    referencedTable: $$ViaCoresOrdemServicoTableTableReferences
+                        ._ordemServicoIdTable(db),
+                    referencedColumn: $$ViaCoresOrdemServicoTableTableReferences
+                        ._ordemServicoIdTable(db)
+                        .id,
+                  ) as T;
+                }
+                if (viaCoresId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.viaCoresId,
+                    referencedTable: $$ViaCoresOrdemServicoTableTableReferences
+                        ._viaCoresIdTable(db),
+                    referencedColumn: $$ViaCoresOrdemServicoTableTableReferences
+                        ._viaCoresIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ViaCoresOrdemServicoTableTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $ViaCoresOrdemServicoTableTable,
+        ViaCoresOrdemServicoTableData,
+        $$ViaCoresOrdemServicoTableTableFilterComposer,
+        $$ViaCoresOrdemServicoTableTableOrderingComposer,
+        $$ViaCoresOrdemServicoTableTableAnnotationComposer,
+        $$ViaCoresOrdemServicoTableTableCreateCompanionBuilder,
+        $$ViaCoresOrdemServicoTableTableUpdateCompanionBuilder,
+        (
+          ViaCoresOrdemServicoTableData,
+          $$ViaCoresOrdemServicoTableTableReferences
+        ),
+        ViaCoresOrdemServicoTableData,
+        PrefetchHooks Function({bool ordemServicoId, bool viaCoresId})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4847,4 +5894,7 @@ class $AppDatabaseManager {
       get fornecedorOrdemServicoTable =>
           $$FornecedorOrdemServicoTableTableTableManager(
               _db, _db.fornecedorOrdemServicoTable);
+  $$ViaCoresOrdemServicoTableTableTableManager get viaCoresOrdemServicoTable =>
+      $$ViaCoresOrdemServicoTableTableTableManager(
+          _db, _db.viaCoresOrdemServicoTable);
 }

@@ -1,15 +1,17 @@
 import 'package:drift/drift.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/viaCoresOrdemServico.dart';
 import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
-
 
 import '../../../domain/entities/fornecedorOrdemServico.dart';
 import '../../../domain/entities/ordemservico.dart';
+import '../../../domain/entities/via_cores.dart';
 import '../../../domain/repositories/ordemservico_repository.dart';
 import '../app_database.dart';
-import '../mappers/ordemservico_mapper.dart' show OrdemServicoMapper;
-import '../mappers/formato_mapper.dart' show FormatoMapper;
 import '../mappers/clientes_mapper.dart' show ClientesMapper;
+import '../mappers/formato_mapper.dart' show FormatoMapper;
+import '../mappers/ordemservico_mapper.dart' show OrdemServicoMapper;
+import '../mappers/papel_mapper.dart' show PapelMapper;
 
 
 class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
@@ -28,6 +30,10 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         db.formatoTable,
         db.formatoTable.id.equalsExp(db.ordemServicoTable.formatoId),
       ),
+      leftOuterJoin(
+        db.papelTable,
+        db.papelTable.id.equalsExp(db.ordemServicoTable.papelId),
+      ),
     ]).get();
 
     // 2️⃣ Busca fornecedores e custos de todas as ordens encontradas
@@ -39,6 +45,15 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
       leftOuterJoin(
         db.fornecedorTable,
         db.fornecedorTable.id.equalsExp(db.fornecedorOrdemServicoTable.fornecedorId),
+      ),
+    ]).get();
+
+    final viasResult = await (db.select(db.viaCoresOrdemServicoTable)
+      ..where((tbl) => tbl.ordemServicoId.isIn(ordemIds))
+    ).join([
+      leftOuterJoin(
+        db.viaCoresTable,
+        db.viaCoresTable.id.equalsExp(db.viaCoresOrdemServicoTable.viaCoresId),
       ),
     ]).get();
 
@@ -73,11 +88,37 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
       }
     }
 
+    final viasPorOrdem = <int, List<ViaCoresOrdemServico>>{};
+    for (final row in viasResult) {
+
+      final viasOdemServico = row.readTable(db.viaCoresOrdemServicoTable);
+      final viaResult = await (db.select(db.viaCoresTable)
+        ..where((tbl) => tbl.id.equals(viasOdemServico.viaCoresId))
+      ).get();
+      if(viaResult.isNotEmpty){
+
+        final viaData = viaResult.map((mp) => ViaCores(
+            id: mp.id,
+          descricao: mp.descricao
+        )).single;
+
+
+        viasPorOrdem.putIfAbsent(viasOdemServico.ordemServicoId, () => []);
+        viasPorOrdem[viasOdemServico.ordemServicoId]!.add(
+          ViaCoresOrdemServico(
+              viaCores:  viaData,
+              ordem: viasOdemServico.ordem)
+          ,
+        );
+      }
+    }
+
     // 4️⃣ Monta lista final de OrdemServico com fornecedores
     return ordensResult.map((row) {
       final ordemData = row.readTable(db.ordemServicoTable);
       final clienteData = row.readTableOrNull(db.clientesTable);
       final formatoData = row.readTableOrNull(db.formatoTable);
+      final papelData = row.readTableOrNull(db.papelTable);
 
       return OrdemServico(
         id: ordemData.id,
@@ -93,8 +134,10 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         valorTotal: ordemData.valorTotal ?? 0.0,
         clientes: ClientesMapper.toEntity(clienteData),
         formato: FormatoMapper.toEntity(formatoData),
+        papel: PapelMapper.toEntity(papelData),
         fornecedores: fornecedoresPorOrdem[ordemData.id] ?? [],
-        tamanhoImagem: new Tamanho(ordemData.tamanhoImagem)
+        vias: viasPorOrdem[ordemData.id] ?? [],
+        tamanhoImagem: ordemData.tamanhoImagem.isNotEmpty ? new Tamanho(ordemData.tamanhoImagem): null
       );
     }).toList();
   }
@@ -120,6 +163,17 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
           );
         }
       }
+      if (ordemServico.vias!.isNotEmpty) {
+        for (final viasOrdemServico in ordemServico.vias) {
+          await db.into(db.viaCoresOrdemServicoTable).insert(
+            ViaCoresOrdemServicoTableCompanion.insert(
+              ordemServicoId: ordemId,
+              viaCoresId: viasOrdemServico.viaCores!.id,
+              ordem: Value(viasOrdemServico.ordem),
+            ),
+          );
+        }
+      }
     });
   }
 
@@ -135,6 +189,7 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
           id: Value(ordemServico.id),
           clienteId: Value(ordemServico.clientes?.id ?? ''),
           formatoId: Value(ordemServico.formato?.id ?? ''),
+          papelId: Value(ordemServico.papel?.id ?? ''),
           material: Value(ordemServico.material),
           corFrente: Value(ordemServico.corFrente),
           corVerso: Value(ordemServico.corVerso),
@@ -145,7 +200,7 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
           valorCusto: Value(ordemServico.valorCusto),
           valorTotal: Value(ordemServico.valorTotal),
           observacao: Value(ordemServico.observacao),
-          tamanhoImagem: Value(ordemServico.tamanhoImagem.toString())
+          tamanhoImagem: Value(ordemServico.tamanhoImagem != null ? ordemServico.tamanhoImagem.toString(): '')
         ),
       );
 
@@ -162,6 +217,25 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
               ordemServicoId: ordemServico.id,
               fornecedorId: fornecedorOrdem.fornecedor!.id,
               custo: Value(fornecedorOrdem.custo),
+            ),
+          );
+        }
+      }
+
+
+
+      // 3️⃣ Insere fornecedores novos
+      if (ordemServico.vias.isNotEmpty) {
+        await (db.delete(db.viaCoresOrdemServicoTable)
+          ..where((tbl) => tbl.ordemServicoId.equals(ordemServico.id))
+        ).go();
+
+        for (final viaCoresOrdem in ordemServico.vias) {
+          await db.into(db.viaCoresOrdemServicoTable).insert(
+            ViaCoresOrdemServicoTableCompanion.insert(
+              ordemServicoId: ordemServico.id,
+              viaCoresId: viaCoresOrdem.viaCores!.id,
+              ordem: Value(viaCoresOrdem.ordem),
             ),
           );
         }

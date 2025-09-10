@@ -29,6 +29,7 @@ class OrdemServicoMapper{
       id: entity.id == 0 ? Value.absent() : Value(entity.id),
       clienteId: Value(entity.clientes?.id ?? ''),
       formatoId: Value(entity.formato?.id ?? ''),
+      papelId: Value(entity.papel?.id ?? ''),
       material: Value(entity.material),
       corFrente: Value(entity.corFrente),
       corVerso: Value(entity.corVerso),
@@ -39,7 +40,7 @@ class OrdemServicoMapper{
       observacao: Value(entity.observacao),
       valorCusto: Value(entity.valorCusto),
       valorTotal: Value(entity.valorTotal),
-      tamanhoImagem: Value(entity.tamanhoImagem.toString()),
+      tamanhoImagem: Value(entity.tamanhoImagem != null ? entity.tamanhoImagem.toString() : ""),
     );
   }
 

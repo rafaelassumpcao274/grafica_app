@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/fornecedor/edit/fornecedor_form_page.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/papel/edit/papel_form_page.dart';
+import 'package:unilith_app/features/ordemServico/presentation/pages/via_cores/edit/via_cores_form_page.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/via_cores/via_cores_filter_input.dart';
 
 import '../widgets/cliente/cliente_filter_input.dart';
 import '../widgets/components/custom_fab.dart';
@@ -74,6 +76,35 @@ class _AppPageState extends ConsumerState<AppPage>
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const PapelForm()),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.note),
+              title: const Text('Cores '),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Scaffold(
+                      appBar: AppBar(title: const Text('Cores')),
+                      body: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: ViaCoresFilterInput(),
+                      ),
+                      floatingActionButton: CustomFloatingActionButton(
+                        icon: Icons.add,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const ViaCoresForm()),
                           );
                         },
                       ),

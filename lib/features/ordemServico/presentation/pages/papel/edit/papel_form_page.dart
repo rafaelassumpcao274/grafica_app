@@ -104,8 +104,8 @@ class _PapelFormState extends ConsumerState<PapelForm> {
                           const SizedBox(height: 16.0),
                           CustomTextInput(
                             controller: _quantidadeController,
-                            hintText: 'E-mail',
-                            icon: Icons.alternate_email,
+                            hintText: 'Quantidade de Folhas ',
+                            icon: Icons.numbers,
 
                           ),
                           const SizedBox(height: 16.0),
