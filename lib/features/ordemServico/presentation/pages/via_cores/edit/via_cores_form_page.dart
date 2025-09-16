@@ -1,22 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/pages/via_cores/edit/via_cores_form_view_model.dart';
 
-import '../../../../domain/provider/via_cores_view_model_provider.dart';
+
 import '../../../providers/via_cores_provider.dart';
 import '../../../widgets/components/custom_text_input.dart';
 
-class ViaCoresForm extends ConsumerWidget {
+class ViaCoresForm extends ConsumerStatefulWidget {
   final String? viacoresId;
   const ViaCoresForm({super.key, this.viacoresId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(viaCoresViewModelProvider);
+  ConsumerState<ViaCoresForm> createState() => _ViaCoresFormState();
+}
+
+class _ViaCoresFormState extends ConsumerState<ViaCoresForm> {
+  late final viewModel = ref.read(viaCoresViewModelProvider);
+
+  @override
+  void dispose() {
+    viewModel.clear(); // Limpa os controllers
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.viacoresId != null) {
+      _loadViaCores();
+    }
+  }
+
+  Future<void> _loadViaCores() async {
+    final notifierAsync = ref.read(viacoresProvider.notifier);
+    final via = await notifierAsync.getById(widget.viacoresId!);
+    if (via != null) {
+      setState(() {
+        viewModel.descricao.text = via.descricao;
+      });
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
     final notifierAsync = ref.read(viacoresProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(viacoresId != null ? 'Editar Via' : 'Cadastrar Via'),
+        title: Text(widget.viacoresId != null ? 'Editar Via' : 'Cadastrar Via'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,45 +68,24 @@ class ViaCoresForm extends ConsumerWidget {
                     return null;
                   },
                 ),
-                if (viewModel.errorMessage != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    viewModel.errorMessage!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ],
                 const SizedBox(height: 16.0),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xD818971C),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                     onPressed: () async {
                       if (viewModel.validar()) {
-                        final viaCores = viewModel.getViaCores(id: viacoresId);
+                        final viaCores = viewModel.getViaCores(id: widget.viacoresId);
 
-                        if (viacoresId != null) {
+                        if (widget.viacoresId != null) {
                           await notifierAsync.updateViaCores(viaCores);
                         } else {
                           await notifierAsync.add(viaCores);
                         }
+                        viewModel.clear(); // limpa o controller
                         Navigator.pop(context);
                       }
                     },
-                    child: Text(
-                      viacoresId != null ? 'Salvar Alterações' : 'Salvar',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: Text(widget.viacoresId != null ? 'Salvar Alterações' : 'Salvar'),
                   ),
                 ),
               ],

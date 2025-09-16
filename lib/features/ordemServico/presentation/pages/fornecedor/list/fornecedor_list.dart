@@ -5,44 +5,52 @@ import 'package:unilith_app/features/ordemServico/presentation/providers/fornece
 
 import '../../../providers/clientes_provider_refactored.dart';
 import '../edit/fornecedor_form_page.dart';
-
+import 'fornecedor_list_view_model.dart';
 
 class FornecedorList extends ConsumerStatefulWidget {
   final String filter;
   const FornecedorList({super.key, this.filter = ''});
-
-  static _FornecedorListState? of(BuildContext context) {
-    final state = context.findAncestorStateOfType<_FornecedorListState>();
-    return state;
-  }
 
   @override
   ConsumerState<FornecedorList> createState() => _FornecedorListState();
 }
 
 class _FornecedorListState extends ConsumerState<FornecedorList> {
-  String searchQuery = '';
+  late final viewModel = FornecedorListViewModel(ref.read(fornecedorProvider.notifier));
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.loadFornecedores();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final asyncNotifier = ref.watch(fornecedorProvider);
-    final fornecedorNotifier = ref.read(fornecedorProvider.notifier);
+    return AnimatedBuilder(
+      animation: viewModel,
+      builder: (context, _) {
+        if (viewModel.isLoading) {
+          // Skeleton/List placeholders
+          return ListView.builder(
+            itemCount: 5,
+            itemBuilder: (context, index) => Card(
+              child: ListTile(
+                leading: Container(width: 40, height: 40, color: Colors.grey.shade300),
+                title: Container(height: 16, color: Colors.grey.shade300),
+                subtitle: Container(height: 12, margin: const EdgeInsets.only(top: 4), color: Colors.grey.shade200),
+              ),
+            ),
+          );
+        }
 
-    return asyncNotifier.when(
-      data: (notifier) {
-        final fornecedores = notifier;
-        final filtered = widget.filter.isEmpty
-            ? fornecedores
-            : fornecedores.where((c) {
-                final query = widget.filter.toLowerCase();
-                return (c?.nome.toLowerCase().contains(query) ??
-                        false) ||
-                    (c?.email?.toLowerCase().contains(query) ?? false);
-              }).toList();
+        if (viewModel.fornecedores.isEmpty) {
+          return const Center(child: Text('Nenhum fornecedor encontrado'));
+        }
+
         return ListView.builder(
-          itemCount: filtered.length,
+          itemCount: viewModel.fornecedores.length,
           itemBuilder: (context, index) {
-            final fornecedor = filtered[index];
+            final fornecedor = viewModel.fornecedores[index];
             return Dismissible(
               key: Key(fornecedor.id ?? fornecedor.nome),
               direction: DismissDirection.endToStart,
@@ -53,23 +61,21 @@ class _FornecedorListState extends ConsumerState<FornecedorList> {
                 child: const Icon(Icons.delete, color: Colors.white),
               ),
               onDismissed: (direction) async {
-                await fornecedorNotifier.delete(fornecedor.id);
-                setState(() {});
+                await viewModel.deleteFornecedor(fornecedor.id);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Fornecedor excluído')),
+                  const SnackBar(content: Text('Fornecedor excluído')),
                 );
               },
               child: Card(
                 child: ListTile(
-                  leading: const Icon(Icons.person),
+                  leading: const Icon(Icons.business),
                   title: Text(fornecedor.nome),
-                  subtitle:
-                      Text( fornecedor.tipoServico.label),
+                  subtitle: Text(fornecedor.tipoServico.label),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FornecedorForm(fornecedorId: fornecedor.id),
+                        builder: (_) => FornecedorForm(fornecedorId: fornecedor.id),
                       ),
                     );
                   },
@@ -79,14 +85,6 @@ class _FornecedorListState extends ConsumerState<FornecedorList> {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Erro: $error')),
     );
-  }
-
-  void filter(String query) {
-    setState(() {
-      searchQuery = query;
-    });
   }
 }
