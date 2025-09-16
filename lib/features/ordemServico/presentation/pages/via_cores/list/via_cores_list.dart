@@ -62,7 +62,7 @@ class _ViaCoresListState extends ConsumerState<ViaCoresList> {
               },
               child: Card(
                 child: ListTile(
-                  leading: const Icon(Icons.person),
+                  leading: const Icon(Icons.format_color_fill_sharp),
                   title: Text(viacores.descricao),
                   onTap: () {
                     Navigator.push(

@@ -61,7 +61,7 @@ class _PapelListState extends ConsumerState<PapelList> {
               },
               child: Card(
                 child: ListTile(
-                  leading: const Icon(Icons.person),
+                  leading: const Icon(Icons.article),
                   title: Text(papel.descricao),
                   subtitle:
                       Text( papel.quantidadePapel.toString()),
