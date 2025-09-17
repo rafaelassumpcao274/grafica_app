@@ -6,13 +6,20 @@ import '../edit/ordem_servico_form_page.dart';
 import '../loading/ordem_servico_skeleton_list.dart';
 
 
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../../providers/ordemservico_provider.dart';
+import '../edit/ordem_servico_form_page.dart';
+import '../loading/ordem_servico_skeleton_list.dart';
+
 class OrdemServicoList extends ConsumerStatefulWidget {
   final String filter;
   const OrdemServicoList({super.key, this.filter = ''});
 
   static _OrdemServicoListState? of(BuildContext context) {
-    final state = context.findAncestorStateOfType<_OrdemServicoListState>();
-    return state;
+    return context.findAncestorStateOfType<_OrdemServicoListState>();
   }
 
   @override
@@ -28,19 +35,29 @@ class _OrdemServicoListState extends ConsumerState<OrdemServicoList> {
     final ordemNotifier = ref.read(ordemServicoProvider.notifier);
 
     return asyncNotifier.when(
-      data: (notifier) {
-        final ordemServicos = notifier;
+      data: (ordens) {
         final filtered = (widget.filter.isEmpty
-            ? ordemServicos
-            : ordemServicos.where((c) {
+            ? ordens
+            : ordens.where((c) {
           final query = widget.filter.toLowerCase();
-          return (c.clientes?.nomeEmpresa.toLowerCase().contains(query) ?? false);
+          return (c.clientes?.nomeEmpresa.toLowerCase().contains(query) ??
+              false);
         })).toList()
           ..sort((a, b) => b.id.compareTo(a.id));
+
+        if (filtered.isEmpty) {
+          return const Center(child: Text("Nenhuma Ordem de Serviço encontrada"));
+        }
+
         return ListView.builder(
           itemCount: filtered.length,
           itemBuilder: (context, index) {
             final ordemServico = filtered[index];
+
+            final createdAtFormatted = ordemServico.createdAt != null
+                ? DateFormat('dd/MM/yyyy HH:mm').format(ordemServico.createdAt!)
+                : 'Data não informada';
+
             return Dismissible(
               key: Key(ordemServico.id.toString()),
               direction: DismissDirection.endToStart,
@@ -54,16 +71,30 @@ class _OrdemServicoListState extends ConsumerState<OrdemServicoList> {
                 await ordemNotifier.delete(ordemServico.id);
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Ordem Servico excluída')),
+                  const SnackBar(content: Text('Ordem de Serviço excluída')),
                 );
               },
-
               child: Card(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: ListTile(
                   leading: const Icon(Icons.description),
-                  title: Text("${ordemServico.id} - ${ordemServico.clientes!.nomeEmpresa}" ??
-                      'Cliente não informado'),
-                  subtitle: Text(ordemServico.material),
+                  title: Text(
+                    "${ordemServico.id} - ${ordemServico.clientes?.nomeEmpresa ?? 'Cliente não informado'}",
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(ordemServico.material),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Criado em: $createdAtFormatted",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -79,7 +110,7 @@ class _OrdemServicoListState extends ConsumerState<OrdemServicoList> {
           },
         );
       },
-      loading: () =>  const OrdemServicoSkeletonList(),
+      loading: () => const OrdemServicoSkeletonList(),
       error: (error, stack) => Center(child: Text('Erro: $error')),
     );
   }

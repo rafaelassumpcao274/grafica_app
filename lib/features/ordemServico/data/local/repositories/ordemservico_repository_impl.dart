@@ -137,7 +137,8 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         papel: PapelMapper.toEntity(papelData),
         fornecedores: fornecedoresPorOrdem[ordemData.id] ?? [],
         vias: viasPorOrdem[ordemData.id] ?? [],
-        tamanhoImagem: ordemData.tamanhoImagem.isNotEmpty ? new Tamanho(ordemData.tamanhoImagem): null
+        tamanhoImagem: ordemData.tamanhoImagem.isNotEmpty ? new Tamanho(ordemData.tamanhoImagem): null,
+          createdAt: ordemData.createdAt
       );
     }).toList();
   }

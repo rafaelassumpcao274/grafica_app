@@ -14,6 +14,16 @@ AsyncNotifierProvider<PapelNotifier, List<Papel>>(
     PapelNotifier.new);
 
 
+// Provider para busca dinâmica de papeis
+final searchPapelProvider =
+FutureProvider.family<List<Papel>, String>((ref, query) async {
+  if (query.isEmpty) return [];
+
+  final notifier = await ref.watch(papelProvider.notifier);
+  return notifier.getPapeisByNome(query);
+});
+
+
 class PapelNotifier extends AsyncNotifier<List<Papel>> {
   late PapelRepositoryImpl repository;
 

@@ -1,9 +1,8 @@
-import 'package:unilith_app/features/ordemServico/data/local/mappers/fornecedor_mapper.dart';
+import 'package:drift/drift.dart';
 
 import '../../../domain/entities/fornecedor.dart';
 import '../../../domain/repositories/fornecedor_repository.dart';
 import '../app_database.dart';
-import 'package:drift/drift.dart';
 
 class FornecedorRepositoryImpl implements FornecedorRepository {
   final AppDatabase db;

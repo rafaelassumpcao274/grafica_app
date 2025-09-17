@@ -20,7 +20,6 @@ class ChipsInputVia extends ConsumerStatefulWidget {
 }
 
 class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
-  final TextEditingController _controller = TextEditingController();
   late List<ViaCores> _viasSelecionadas;
 
   @override
@@ -39,19 +38,15 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
     }
   }
 
-
   void _addItem(ViaCores value) {
-    if (value == null) return;
-
     final exists = _viasSelecionadas
         .any((v) => v.descricao.toLowerCase() == value.descricao.toLowerCase());
-    if (!exists ) {
+    if (!exists) {
       setState(() {
         _viasSelecionadas.add(value);
       });
       widget.onChanged(_viasSelecionadas);
     }
-    _controller.clear();
   }
 
   void _removeItem(ViaCores via) {
@@ -72,7 +67,6 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
             if (textEditingValue.text.isEmpty) {
               return const Iterable<ViaCores>.empty();
             }
-            // consulta no banco pelo nome parcial
             final results = await ref
                 .read(viacoresProvider.notifier)
                 .getViaByNome(textEditingValue.text);
@@ -80,22 +74,36 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
           },
           displayStringForOption: (via) => via.descricao,
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-            _controller.value = controller.value;
             return TextField(
               controller: controller,
               focusNode: focusNode,
               enabled: _viasSelecionadas.length < 4,
-              decoration: const InputDecoration(
-                labelText: 'Vias ',
+              decoration: InputDecoration(
+                labelText: 'Vias',
                 filled: true,
                 fillColor: Colors.white,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: controller.text.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      controller.clear();
+                    });
+                  },
+                )
+                    : null,
               ),
             );
           },
           onSelected: (via) {
             _addItem(via);
-            _controller.clear();
+            // aqui já limpa o campo automaticamente
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              // garante que o clear acontece depois do addItem
+              FocusScope.of(context).unfocus();
+              // se quiser fechar o teclado
+            });
           },
         ),
         const SizedBox(height: 8),
@@ -104,10 +112,10 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
           runSpacing: 8,
           children: _viasSelecionadas
               .map((via) => Chip(
-                    label: Text(via.descricao),
-                    deleteIcon: const Icon(Icons.close),
-                    onDeleted: () => _removeItem(via),
-                  ))
+            label: Text(via.descricao),
+            deleteIcon: const Icon(Icons.close),
+            onDeleted: () => _removeItem(via),
+          ))
               .toList(),
         ),
         const SizedBox(height: 8),

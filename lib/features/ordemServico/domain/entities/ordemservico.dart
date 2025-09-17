@@ -24,6 +24,7 @@ class OrdemServico extends Equatable {
   final double valorCusto;
   final double valorTotal;
   final Tamanho? tamanhoImagem;
+  final DateTime? createdAt;
 
   final List<FornecedorOrdemServico> fornecedores;
   final List<ViaCoresOrdemServico> vias;
@@ -45,8 +46,9 @@ class OrdemServico extends Equatable {
     this.valorTotal = 0.0,
     List<FornecedorOrdemServico>? fornecedores,
     List<ViaCoresOrdemServico>? vias,
-    Tamanho? tamanhoImagem
-  })  : id = id ?? 0, fornecedores = fornecedores ?? [],tamanhoImagem = tamanhoImagem,vias = vias ?? [];
+    Tamanho? tamanhoImagem,
+    DateTime? createdAt
+  })  : id = id ?? 0, fornecedores = fornecedores ?? [],tamanhoImagem = tamanhoImagem,vias = vias ?? [], createdAt = createdAt ?? DateTime.now();
 
   OrdemServico copyWith({
     String? material,
@@ -64,7 +66,8 @@ class OrdemServico extends Equatable {
     double? valorTotal,
     List<FornecedorOrdemServico>? fornecedores,
     List<ViaCoresOrdemServico>? vias,
-    Tamanho? tamanhoImagem
+    Tamanho? tamanhoImagem,
+    DateTime? createdAt
   }) {
     return  OrdemServico(
       id: id,
@@ -83,7 +86,8 @@ class OrdemServico extends Equatable {
       valorTotal: valorTotal ?? this.valorTotal,
       fornecedores: fornecedores ?? this.fornecedores,
       vias: vias ?? this.vias,
-        tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem
+        tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem,
+        createdAt: createdAt ?? DateTime.now()
     );
   }
 
@@ -105,6 +109,7 @@ class OrdemServico extends Equatable {
         valorTotal,
         fornecedores,
         vias,
-    tamanhoImagem
+    tamanhoImagem,
+    createdAt
       ];
 }
