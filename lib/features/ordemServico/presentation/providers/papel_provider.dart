@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/data/local/repositories/papel_repository_impl.dart';
+import 'package:unilith_app/features/ordemServico/domain/provider/providers.dart';
 
 import '../../data/local/app_database.dart';
 import '../../domain/entities/papel.dart';
+import '../../domain/repositories/papel_repository.dart';
 
 
 final dbProvider = FutureProvider<AppDatabase>((ref) async {
@@ -17,21 +19,24 @@ AsyncNotifierProvider<PapelNotifier, List<Papel>>(
 // Provider para busca dinâmica de papeis
 final searchPapelProvider =
 FutureProvider.family<List<Papel>, String>((ref, query) async {
-  if (query.isEmpty) return [];
+
+
+  // Isso dispara o build e inicializa o _repository
+  await ref.watch(papelProvider.future);
 
   final notifier = await ref.watch(papelProvider.notifier);
+
+  if (query.isEmpty) return ref.read(papelProvider).value ?? [];
   return notifier.getPapeisByNome(query);
 });
 
 
 class PapelNotifier extends AsyncNotifier<List<Papel>> {
-  late PapelRepositoryImpl repository;
+  late PapelRepository repository;
 
   @override
   Future<List<Papel>> build() async {
-    await Future.delayed(const Duration(seconds: 2)); // simula carregamento lento
-    final db = await ref.watch(dbProvider.future);
-    repository = PapelRepositoryImpl(db);
+    repository = await ref.watch(papelRepositoryProvider.future);
     return await repository.getPapeis();
   }
 

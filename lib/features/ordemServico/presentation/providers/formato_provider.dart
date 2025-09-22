@@ -1,23 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/local/app_database.dart';
-import '../../data/local/repositories/formato_repository_impl.dart';
 import '../../domain/entities/formato.dart';
-
-
-
-final dbProvider = FutureProvider<AppDatabase>((ref) async {
-  return await AppDatabase.getInstance();
-});
-
-final formatoRepositoryProvider =
-    FutureProvider<FormatoRepositoryImpl>((ref) async {
-  final db = await ref.watch(dbProvider.future);
-  return FormatoRepositoryImpl(db);
-});
+import '../../domain/provider/providers.dart';
+import '../../domain/repositories/formato_repository.dart';
 
 class FormatoNotifier extends StateNotifier<List<Formato>> {
-  final FormatoRepositoryImpl repository;
+  final FormatoRepository repository;
 
   FormatoNotifier(this.repository) : super([]) {
     loadFormatos();
@@ -30,12 +18,10 @@ class FormatoNotifier extends StateNotifier<List<Formato>> {
   // MÉTODO CORRIGIDO: Use o parâmetro search do repository
   Future<List<Formato>> getFormatoByDescricao(String descricao) async {
     print('🔍 Buscando por: "$descricao"'); // Debug
-    
+
     try {
       final formatos = await repository.getFormatosPaginated(
-        search: descricao,
-        pageSize: 50
-      );
+          search: descricao, pageSize: 50);
 
       return formatos;
     } catch (e) {
@@ -43,7 +29,6 @@ class FormatoNotifier extends StateNotifier<List<Formato>> {
       rethrow;
     }
   }
-
 
   Future<Formato?> getClienteById(String id) async {
     final formatos = await repository.getFormatos();
@@ -69,7 +54,6 @@ class FormatoNotifier extends StateNotifier<List<Formato>> {
     await loadFormatos();
   }
 }
-
 
 final formatoProvider = FutureProvider<FormatoNotifier>((ref) async {
   final repository = await ref.watch(formatoRepositoryProvider.future);

@@ -8,7 +8,6 @@ import '../../../providers/clientes_provider_refactored.dart';
 final clientListViewModelProvider = ChangeNotifierProvider.family<ClientListViewModel, ClientesNotifier>(
       (ref, notifier) {
     final vm = ClientListViewModel(notifier);
-    vm.loadClientes();
     return vm;
   },
 );
@@ -16,7 +15,9 @@ final clientListViewModelProvider = ChangeNotifierProvider.family<ClientListView
 class ClientListViewModel extends ChangeNotifier {
   final ClientesNotifier clienteNotifier;
 
-  ClientListViewModel(this.clienteNotifier);
+  ClientListViewModel(this.clienteNotifier) : super() {
+    _clientes = clienteNotifier.state;
+  }
 
   List<Clientes> _clientes = [];
   List<Clientes> get clientes => _clientes;

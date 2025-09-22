@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/formato.dart';
+import '../../../../domain/entities/fornecedorOrdemServico.dart';
 import '../../../../domain/entities/ordemservico.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,14 +24,22 @@ class OrdemServicoViewModel extends ChangeNotifier {
   final OrdemServicoNotifier ordemNotifier;
   final Ref ref;
 
-  OrdemServicoViewModel(this.ordemNotifier, this.ref);
+  OrdemServicoViewModel(this.ordemNotifier, this.ref) {
+    ref.listen<List<FornecedorOrdemServico>>(
+      fornecedorCustoViewModelProvider,
+          (previous, next) {
+        final total = next.fold(0.0, (a, b) => a + b.custo);
+        valorCustoController.text = total.toStringAsFixed(2);
+        notifyListeners();
+      },
+    );
+  }
+
 
   // Fornecedor
   FornecedorCustoViewModel get fornecedorNotifier =>
       ref.read(fornecedorCustoViewModelProvider.notifier);
 
-
-  double get totalCusto => fornecedorNotifier.totalCusto;
 
   // Campos e controllers
   Clientes? selectedCliente;
@@ -102,6 +111,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
   }
 
 
+
   void disposeControllers() {
     materialController.dispose();
     corFrenteController.dispose();
@@ -135,7 +145,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
       numeracaoFinal: numeracaoFinalController.number!,
       observacao: observacaoController.text,
       valorCusto: totalCusto,
-      valorTotal: double.tryParse(valorTotalController.text) ?? 0,
+      valorTotal: double.tryParse(valorTotalController.text) ?? 0.0,
       fornecedores: fornecedores,
       vias: listVias,
       tamanhoImagem: tamanhoImagemController.text.isNotEmpty

@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/local/app_database.dart';
 import '../../data/local/repositories/ordemservico_repository_impl.dart';
 import '../../domain/entities/ordemservico.dart';
+import '../../domain/provider/providers.dart';
+import '../../domain/repositories/ordemservico_repository.dart';
 
 
-final dbProvider = FutureProvider<AppDatabase>((ref) async {
-  return await AppDatabase.getInstance();
-});
 
 
 final ordemServicoProvider =
@@ -17,13 +16,11 @@ AsyncNotifierProvider<OrdemServicoNotifier, List<OrdemServico>>(
 
 
 class OrdemServicoNotifier extends AsyncNotifier<List<OrdemServico>> {
-  late OrdemServicoRepositoryImpl repository;
+  late OrdemServicoRepository repository;
 
   @override
   Future<List<OrdemServico>> build() async {
-    await Future.delayed(const Duration(seconds: 2)); // simula carregamento lento
-    final db = await ref.watch(dbProvider.future);
-    repository = OrdemServicoRepositoryImpl(db);
+    repository = await ref.watch(ordemServicoRepositoryProvider.future);
     return await repository.getOrdensServico();
   }
 

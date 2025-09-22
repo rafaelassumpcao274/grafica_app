@@ -1,13 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/via_cores.dart';
 
-import '../../data/local/app_database.dart';
 import '../../data/local/repositories/viacores_repository_impl.dart';
+import '../../domain/provider/providers.dart';
+import '../../domain/repositories/viacores_repository.dart';
 
 
-final dbProvider = FutureProvider<AppDatabase>((ref) async {
-  return await AppDatabase.getInstance();
-});
 
 final viacoresProvider =
 AsyncNotifierProvider<ViaCoresNotifier, List<ViaCores>>(
@@ -15,12 +13,11 @@ AsyncNotifierProvider<ViaCoresNotifier, List<ViaCores>>(
 
 
 class ViaCoresNotifier extends AsyncNotifier<List<ViaCores>> {
-  late ViaCoresRepositoryImpl repository;
+  late ViaCoresRepository repository;
 
   @override
   Future<List<ViaCores>> build() async {
-    final db = await ref.watch(dbProvider.future);
-    repository = ViaCoresRepositoryImpl(db);
+    repository = await ref.watch(viaCoresRepositoryProvider.future);
     return await repository.getViaCores();
   }
 

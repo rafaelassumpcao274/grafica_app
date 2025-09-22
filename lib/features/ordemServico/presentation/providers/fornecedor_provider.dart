@@ -1,81 +1,115 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor.dart';
+import 'package:unilith_app/features/ordemServico/domain/repositories/clientes_repository.dart';
+
+import '../../domain/provider/providers.dart';
+import '../../domain/repositories/fornecedor_repository.dart';
 
 
-import '../../data/local/app_database.dart';
-import '../../data/local/repositories/fornecedor_repository_impl.dart';
-import '../../data/local/repositories/ordemservico_repository_impl.dart';
-import '../../domain/entities/ordemservico.dart';
 
-
-final dbProvider = FutureProvider<AppDatabase>((ref) async {
-  return await AppDatabase.getInstance();
-});
-
-
-final fornecedorProvider =
+// Provider do Notifier
+final fornecedorNotifierProvider =
 AsyncNotifierProvider<FornecedorNotifier, List<Fornecedor>>(
-    FornecedorNotifier.new);
+      () => FornecedorNotifier(),
+);
 
 
 class FornecedorNotifier extends AsyncNotifier<List<Fornecedor>> {
-  late FornecedorRepositoryImpl repository;
+  late final FornecedorRepository repository;
 
   @override
   Future<List<Fornecedor>> build() async {
-    await Future.delayed(const Duration(seconds: 2)); // simula carregamento lento
-    final db = await ref.watch(dbProvider.future);
-    repository = FornecedorRepositoryImpl(db);
-    return await repository.getFornecedores();
+    repository = await ref.watch(fornecedorRepositoryProvider.future);
+    return repository.getFornecedores();
   }
 
-  Future<void> loadFornecedor() async {
-     state = AsyncValue.data(await repository.getFornecedores());
+  Future<void> addFornecedor(Fornecedor fornecedor) async {
+    await repository.add(fornecedor);
+    state = AsyncValue.data(await repository.getFornecedores());
   }
 
+  Future<void> updateFornecedor(Fornecedor fornecedor) async {
+    await repository.update(fornecedor);
+    state = AsyncValue.data(await repository.getFornecedores());
+  }
+
+  Future<void> deleteFornecedor(String id) async {
+    await repository.delete(id);
+    state = AsyncValue.data(await repository.getFornecedores());
+  }
+
+  Future<List<Fornecedor>> getFornecedoresByNome(String nomeParcial) async {
+    return repository.getFornecedorPaginated(search: nomeParcial, pageSize: 20);
+  }
 
   Future<Fornecedor?> getById(String id) async {
     final fornecedores = await repository.getFornecedores();
     try {
       return fornecedores.firstWhere((fornecedor) => fornecedor.id == id);
     } catch (e) {
-      return null;
+      state = AsyncValue.error(e,StackTrace.empty);
     }
-  }
-
-  Future<List<Fornecedor>> getFornecedoresByNome(String nomeParcial) async {
-    print('🔍 Buscando por: "$nomeParcial"');
-
-    try {
-      // CORREÇÃO: Passe o nomeParcial como search parameter
-      final fornecedores = await repository.getFornecedorPaginated(
-        search: nomeParcial,
-        pageSize: 20, // Aumente o limite para pegar mais resultados
-      );
-
-      print('📊 Fornecedores encontrados: ${fornecedores.length}');
-      return fornecedores;
-
-    } catch (e) {
-      print('❌ Erro na busca: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> add(Fornecedor fornecedor) async {
-    await repository.add(fornecedor);
-    await loadFornecedor();
-  }
-
-  Future<void> updateFornecedor( Fornecedor fornecedor) async {
-    await repository.update(fornecedor);
-    await loadFornecedor();
-  }
-
-  Future<void> delete(String id) async {
-    await repository.delete(id);
-    await loadFornecedor();
   }
 }
 
 
+
+
+
+
+//
+// class FornecedorNotifier extends StateNotifier<List<Fornecedor>> {
+//   final FornecedorRepository repository;
+//
+//   FornecedorNotifier(this.repository) : super([]) {
+//     loadFornecedores();
+//   }
+//
+//   Future<void> loadFornecedores() async {
+//     state = await repository.getFornecedores();
+//   }
+//
+//   Future<Fornecedor?> getById(String id) async {
+//     final fornecedores = await repository.getFornecedores();
+//     try {
+//       return fornecedores.firstWhere((fornecedor) => fornecedor.id == id);
+//     } catch (e) {
+//       return null;
+//     }
+//   }
+//
+//   Future<List<Fornecedor>> getFornecedoresByNome(String nomeParcial) async {
+//     print('🔍 Buscando fornecedor por: "$nomeParcial"');
+//     try {
+//       final fornecedores = await repository.getFornecedorPaginated(
+//         search: nomeParcial,
+//         pageSize: 20,
+//       );
+//
+//       print('📊 Fornecedores encontrados: ${fornecedores.length}');
+//       for (var f in fornecedores) {
+//         print('  - ${f.nome}');
+//       }
+//
+//       return fornecedores;
+//     } catch (e) {
+//       print('❌ Erro na busca: $e');
+//       rethrow;
+//     }
+//   }
+//
+//   Future<void> add(Fornecedor fornecedor) async {
+//     await repository.add(fornecedor);
+//     await loadFornecedores();
+//   }
+//
+//   Future<void> updateFornecedor(Fornecedor fornecedor) async {
+//     await repository.update(fornecedor);
+//     await loadFornecedores();
+//   }
+//
+//   Future<void> delete(String id) async {
+//     await repository.delete(id);
+//     await loadFornecedores();
+//   }
+// }

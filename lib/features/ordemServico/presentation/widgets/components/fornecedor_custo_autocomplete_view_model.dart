@@ -12,12 +12,16 @@ final fornecedorCustoViewModelProvider = StateNotifierProvider<
 });
 
 final searchFornecedorProvider =
-    FutureProvider.family<List<Fornecedor>, String>((ref, query) async {
+FutureProvider.family<List<Fornecedor>, String>((ref, query) async {
   if (query.isEmpty) return [];
 
-  final notifier = await ref.watch(fornecedorProvider.notifier);
+  final notifier = await ref.watch(fornecedorNotifierProvider.notifier);
   return notifier.getFornecedoresByNome(query);
 });
+
+
+
+
 
 class FornecedorCustoViewModel
     extends StateNotifier<List<FornecedorOrdemServico>> {
@@ -25,6 +29,8 @@ class FornecedorCustoViewModel
   final Map<String, TextEditingController> _controllers = {};
 
   FornecedorCustoViewModel() : super([]);
+
+
 
   double get totalCusto => state.fold(0.0, (a, b) => a + b.custo);
 
@@ -69,4 +75,5 @@ class FornecedorCustoViewModel
     updated[index] = updated[index].copyWith(custo: parsed);
     state = updated;
   }
+
 }

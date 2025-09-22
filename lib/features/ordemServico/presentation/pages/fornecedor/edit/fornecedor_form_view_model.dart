@@ -6,11 +6,20 @@ import '../../../providers/fornecedor_provider.dart';
 
 
 // Provider para o form, recebe o Notifier
-final fornecedorFormViewModelProvider = ChangeNotifierProvider.family<FornecedorFormViewModel, FornecedorNotifier>(
-      (ref, notifier) {
-    return FornecedorFormViewModel(notifier);
+final fornecedorFormViewModelProvider =
+ChangeNotifierProvider.family<FornecedorFormViewModel, String?>(
+      (ref, fornecedorId) {
+    final notifier = ref.watch(fornecedorNotifierProvider.notifier);
+    final vm = FornecedorFormViewModel(notifier);
+
+    if (fornecedorId != null) {
+      vm.loadFornecedor(fornecedorId);
+    }
+
+    return vm;
   },
 );
+
 
 
 class FornecedorFormViewModel extends ChangeNotifier {
@@ -73,7 +82,7 @@ class FornecedorFormViewModel extends ChangeNotifier {
     if (fornecedorId != null) {
       await notifier.updateFornecedor(fornecedor);
     } else {
-      await notifier.add(fornecedor);
+      await notifier.addFornecedor(fornecedor);
     }
   }
 

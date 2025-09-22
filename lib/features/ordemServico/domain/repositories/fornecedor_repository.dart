@@ -5,4 +5,8 @@ abstract class FornecedorRepository {
   Future<void> add(Fornecedor fornecedor);
   Future<void> update(Fornecedor fornecedor);
   Future<void> delete(String id);
+  Future<List<Fornecedor>> getFornecedorPaginated({
+  String search = '',
+  int page = 1,
+  int pageSize = 10});
 }

@@ -1,20 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/local/app_database.dart';
-import '../../data/local/repositories/clientes_repository_impl.dart';
+
 import '../../domain/entities/clientes.dart';
-
-
-final dbProvider = FutureProvider<AppDatabase>((ref) async {
-  return await AppDatabase.getInstance();
-});
-final clientesRepositoryProvider =
-    FutureProvider<ClientesRepositoryImpl>((ref) async {
-  final db = await ref.watch(dbProvider.future);
-  return ClientesRepositoryImpl(db);
-});
+import '../../domain/provider/providers.dart';
+import '../../domain/repositories/clientes_repository.dart';
 
 class ClientesNotifier extends StateNotifier<List<Clientes>> {
-  final ClientesRepositoryImpl repository;
+  final ClientesRepository repository;
 
   ClientesNotifier(this.repository) : super([]) {
     loadClientes();

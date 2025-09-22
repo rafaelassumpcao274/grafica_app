@@ -6,115 +6,110 @@ import '../../../widgets/components/dropdown_tipo_servico.dart';
 import '../../../widgets/components/telefone_input.dart';
 import 'fornecedor_form_view_model.dart';
 
-class FornecedorForm extends ConsumerStatefulWidget {
+class FornecedorForm extends ConsumerWidget {
   final String? fornecedorId;
+
   const FornecedorForm({super.key, this.fornecedorId});
 
-  @override
-  ConsumerState<FornecedorForm> createState() => _FornecedorFormState();
-}
 
-class _FornecedorFormState extends ConsumerState<FornecedorForm> {
-  final _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-    // Carrega o fornecedor assim que o widget é inicializado
-    Future.microtask(() {
-      final notifier = ref.read(fornecedorProvider.notifier)!;
-      final vm = ref.read(fornecedorFormViewModelProvider(notifier));
-      vm.loadFornecedor(widget.fornecedorId);
-    });
-  }
+  Widget build(BuildContext context,WidgetRef ref) {
+    final notifier = ref.watch(fornecedorNotifierProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    final notifier = ref.watch(fornecedorProvider.notifier)!;
-    final vm = ref.watch(fornecedorFormViewModelProvider(notifier));
+    return notifier.when(
+        data: (fornecedorNotifier) {
+          final vm = ref.watch(fornecedorFormViewModelProvider(fornecedorId));
 
-    if (vm.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+          if (vm.isLoading) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.fornecedorId != null ? 'Editar Fornecedor' : 'Cadastrar Fornecedor'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTextInput(
-                  controller: vm.nameController,
-                  hintText: 'Nome do Fornecedor',
-                  icon: Icons.business_center,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'Informe o nome do Fornecedor';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextInput(
-                  controller: vm.emailController,
-                  hintText: 'E-mail',
-                  icon: Icons.alternate_email,
-                ),
-                const SizedBox(height: 16),
-                CustomTextInput(
-                  controller: vm.contatoController,
-                  hintText: 'Contato',
-                  icon: Icons.person,
-                ),
-                const SizedBox(height: 16),
-                TelefoneInput(controller: vm.telefoneController),
-                const SizedBox(height: 16),
-                TipoServicoDropdown(
-                  valorInicial: vm.tipoSelecionado,
-                  onChanged: (valor) => vm.tipoSelecionado = valor,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Observação',
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: vm.observacaoController,
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xD818971C),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await vm.saveFornecedor(widget.fornecedorId);
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Text(
-                      widget.fornecedorId != null ? 'Salvar Alterações' : 'Salvar',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(fornecedorId != null ? 'Editar Fornecedor' : 'Cadastrar Fornecedor'),
             ),
-          ),
-        ),
-      ),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: GlobalKey<FormState>(),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextInput(
+                        controller: vm.nameController,
+                        hintText: 'Nome do Fornecedor',
+                        icon: Icons.business_center,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) return 'Informe o nome do Fornecedor';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextInput(
+                        controller: vm.emailController,
+                        hintText: 'E-mail',
+                        icon: Icons.alternate_email,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextInput(
+                        controller: vm.contatoController,
+                        hintText: 'Contato',
+                        icon: Icons.person,
+                      ),
+                      const SizedBox(height: 16),
+                      TelefoneInput(controller: vm.telefoneController),
+                      const SizedBox(height: 16),
+                      TipoServicoDropdown(
+                        valorInicial: vm.tipoSelecionado,
+                        onChanged: (valor) => vm.tipoSelecionado = valor,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Observação',
+                          border: OutlineInputBorder(),
+                        ),
+                        controller: vm.observacaoController,
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xD818971C),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () async {
+
+                              await vm.saveFornecedor(fornecedorId);
+                              Navigator.pop(context);
+
+                          },
+                          child: Text(
+                            fornecedorId != null ? 'Salvar Alterações' : 'Salvar',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+
+    },
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (err, stack) => Scaffold(body: Center(child: Text('Erro: $err'))),
     );
+
+
   }
 }
