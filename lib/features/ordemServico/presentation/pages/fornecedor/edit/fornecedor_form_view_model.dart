@@ -12,6 +12,7 @@ ChangeNotifierProvider.family<FornecedorFormViewModel, String?>(
     final notifier = ref.watch(fornecedorNotifierProvider.notifier);
     final vm = FornecedorFormViewModel(notifier);
 
+    vm.clearFields();
     if (fornecedorId != null) {
       vm.loadFornecedor(fornecedorId);
     }

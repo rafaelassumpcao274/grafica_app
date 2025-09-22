@@ -12,6 +12,7 @@ class CustomDecimalInput extends StatefulWidget {
   final IconData? icon;
   final bool enabled;
   final String? Function(String?)? validator;
+  final CurrencyFormatType currencyFormatType;
 
   const CustomDecimalInput({
     super.key,
@@ -20,7 +21,8 @@ class CustomDecimalInput extends StatefulWidget {
     this.icon,
     this.enabled = true,
     this.validator,
-  });
+    CurrencyFormatType ? formatType
+  }): currencyFormatType = formatType ?? CurrencyFormatType.full;
 
   @override
   State<CustomDecimalInput> createState() => _CustomDecimalInputState();
@@ -37,7 +39,7 @@ class _CustomDecimalInputState extends State<CustomDecimalInput> {
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
-        CurrencyInputFormatter(),
+        CurrencyInputFormatter( formatType: widget.currencyFormatType),
       ],
       validator: widget.validator ??
           (value) {

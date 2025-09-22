@@ -21,11 +21,14 @@ class FornecedorForm extends ConsumerWidget {
         data: (fornecedorNotifier) {
           final vm = ref.watch(fornecedorFormViewModelProvider(fornecedorId));
 
+
           if (vm.isLoading) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
+
+
 
           return Scaffold(
             appBar: AppBar(

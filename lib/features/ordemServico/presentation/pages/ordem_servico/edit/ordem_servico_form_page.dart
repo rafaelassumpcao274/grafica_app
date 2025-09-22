@@ -12,9 +12,9 @@ import '../../../widgets/components/papel_autocomplete.dart';
 import '../../../widgets/via_cores/chips_via_cores.dart';
 import 'ordem_servico_form_view_model.dart';
 
-
 class OrdemServicoForm extends ConsumerStatefulWidget {
   final int? ordemId;
+
   const OrdemServicoForm({super.key, this.ordemId});
 
   @override
@@ -27,7 +27,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_loaded ) {
+    if (!_loaded) {
       Future.microtask(() async {
         final viewModel = ref.read(ordemServicoViewModelProvider);
         await viewModel.loadOrdem(widget.ordemId);
@@ -42,7 +42,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(ordemServicoViewModelProvider);
 
-    if ( viewModel.isLoading) {
+    if (viewModel.isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -69,7 +69,13 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                 CustomTextInput(
                   controller: viewModel.materialController,
                   hintText: 'Material',
-                  icon: Icons.receipt_long,
+                  icon: Icons.article,
+                ),
+                const SizedBox(height: 16),
+                CustomTextInput(
+                  controller: viewModel.tamanhoImagemController,
+                  hintText: 'Tamanho',
+                  icon: Icons.image,
                 ),
                 const SizedBox(height: 16),
                 PapelAutocomplete(
@@ -80,7 +86,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                 const SizedBox(height: 16),
                 ChipsInputVia(
                   initialItems:
-                  viewModel.listVias.map((e) => e.viaCores!).toList(),
+                      viewModel.listVias.map((e) => e.viaCores!).toList(),
                   onChanged: (vias) {
                     viewModel.listVias = vias
                         .map((it) => ViaCoresOrdemServico(viaCores: it))
@@ -107,12 +113,13 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                   CustomIntegerInput(
                     controller: viewModel.numeracaoInicialController,
                     hintText: 'Numeração Inicial',
+                    useThousandsSeparator: true,
                   ),
                   const SizedBox(height: 16),
                   CustomIntegerInput(
-                    controller: viewModel.numeracaoFinalController,
-                    hintText: 'Numeração Final',
-                  ),
+                      controller: viewModel.numeracaoFinalController,
+                      hintText: 'Numeração Final',
+                      useThousandsSeparator: true,),
                 ],
                 const SizedBox(height: 16),
                 const FornecedorCustoAutocomplete(),
@@ -159,4 +166,3 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
     );
   }
 }
-
