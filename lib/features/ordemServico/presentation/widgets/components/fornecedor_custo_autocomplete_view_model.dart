@@ -4,37 +4,31 @@ import 'package:unilith_app/features/ordemServico/presentation/providers/fornece
 
 import '../../../domain/entities/fornecedor.dart';
 import '../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../domain/provider/providers.dart';
+import '../../../domain/repositories/fornecedor_repository.dart';
 
 /// Provider da ViewModel
+// Provider do ViewModel
 final fornecedorCustoViewModelProvider = StateNotifierProvider<
     FornecedorCustoViewModel, List<FornecedorOrdemServico>>((ref) {
-  return FornecedorCustoViewModel();
+  final repositoryAsync = ref.watch(fornecedorRepositoryProvider);
+
+  return repositoryAsync.when(
+    data: (repository) => FornecedorCustoViewModel(repository),
+    loading: () => FornecedorCustoViewModel(null), // sem repo ainda
+    error: (err, stack) => FornecedorCustoViewModel(null), // sem repo em caso de erro
+  );
 });
 
-final searchFornecedorProvider =
-FutureProvider.family<List<Fornecedor>, String>((ref, query) async {
-  if (query.isEmpty) return [];
 
-  final notifier = await ref.watch(fornecedorNotifierProvider.notifier);
-  return notifier.getFornecedoresByNome(query);
-});
-
-
-
-
-
-class FornecedorCustoViewModel
-    extends StateNotifier<List<FornecedorOrdemServico>> {
-  /// controllers para inputs de custo
+class FornecedorCustoViewModel extends StateNotifier<List<FornecedorOrdemServico>> {
+  final FornecedorRepository? repository;
   final Map<String, TextEditingController> _controllers = {};
 
-  FornecedorCustoViewModel() : super([]);
-
-
+  FornecedorCustoViewModel(this.repository) : super([]);
 
   double get totalCusto => state.fold(0.0, (a, b) => a + b.custo);
 
-  /// limpa a lista ao iniciar
   void clear() {
     state = [];
     _controllers.clear();
@@ -44,31 +38,27 @@ class FornecedorCustoViewModel
     state = fornecedores;
   }
 
-  /// adiciona fornecedor à lista
   void addFornecedor(Fornecedor fornecedor) {
     if (!state.any((f) => f.fornecedor?.id == fornecedor.id)) {
       state = [...state, FornecedorOrdemServico(fornecedor: fornecedor)];
     }
   }
 
-  /// remove fornecedor por índice
   void removeFornecedor(int index) {
     final removed = state[index];
     _controllers.remove(removed.id);
     state = [...state]..removeAt(index);
   }
 
-  /// retorna ou cria controller para campo de custo
   TextEditingController getController(FornecedorOrdemServico fornecedor) {
     return _controllers.putIfAbsent(
       fornecedor.id,
-      () => TextEditingController(
-        text: fornecedor.custo.toStringAsFixed(2) ?? "",
+          () => TextEditingController(
+        text: fornecedor.custo.toStringAsFixed(2),
       ),
     );
   }
 
-  /// atualiza valor do fornecedor na lista
   void updateFornecedor(int index, String valor) {
     final parsed = double.tryParse(valor.replaceAll(',', '.')) ?? 0.0;
     final updated = [...state];
@@ -76,4 +66,12 @@ class FornecedorCustoViewModel
     state = updated;
   }
 
+  /// 🔎 Busca fornecedores por nome direto no repository
+  Future<List<Fornecedor>> searchFornecedores(String query) async {
+    if(repository == null) return [];
+    if (query.isEmpty) return await repository!.getFornecedores() ;
+    return repository!.getFornecedorPaginated(search: query);
+  }
 }
+
+

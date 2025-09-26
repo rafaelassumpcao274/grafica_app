@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../domain/entities/fornecedor.dart';
 import '../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../domain/provider/providers.dart';
 import '../../core/formatter/currency_input_formatter.dart';
 import 'fornecedor_custo_autocomplete_view_model.dart';
 
@@ -22,9 +23,6 @@ class FornecedorCustoAutocomplete extends ConsumerStatefulWidget {
 
 class _FornecedorCustoAutocompleteState
     extends ConsumerState<FornecedorCustoAutocomplete> {
-
-
-
   @override
   Widget build(BuildContext context) {
     final fornecedores = ref.watch(fornecedorCustoViewModelProvider);
@@ -35,17 +33,16 @@ class _FornecedorCustoAutocompleteState
       children: [
         const Text("Fornecedor", style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
-
         TypeAheadField<Fornecedor>(
           suggestionsCallback: (query) async {
-            final result = await ref.watch(searchFornecedorProvider(query).future);
-            return result;
+
+            final repo = await ref.read(fornecedorRepositoryProvider.future);
+            if (query.isEmpty) await repo.getFornecedores();
+            return repo.getFornecedorPaginated(search: query);
           },
           itemBuilder: (context, item) => ListTile(title: Text(item.nome)),
           onSelected: (value) {
-            viewModel.addFornecedor(
-              value,
-            );
+            viewModel.addFornecedor(value);
           },
           builder: (context, controller, focusNode) {
             return TextFormField(
@@ -64,9 +61,7 @@ class _FornecedorCustoAutocompleteState
             );
           },
         ),
-
         const SizedBox(height: 8),
-
         Column(
           children: fornecedores.map((fornecedor) {
             final controller = viewModel.getController(fornecedor);
@@ -86,7 +81,8 @@ class _FornecedorCustoAutocompleteState
                       child: TextFormField(
                         key: ValueKey(fornecedor.id),
                         controller: controller,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
                         decoration: const InputDecoration(
                           prefixText: 'R\$ ',
                           labelText: "Digite o Valor",

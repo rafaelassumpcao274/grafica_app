@@ -54,7 +54,6 @@ class OrdemServicoViewModel extends ChangeNotifier {
   TextEditingController formatoController = TextEditingController();
   TextEditingController papelController = TextEditingController();
   TextEditingController tamanhoImagemController = TextEditingController();
-  TextEditingController valorTotalController = TextEditingController();
   TextEditingController observacaoController = TextEditingController();
 
   NumberEditingController<int> quantidadeFolhaController =
@@ -65,6 +64,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
   NumberEditingController<int>(value: 0);
   NumberEditingController<double> valorCustoController =
   NumberEditingController<double>(value: 0.0);
+  NumberEditingController valorTotalController = NumberEditingController<double>(value: 0.0);
 
   bool isLoading = false;
 
@@ -145,7 +145,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
       numeracaoFinal: numeracaoFinalController.number!,
       observacao: observacaoController.text,
       valorCusto: totalCusto,
-      valorTotal: double.tryParse(valorTotalController.text) ?? 0.0,
+      valorTotal: valorTotalController.number!.toDouble(),
       fornecedores: fornecedores,
       vias: listVias,
       tamanhoImagem: tamanhoImagemController.text.isNotEmpty
