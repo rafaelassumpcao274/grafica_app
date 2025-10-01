@@ -5,11 +5,10 @@ import '../../../../domain/entities/clientes.dart';
 import '../../../providers/clientes_provider_refactored.dart';
 
 final clientFormViewModelProvider = ChangeNotifierProvider.family<ClientFormViewModel, String?>((ref, clienteId) {
-  final clienteNotifier = ref.read(clientesNotifierProvider).value!;
-  final vm = ClientFormViewModel(clienteNotifier);
-  if(clienteId != null){
-    vm.loadCliente(clienteId); // já carrega aqui
-  }
+  final notifier = ref.watch(clientesNotifierProvider.notifier);
+  final vm = ClientFormViewModel(notifier);
+  vm.loadCliente(clienteId);
+
   return vm;
 });
 
@@ -33,17 +32,19 @@ class ClientFormViewModel extends ChangeNotifier {
   bool isLoading = false;
 
   // Carrega cliente existente
-  Future<void> loadCliente(String clienteId) async {
+  Future<void> loadCliente(String? clienteId) async {
     isLoading = true;
     notifyListeners();
     clearControllers();
 
-    final cliente = await clienteNotifier.getClienteById(clienteId);
-    if (cliente != null) {
-      nameController.text = cliente.nomeEmpresa ?? '';
-      emailController.text = cliente.email ?? '';
-      cpfController.text = cliente.getDocumentFormatted() ?? '';
-      telefoneController.text = cliente.telefone ?? '';
+    if(clienteId != null){
+      final cliente = await clienteNotifier.getClienteById(clienteId);
+      if (cliente != null) {
+        nameController.text = cliente.nomeEmpresa ?? '';
+        emailController.text = cliente.email ?? '';
+        cpfController.text = cliente.getDocumentFormatted() ?? '';
+        telefoneController.text = cliente.telefone ?? '';
+      }
     }
 
     isLoading = false;
@@ -51,7 +52,7 @@ class ClientFormViewModel extends ChangeNotifier {
   }
 
   void clearControllers() {
-    // Limpa os controllers antes de carregar o novo cliente
+
     nameController.clear();
     emailController.clear();
     cpfController.clear();
@@ -60,6 +61,7 @@ class ClientFormViewModel extends ChangeNotifier {
     cidadeController.clear();
     estadoController.clear();
     cepController.clear();
+    notifyListeners();
   }
 
 

@@ -90,13 +90,15 @@ class _ClienteAutocompleteState extends ConsumerState<ClienteAutocomplete> {
   @override
   Widget build(BuildContext context) {
     final clientesNotifierAsync = ref.watch(clientesNotifierProvider);
+    final clienteNotifier = ref.read(clientesNotifierProvider.notifier);
+
     return clientesNotifierAsync.when(
       data: (notifier) {
         return AutoCompleteSelector<Clientes>(
           key: widget.key,
           title: 'Cliente',
           suggestionsCallback: (query) =>
-              notifier.getClientesByNomeEmpresa(query),
+              clienteNotifier.getClientesByNomeEmpresaAlternativo(query),
           itemBuilder: (p0, item) => ListTile(
             title: Text(item.nomeEmpresa),
             subtitle: Text(item.documento),

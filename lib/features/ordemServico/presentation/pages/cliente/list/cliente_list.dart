@@ -39,6 +39,11 @@ class ClientList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final clientesNotifierAsync = ref.watch(clientesNotifierProvider);
+    final clienteNotifier = ref.read(clientesNotifierProvider.notifier);
+    final viewModel = ref.watch(clientListViewModelProvider(clienteNotifier));
+    if(filter.isNotEmpty){
+      viewModel.applyFilter(filter);
+    }
 
     return clientesNotifierAsync.when(
       loading: () => ListView.builder(
@@ -49,9 +54,9 @@ class ClientList extends ConsumerWidget {
         ),
       ),
       error: (err, stack) => Center(child: Text('Erro: $err')),
-      data: (clientesNotifier) {
+      data: (clientes) {
         // Agora temos certeza que o notifier não é nulo
-        final viewModel = ref.watch(clientListViewModelProvider(clientesNotifier));
+
 
         if (viewModel.isLoading) {
           // Skeleton enquanto o viewmodel carrega os dados
@@ -64,10 +69,9 @@ class ClientList extends ConsumerWidget {
           );
         }
 
-        var filtered = viewModel.clientes;
-        if(filter.isNotEmpty){
-          viewModel.setSearchQuery(filter);
-          filtered = viewModel.filteredClientes;
+        var filtered = clientes;
+        if (filtered.isEmpty) {
+          return const Center(child: Text('Nenhum Cliente encontrado'));
         }
 
         return ListView.builder(
@@ -76,7 +80,7 @@ class ClientList extends ConsumerWidget {
             final cliente = filtered[index];
 
             return Dismissible(
-              key: Key(cliente.id ?? cliente.nomeEmpresa),
+              key: Key(cliente.id ),
               direction: DismissDirection.endToStart,
               background: Container(
                 color: Colors.red,

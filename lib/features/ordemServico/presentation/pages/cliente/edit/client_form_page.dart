@@ -20,13 +20,6 @@ class ClientForm extends ConsumerWidget {
       data: (clienteNotifier) {
         final viewModel = ref.watch(clientFormViewModelProvider(clienteId));
 
-        // Chama loadCliente depois que a UI for construída
-        if (clienteId != null && !viewModel.isLoading && viewModel.nameController.text.isEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            viewModel.loadCliente(clienteId!);
-          });
-        }
-
         if (viewModel.isLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),

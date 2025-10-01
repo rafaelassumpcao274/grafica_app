@@ -7,8 +7,7 @@ import '../../../providers/clientes_provider_refactored.dart';
 // Recebe um ClientesNotifier já carregado
 final clientListViewModelProvider = ChangeNotifierProvider.family<ClientListViewModel, ClientesNotifier>(
       (ref, notifier) {
-    final vm = ClientListViewModel(notifier);
-    return vm;
+    return ClientListViewModel(notifier);
   },
 );
 
@@ -16,7 +15,7 @@ class ClientListViewModel extends ChangeNotifier {
   final ClientesNotifier clienteNotifier;
 
   ClientListViewModel(this.clienteNotifier) : super() {
-    _clientes = clienteNotifier.state;
+   loadClientes();
   }
 
   List<Clientes> _clientes = [];
@@ -24,42 +23,32 @@ class ClientListViewModel extends ChangeNotifier {
 
   bool isLoading = false;
 
-  String _searchQuery = '';
-  String get searchQuery => _searchQuery;
 
   // Carrega clientes do notifier
   Future<void> loadClientes() async {
     isLoading = true;
     notifyListeners();
 
-    _clientes = clienteNotifier.state;
+    _clientes = [...?clienteNotifier.state.value ?? []];
+
     isLoading = false;
     notifyListeners();
   }
 
   // Filtra clientes por query
-  List<Clientes> get filteredClientes {
-    if (_searchQuery.isEmpty) return _clientes;
+  Future<void> applyFilter(String query) async {
 
-    final query = _searchQuery.toLowerCase();
-    return _clientes.where((c) {
-      return (c.nomeEmpresa.toLowerCase().contains(query)) ||
-          (c.documento.toLowerCase().contains(query)) ||
-          (c.email?.toLowerCase().contains(query) ?? false);
-    }).toList();
-  }
+    query = query.toLowerCase();
+    await clienteNotifier.getClientesByNomeEmpresa(query);
 
-  // Atualiza a query do filtro
-  void setSearchQuery(String query) {
-    _searchQuery = query;
-    notifyListeners();
+    await loadClientes();
   }
 
   // Exclui cliente
   Future<void> deleteCliente(String? clienteId) async {
     if (clienteId == null) return;
     await clienteNotifier.deleteCliente(clienteId);
-    _clientes = clienteNotifier.state;
+    await loadClientes();
     notifyListeners();
   }
 }
