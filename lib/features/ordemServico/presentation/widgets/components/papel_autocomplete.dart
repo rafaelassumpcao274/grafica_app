@@ -47,6 +47,8 @@ class _PapelAutocompleteState extends ConsumerState<PapelAutocomplete> {
           decoration: const InputDecoration(
             labelText: 'Papel',
             hintText: 'Digite o nome do papel',
+            filled: true,
+            fillColor: Colors.white,
             border: OutlineInputBorder(),
           ),
           onChanged: (value) {

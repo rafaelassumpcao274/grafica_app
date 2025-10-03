@@ -25,13 +25,15 @@ class CustomIntegerInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<TextInputFormatter> inputFormatters = [];
+    List<TextInputFormatter> inputFormatters = [FilteringTextInputFormatter.digitsOnly];
+
+    if(controller.text.isNotEmpty){
+      controller.text = ThousandsFormatter().ThousandsFormatNumber(controller.text);
+    }
 
     if (useThousandsSeparator) {
       // Formata com separador de milhar
       inputFormatters.add(ThousandsFormatter());
-    } else {
-      inputFormatters.add(FilteringTextInputFormatter.digitsOnly);
     }
 
     return TextFormField(
@@ -67,12 +69,17 @@ class ThousandsFormatter extends TextInputFormatter {
     String digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
     if (digitsOnly.isEmpty) return const TextEditingValue(text: '');
 
-    final number = int.parse(digitsOnly);
-    final newText = NumberFormat('#,###', 'pt_BR').format(number);
+    String newText = ThousandsFormatNumber(digitsOnly);
 
     return TextEditingValue(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
     );
+  }
+
+  String ThousandsFormatNumber(String digitsOnly) {
+       final number = int.parse(digitsOnly);
+    final newText = NumberFormat('#,###', 'pt_BR').format(number);
+    return newText;
   }
 }
