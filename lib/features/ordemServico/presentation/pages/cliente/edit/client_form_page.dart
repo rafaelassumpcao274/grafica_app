@@ -19,6 +19,9 @@ class ClientForm extends ConsumerWidget {
     return clienteNotifierAsync.when(
       data: (clienteNotifier) {
         final viewModel = ref.watch(clientFormViewModelProvider(clienteId));
+        if(clienteId == null || clienteId!.isEmpty){
+          viewModel.clearControllers();
+        }
 
         if (viewModel.isLoading) {
           return const Scaffold(

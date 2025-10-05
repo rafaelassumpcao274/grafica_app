@@ -7,7 +7,9 @@ import '../../../providers/clientes_provider_refactored.dart';
 final clientFormViewModelProvider = ChangeNotifierProvider.family<ClientFormViewModel, String?>((ref, clienteId) {
   final notifier = ref.watch(clientesNotifierProvider.notifier);
   final vm = ClientFormViewModel(notifier);
-  vm.loadCliente(clienteId);
+  if(clienteId != null && clienteId.isNotEmpty){
+    vm.loadCliente(clienteId);
+  }
 
   return vm;
 });
@@ -32,12 +34,12 @@ class ClientFormViewModel extends ChangeNotifier {
   bool isLoading = false;
 
   // Carrega cliente existente
-  Future<void> loadCliente(String? clienteId) async {
+  Future<void> loadCliente(String clienteId) async {
     isLoading = true;
     notifyListeners();
     clearControllers();
 
-    if(clienteId != null){
+
       final cliente = await clienteNotifier.getClienteById(clienteId);
       if (cliente != null) {
         nameController.text = cliente.nomeEmpresa ?? '';
@@ -45,7 +47,7 @@ class ClientFormViewModel extends ChangeNotifier {
         cpfController.text = cliente.getDocumentFormatted() ?? '';
         telefoneController.text = cliente.telefone ?? '';
       }
-    }
+
 
     isLoading = false;
     notifyListeners();

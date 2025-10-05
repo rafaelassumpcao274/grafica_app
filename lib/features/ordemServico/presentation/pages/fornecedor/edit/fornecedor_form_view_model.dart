@@ -47,13 +47,11 @@ class FornecedorFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadFornecedor(String? fornecedorId) async {
+  Future<void> loadFornecedor(String fornecedorId) async {
     isLoading = true;
     notifyListeners();
 
-    if (fornecedorId == null) {
-      clearFields(); // Novo fornecedor → limpa campos
-    } else {
+
       final fornecedor = await notifier.getById(fornecedorId);
       if (fornecedor != null) {
         nameController.text = fornecedor.nome ?? '';
@@ -63,7 +61,7 @@ class FornecedorFormViewModel extends ChangeNotifier {
         observacaoController.text = fornecedor.observacao ?? '';
         tipoSelecionado = fornecedor.tipoServico;
       }
-    }
+
 
     isLoading = false;
     notifyListeners();
