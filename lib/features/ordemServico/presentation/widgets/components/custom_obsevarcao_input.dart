@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
 
-class CustomTextInput extends StatelessWidget {
+class CustomObservacaoInput extends StatelessWidget {
   final TextEditingController controller;
-  final String hintText;
   final IconData? icon;
   final String? Function(String?)? validator;
   final bool enabled;
 
-  const CustomTextInput({
+  const CustomObservacaoInput({
     super.key,
     required this.controller,
-    required this.hintText,
     this.icon,
     this.validator,
     this.enabled = true,
@@ -33,20 +31,22 @@ class CustomTextInput extends StatelessWidget {
           ),
         ],
       ),
-      child: TextFormField(
+      child:
+      TextFormField(
         controller: controller,
-        validator: validator,
-        enabled: enabled,
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textDark),
-          decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(color: AppColors.textGray, fontSize: 15),
-              prefixIcon: Icon(icon, color: AppColors.textGray, size: 20),
-              prefixStyle: TextStyle(color: AppColors.textDark, fontSize: 15, fontWeight: FontWeight.w600),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16)
-          )
-      )
+        maxLines: 4,
+        style:
+        TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textDark),
+        decoration: InputDecoration(
+          hintText: 'Observações adicionais...',
+          hintStyle: TextStyle(color: AppColors.textGray, fontSize: 15),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(16),
+        ),
+      ),
     );
   }
 }

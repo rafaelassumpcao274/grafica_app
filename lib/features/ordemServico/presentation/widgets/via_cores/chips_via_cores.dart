@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/via_cores.dart';
+import '../../core/theme.dart';
 import '../../providers/via_cores_provider.dart';
 
 class ChipsInputVia extends ConsumerStatefulWidget {
@@ -74,26 +75,45 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
           },
           displayStringForOption: (via) => via.descricao,
           fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-            return TextField(
-              controller: controller,
-              focusNode: focusNode,
-              enabled: _viasSelecionadas.length < 4,
-              decoration: InputDecoration(
-                labelText: 'Vias',
-                filled: true,
-                fillColor: Colors.white,
-                border: const OutlineInputBorder(),
-                suffixIcon: controller.text.isNotEmpty
-                    ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    setState(() {
-                      controller.clear();
-                    });
-                  },
+            return Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryBlue.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child:
+                TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  enabled: _viasSelecionadas.length < 4,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textDark),
+                  decoration: InputDecoration(
+                    labelText: 'Vias',
+                    filled: true,
+                    fillColor: Colors.white,
+                    prefixIcon: Icon(Icons.layers_outlined, color: AppColors.textGray, size: 20),
+                    prefixStyle: TextStyle(color: AppColors.textDark, fontSize: 15, fontWeight: FontWeight.w600),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    suffixIcon: controller.text.isNotEmpty
+                        ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          controller.clear();
+                        });
+                      },
+                    )
+                        : null,
+                  ),
                 )
-                    : null,
-              ),
             );
           },
           onSelected: (via) {

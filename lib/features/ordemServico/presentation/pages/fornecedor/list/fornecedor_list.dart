@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/enums/TipoServico.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/fornecedor/edit/fornecedor_form_view_model.dart';
 import 'package:unilith_app/features/ordemServico/presentation/providers/fornecedor_provider.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/fornecedor_card.dart';
 
 import '../../../providers/clientes_provider_refactored.dart';
 import '../edit/fornecedor_form_page.dart';
@@ -90,22 +91,8 @@ class FornecedorList extends ConsumerWidget {
                   const SnackBar(content: Text('Fornecedor excluído')),
                 );
               },
-              child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.business),
-                  title: Text(fornecedor.nome),
-                  subtitle: Text(fornecedor.tipoServico.label),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            FornecedorForm(fornecedorId: fornecedor.id),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              child: 
+              FornecedorCard(fornecedor: fornecedor),
             );
           },
         );

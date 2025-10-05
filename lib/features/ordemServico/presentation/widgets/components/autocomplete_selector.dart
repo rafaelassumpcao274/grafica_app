@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
+import '../../core/theme.dart';
+
 class AutoCompleteSelector<T> extends StatefulWidget {
-  final String title;
   final List<T> selectedItems;
   final T? selectedItem;
   final Function(dynamic) onSelect;
@@ -23,7 +24,6 @@ class AutoCompleteSelector<T> extends StatefulWidget {
 
   const AutoCompleteSelector(
       {super.key,
-      required this.title,
       required this.suggestionsCallback,
       required this.displayItem,
       required this.itemBuilder,
@@ -135,106 +135,114 @@ class _AutoCompleteSelectorState<T> extends State<AutoCompleteSelector<T>> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+      child:
+          Container(
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryBlue.withValues(alpha: 0.04),
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-              if (widget.isRequired)
-                const Text(
-                  " *",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          TypeAheadField<T>(
-            controller: _controller,
-            focusNode: _focusNode,
-            suggestionsCallback: widget.suggestionsCallback,
-            itemBuilder: (context, T item) => widget.itemBuilder(context, item),
-            onSelected: (T item) {
-              if (widget.isMultiple) {
-                if (!_selectedItems.contains(item)) {
-                  setState(() {
-                    _selectedItems.add(item);
-                    _controller.clear();
-                  });
-                  widget.onSelect(_selectedItems);
-                }
-              } else {
-                _selectSingleItem(item);
-              }
-            },
-            errorBuilder: (context, error) => const Text('Ocorreu um erro!'),
-            emptyBuilder: (context) => const Text('Nenhum item encontrado!'),
-            builder: (context, _, __) {
-              return TextFormField(
-                key: _fieldKey,
-                controller: _controller,
-                focusNode: _focusNode,
-                enabled: widget.isEnabled,
-                decoration: InputDecoration(
-                  prefixIcon: widget.prefixIcon,
-                  suffixIcon: _controller.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      setState(() {
-                        _controller.clear();
-                        if (!widget.isMultiple) {
-                          _selectedItem = null;
-                          widget.onSelect(null);
-                        }
-                      });
-                    },
-                  )
-                      : null,
-                  filled: true,
-                  fillColor: widget.isEnabled ? Colors.white : Colors.grey.shade200,
-                  border: const OutlineInputBorder(),
-                  hintText: widget.placeholder,
-                ),
-                validator: widget.validator ??
-                    (value) {
-                      if (widget.isRequired &&
-                          (value == null || value.trim().isEmpty)) {
-                        return 'Preencha este campo';
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TypeAheadField<T>(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  suggestionsCallback: widget.suggestionsCallback,
+                  itemBuilder: (context, T item) => widget.itemBuilder(context, item),
+                  onSelected: (T item) {
+                    if (widget.isMultiple) {
+                      if (!_selectedItems.contains(item)) {
+                        setState(() {
+                          _selectedItems.add(item);
+                          _controller.clear();
+                        });
+                        widget.onSelect(_selectedItems);
                       }
-                      return null;
-                    },
-              );
-            },
-          ),
-          const SizedBox(height: 2),
-          if (widget.isMultiple)
-            Wrap(
-              spacing: 6.0,
-              children: _selectedItems.map((item) {
-                return Chip(
-                  label: Text(
-                    widget.displayItem(item),
-                    style: const TextStyle(color: Colors.green),
+                    } else {
+                      _selectSingleItem(item);
+                    }
+                  },
+                  errorBuilder: (context, error) => const Text('Ocorreu um erro!'),
+                  emptyBuilder: (context) => const Text('Nenhum item encontrado!'),
+                  builder: (context, _, __) {
+                    return TextFormField(
+                      key: _fieldKey,
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      enabled: widget.isEnabled,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textDark),
+                      decoration: InputDecoration(
+                          hintText: widget.placeholder,
+                          hintStyle: TextStyle(color: AppColors.textGray, fontSize: 15),
+                        prefixIcon: Container(
+                          margin: EdgeInsets.all(12),
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [AppColors.primaryBlue.withValues(alpha: 0.15), AppColors.accentPurple.withValues(alpha: 0.15)],
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: widget.prefixIcon,
+                        ),
+                          prefixStyle: TextStyle(color: AppColors.textDark, fontSize: 15, fontWeight: FontWeight.w600),
+                          suffixIcon: _controller.text.isNotEmpty
+                              ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                _controller.clear();
+                                if (!widget.isMultiple) {
+                                  _selectedItem = null;
+                                  widget.onSelect(null);
+                                }
+                              });
+                            },
+                          )
+                              : null,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16)
+                      ),
+                      validator: widget.validator ??
+                              (value) {
+                            if (widget.isRequired &&
+                                (value == null || value.trim().isEmpty)) {
+                              return 'Preencha este campo';
+                            }
+                            return null;
+                          },
+                    );
+                  },
+                ),
+                const SizedBox(height: 2),
+                if (widget.isMultiple)
+                  Wrap(
+                    spacing: 6.0,
+                    children: _selectedItems.map((item) {
+                      return Chip(
+                        label: Text(
+                          widget.displayItem(item),
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                        shadowColor: Colors.green,
+                        onDeleted: () => _removeItem(item),
+                        deleteIcon:
+                        const Icon(Icons.close, size: 18, color: Colors.red),
+                      );
+                    }).toList(),
                   ),
-                  shadowColor: Colors.green,
-                  onDeleted: () => _removeItem(item),
-                  deleteIcon:
-                      const Icon(Icons.close, size: 18, color: Colors.red),
-                );
-              }).toList(),
+              ],
             ),
-        ],
-      ),
+          )
+
     );
   }
 }

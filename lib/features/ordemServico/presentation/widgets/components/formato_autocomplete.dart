@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/formato.dart';
+import '../../core/theme.dart';
 import '../../providers/formato_provider.dart';
 import 'autocomplete_selector.dart';
 
@@ -92,7 +93,7 @@ void didUpdateWidget(covariant FormatoAutocomplete oldWidget) {
       data: (notifier) {
         return AutoCompleteSelector<Formato>(
           key: widget.key,
-          title: widget.labelText,
+          prefixIcon: Icon(Icons.business_outlined, color: AppColors.accentPurple, size: 20),
           suggestionsCallback: (query) => notifier.getFormatoByDescricao(query),
           itemBuilder: (p0, item) => ListTile(
             title: Text(item.descricao),

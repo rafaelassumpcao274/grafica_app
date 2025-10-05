@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/clientes.dart';
+import '../../core/theme.dart';
 import '../../providers/clientes_provider_refactored.dart';
 import '../components/autocomplete_selector.dart';
 
@@ -96,10 +97,12 @@ class _ClienteAutocompleteState extends ConsumerState<ClienteAutocomplete> {
       data: (notifier) {
         return AutoCompleteSelector<Clientes>(
           key: widget.key,
-          title: 'Cliente',
+          prefixIcon: Icon(Icons.person_outline, color: AppColors.primaryBlue, size: 20),
+          placeholder: "Informe um cliente ",
           suggestionsCallback: (query) =>
               clienteNotifier.getClientesByNomeEmpresaAlternativo(query),
-          itemBuilder: (p0, item) => ListTile(
+          itemBuilder: (p0, item) =>
+              ListTile(
             title: Text(item.nomeEmpresa),
             subtitle: Text(item.documento),
           ),

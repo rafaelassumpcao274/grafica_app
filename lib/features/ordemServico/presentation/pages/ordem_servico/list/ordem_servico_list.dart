@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/ordem_card.dart';
 
 import '../../../providers/ordemservico_provider.dart';
 import '../edit/ordem_servico_form_page.dart';
@@ -74,38 +75,8 @@ class _OrdemServicoListState extends ConsumerState<OrdemServicoList> {
                   const SnackBar(content: Text('Ordem de Serviço excluída')),
                 );
               },
-              child: Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: ListTile(
-                  leading: const Icon(Icons.description),
-                  title: Text(
-                    "${ordemServico.id} - ${ordemServico.clientes?.nomeEmpresa ?? 'Cliente não informado'}",
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(ordemServico.material),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Criado em: $createdAtFormatted",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            OrdemServicoForm(ordemId: ordemServico.id),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              child:
+                OrdemCard(ordem: ordemServico),
             );
           },
         );

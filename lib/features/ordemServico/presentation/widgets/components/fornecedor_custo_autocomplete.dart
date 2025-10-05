@@ -6,6 +6,7 @@ import '../../../domain/entities/fornecedor.dart';
 import '../../../domain/entities/fornecedorOrdemServico.dart';
 import '../../../domain/provider/providers.dart';
 import '../../core/formatter/currency_input_formatter.dart';
+import '../../core/theme.dart';
 import 'fornecedor_custo_autocomplete_view_model.dart';
 
 class FornecedorCustoAutocomplete extends ConsumerStatefulWidget {
@@ -31,8 +32,6 @@ class _FornecedorCustoAutocompleteState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Fornecedor", style: TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 6),
         TypeAheadField<Fornecedor>(
           suggestionsCallback: (query) async {
 
@@ -45,20 +44,49 @@ class _FornecedorCustoAutocompleteState
             viewModel.addFornecedor(value);
           },
           builder: (context, controller, focusNode) {
-            return TextFormField(
-              controller: controller,
-              focusNode: focusNode,
-              decoration: InputDecoration(
-                hintText: "Informe o Fornecedor",
-                filled: true,
-                fillColor: Colors.white,
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => controller.clear(),
-                ),
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryBlue.withValues(alpha: 0.04),
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-            );
+                child:TextFormField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textDark),
+                  decoration: InputDecoration(
+                    hintText: "Informe o Fornecedor",
+                    hintStyle: TextStyle(color: AppColors.textGray, fontSize: 15),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    filled: true,
+                    fillColor: Colors.white,
+                    prefixIcon: Container(
+                      margin: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.accentPurple.withValues(alpha: 0.15), AppColors.accentPink.withValues(alpha: 0.15)],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(Icons.business_outlined, color: AppColors.accentPurple, size: 20),
+                    ),
+                    prefixStyle: TextStyle(color: AppColors.textDark, fontSize: 15, fontWeight: FontWeight.w600),
+                    border: InputBorder.none,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => controller.clear(),
+                    ),
+                  ),
+                ))
+              ;
           },
         ),
         const SizedBox(height: 8),
@@ -68,6 +96,7 @@ class _FornecedorCustoAutocompleteState
             final index = fornecedores.indexOf(fornecedor);
 
             return Card(
+              color: AppColors.white,
               margin: const EdgeInsets.symmetric(vertical: 4),
               elevation: 2,
               child: Padding(

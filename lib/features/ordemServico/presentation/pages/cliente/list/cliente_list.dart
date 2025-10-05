@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/cliente_card.dart';
 
 import '../edit/client_form_page.dart';
 import '../../../providers/clientes_provider_refactored.dart';
@@ -94,21 +95,8 @@ class ClientList extends ConsumerWidget {
                   const SnackBar(content: Text('Cliente excluído')),
                 );
               },
-              child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(cliente.nomeEmpresa),
-                  subtitle: Text(cliente.getDocumentFormatted() ?? 'documento não informado'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ClientForm(clienteId: cliente.id),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              child:
+              ClienteCard(cliente: cliente),
             );
           },
         );
