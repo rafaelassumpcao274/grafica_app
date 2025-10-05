@@ -69,16 +69,20 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) async {},
-        onUpgrade: (migrator, from, to) async {},
-        beforeOpen: (details) async {
-          await master(this); // aplica os scripts no startup
-          final formatosCount = await select(formatoTable).get();
-          if (formatosCount.isEmpty) {
-            await insertSeedData(this);
-          }
-        },
-      );
+    onCreate: (Migrator m) async {
+      await m.createAll(); // cria todas as tabelas automaticamente
+
+      // Insere seeds apenas na criação
+      await insertSeedData(this);
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      // Exemplo: migrações automáticas
+      if (from == 1) {
+        // await m.addColumn(papelTable, papelTable.novaColuna);
+        // await m.createTable(novaTabelaTable);
+      }
+    },
+  );
 
   static Future<void> insertSeedData(AppDatabase db) async {
     for (final formato in formatoSeed) {
