@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/enums/TipoServico.dart';
 import 'package:unilith_app/features/ordemServico/presentation/providers/fornecedor_provider.dart';
 import 'package:unilith_app/features/ordemServico/presentation/providers/via_cores_provider.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/via_cores_card.dart';
 
+import '../../../core/theme.dart';
 import '../../../providers/clientes_provider_refactored.dart';
 import '../../../providers/papel_provider.dart';
 import '../edit/via_cores_form_page.dart';
@@ -40,39 +42,35 @@ class _ViaCoresListState extends ConsumerState<ViaCoresList> {
                 return (c?.descricao.toLowerCase().contains(query) ??
                         false);
               }).toList();
+
         return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 100),
           itemCount: filtered.length,
           itemBuilder: (context, index) {
             final viacores = filtered[index];
-            return Dismissible(
-              key: Key(viacores.id),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                color: Colors.red,
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: const Icon(Icons.delete, color: Colors.white),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryBlue.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              onDismissed: (direction) async {
-                await viacoresNotifier.delete(viacores.id);
-                setState(() {});
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Via excluída')),
+              child: ViaCoresCard(viaCores: viacores,
+              onEdit: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ViaCoresForm(viacoresId: viacores.id),
+                  ),
                 );
               },
-              child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.format_color_fill_sharp),
-                  title: Text(viacores.descricao),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ViaCoresForm(viacoresId: viacores.id),
-                      ),
-                    );
-                  },
-                ),
+                onRemove: () async =>  await viacoresNotifier.delete(viacores.id),
               ),
             );
           },

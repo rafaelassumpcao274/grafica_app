@@ -50,4 +50,11 @@ class FornecedorNotifier extends AsyncNotifier<List<Fornecedor>> {
       state = AsyncValue.error(e,StackTrace.empty);
     }
   }
+
+  /// 🔎 Busca fornecedores por nome direto no repository
+  Future<List<Fornecedor>> searchFornecedores(String query) async {
+    if (repository == null) return [];
+    if (query.isEmpty) return await repository!.getFornecedores();
+    return repository!.getFornecedorPaginated(search: query);
+  }
 }

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/formato.dart';
 import '../../../../domain/entities/fornecedorOrdemServico.dart';
 import '../../../../domain/entities/ordemservico.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../domain/entities/papel.dart';
 import '../../../../domain/entities/viaCoresOrdemServico.dart';
 import '../../../../domain/vos/tamanho.dart';
-import '../../../providers/fornecedor_custo_provider.dart';
 import '../../../providers/ordemservico_provider.dart';
-import '../../../widgets/components/fornecedor_custo_autocomplete_view_model.dart';
+import '../../../widgets/fornecedor/fornecedor_custo_controller.dart';
 import '../../../widgets/number_editing_controller.dart';
 
 final ordemServicoViewModelProvider =
@@ -25,20 +23,8 @@ class OrdemServicoViewModel extends ChangeNotifier {
   final Ref ref;
 
   OrdemServicoViewModel(this.ordemNotifier, this.ref) {
-    ref.listen<List<FornecedorOrdemServico>>(
-      fornecedorCustoViewModelProvider,
-          (previous, next) {
-        final total = next.fold(0.0, (a, b) => a + b.custo);
-        valorCustoController.text = total.toStringAsFixed(2);
-        notifyListeners();
-      },
-    );
+    fornecedorCustoController.addListener( () => valorCustoController.text = fornecedorCustoController.totalCusto.toString());
   }
-
-
-  // Fornecedor
-  FornecedorCustoViewModel get fornecedorNotifier =>
-      ref.read(fornecedorCustoViewModelProvider.notifier);
 
 
   // Campos e controllers
@@ -55,6 +41,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
   TextEditingController papelController = TextEditingController();
   TextEditingController tamanhoImagemController = TextEditingController();
   TextEditingController observacaoController = TextEditingController();
+  FornecedorCustoController fornecedorCustoController = FornecedorCustoController();
 
   NumberEditingController<int> quantidadeFolhaController =
   NumberEditingController<int>(value: 0);
@@ -72,8 +59,6 @@ class OrdemServicoViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final fornecedorVM = fornecedorNotifier;
-    fornecedorVM.clear();
    if(ordemId != null){
      final ordem = await ordemNotifier.getById(ordemId);
      if (ordem != null) {
@@ -84,7 +69,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
        selectedPapel = ordem.papel;
        listVias = ordem.vias;
        possuiNumeracao = ordem.possuiNumeracao;
-
+       fornecedorCustoController.setFornecedores( ordem.fornecedores);
        materialController.text = ordem.material ?? '';
        corFrenteController.text = ordem.corFrente ?? '';
        corVersoController.text = ordem.corVerso ?? '';
@@ -95,14 +80,8 @@ class OrdemServicoViewModel extends ChangeNotifier {
        papelController.text = ordem.papel?.descricao ?? '';
        tamanhoImagemController.text = ordem.tamanhoImagem?.toString() ?? '';
        observacaoController.text = ordem.observacao ?? '';
-       valorCustoController.text = ordem.valorCusto.toString();
+       valorCustoController.text = fornecedorCustoController.totalCusto.toString();
        valorTotalController.text = ordem.valorTotal.toString();
-
-       // Carrega fornecedores já salvos na OS
-
-       if (ordem.fornecedores.isNotEmpty) {
-         fornecedorVM.setFornecedores(ordem.fornecedores);
-       }
      }
    }
 
@@ -125,11 +104,12 @@ class OrdemServicoViewModel extends ChangeNotifier {
     numeracaoInicialController.dispose();
     numeracaoFinalController.dispose();
     valorCustoController.dispose();
+    fornecedorCustoController.dispose();
   }
 
   OrdemServico buildOrdem({int? ordemId}) {
-    final totalCusto = fornecedorNotifier.totalCusto;
-    final fornecedores = fornecedorNotifier.state;
+    final totalCusto = fornecedorCustoController.totalCusto;
+    final fornecedores = fornecedorCustoController.value;
 
     return OrdemServico(
       id: ordemId,
@@ -145,7 +125,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
       numeracaoFinal: numeracaoFinalController.number!,
       observacao: observacaoController.text,
       valorCusto: totalCusto,
-      valorTotal: valorTotalController.number!.toDouble(),
+      valorTotal: double.tryParse(valorTotalController.text) ?? 0.0,
       fornecedores: fornecedores,
       vias: listVias,
       tamanhoImagem: tamanhoImagemController.text.isNotEmpty

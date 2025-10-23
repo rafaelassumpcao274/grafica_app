@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_btn.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_header_with_btn_back.dart';
 
 import '../../../../domain/entities/clientes.dart';
+import '../../../core/theme.dart';
 import '../../../providers/clientes_provider_refactored.dart';
 import '../../../widgets/components/cpf_cnpj_form_field.dart';
 import '../../../widgets/components/custom_text_input.dart';
@@ -30,46 +33,49 @@ class ClientForm extends ConsumerWidget {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(clienteId != null ? 'Editar Cliente' : 'Cadastrar Cliente'),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: GlobalKey<FormState>(),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextInput(
-                      controller: viewModel.nameController,
-                      hintText: 'Nome da Empresa',
-                      icon: Icons.domain,
+          backgroundColor: AppColors.lightGray,
+    body: SafeArea(child:
+        Column(
+          children: [
+            CustomHeaderWithBtnBack(text: clienteId != null ? 'Editar Cliente' : 'Cadastrar Cliente'),
+            Expanded(child:
+                SingleChildScrollView(
+                  padding: EdgeInsets.all(24),
+                  child: Form(
+                  key: GlobalKey<FormState>(),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextInput(
+                          controller: viewModel.nameController,
+                          hintText: 'Nome da Empresa',
+                          icon: Icons.domain,
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextInput(
+                          controller: viewModel.emailController,
+                          hintText: 'E-mail',
+                          icon: Icons.alternate_email,
+                        ),
+                        const SizedBox(height: 16),
+                        CpfCnpjFormField(controller: viewModel.cpfController),
+                        const SizedBox(height: 16),
+
+                        CustomBtn( text: 'Salvar Cliente',
+                            onTap: () async {
+                              await viewModel.saveCliente(clienteId);
+                              Navigator.pop(context);
+                            }),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    CustomTextInput(
-                      controller: viewModel.emailController,
-                      hintText: 'E-mail',
-                      icon: Icons.alternate_email,
-                    ),
-                    const SizedBox(height: 16),
-                    CpfCnpjFormField(controller: viewModel.cpfController),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await viewModel.saveCliente(clienteId);
-                          Navigator.pop(context);
-                        },
-                        child: Text(clienteId != null ? 'Salvar Alterações' : 'Salvar'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  ),
+                ),)
+            )
+
+          ],
+        )
+    )
         );
       },
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),

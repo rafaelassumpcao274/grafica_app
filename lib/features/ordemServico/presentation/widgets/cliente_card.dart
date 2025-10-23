@@ -50,9 +50,9 @@ class ClienteCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(cliente.nomeEmpresa, style: Theme.of(context).textTheme.titleMedium),
-                      if (cliente.telefone != null) ...[
+                      if (cliente.documento != null) ...[
                         SizedBox(height: 6),
-                        _buildInfoRow(Icons.phone_outlined, cliente.telefone!),
+                        _buildInfoRow(Icons.art_track, cliente.documento!),
                       ],
                       if (cliente.email != null) ...[
                         SizedBox(height: 4),

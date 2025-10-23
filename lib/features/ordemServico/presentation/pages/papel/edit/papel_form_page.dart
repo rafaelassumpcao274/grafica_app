@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/papel/edit/papel_form_view_model.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_btn.dart';
 
 
 import '../../../widgets/components/custom_text_input.dart';
@@ -53,7 +54,7 @@ class _PapelFormState extends ConsumerState<PapelForm> {
                 CustomTextInput(
                   controller: viewModel.descricao,
                   hintText: 'Nome do Papel',
-                  icon: Icons.business_center,
+                  icon: Icons.description,
                   validator: (_) => viewModel.errorMessage,
                 ),
                 const SizedBox(height: 16.0),
@@ -63,39 +64,18 @@ class _PapelFormState extends ConsumerState<PapelForm> {
                   icon: Icons.numbers,
                 ),
                 const SizedBox(height: 16.0),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xD818971C),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate() && viewModel.validar()) {
-                        final papel = viewModel.getPapel(id: widget.papelId);
+                CustomBtn(text: 'Salvar Alterações', onTap: () async {
+                  if (_formKey.currentState!.validate() && viewModel.validar()) {
+                    final papel = viewModel.getPapel(id: widget.papelId);
 
-                        if (widget.papelId != null) {
-                          await viewModel.notifier.updatePapel(papel);
-                        } else {
-                          await viewModel.notifier.add(papel);
-                        }
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Text(
-                      widget.papelId != null ? 'Salvar Alterações' : 'Salvar',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                    if (widget.papelId != null) {
+                      await viewModel.notifier.updatePapel(papel);
+                    } else {
+                      await viewModel.notifier.add(papel);
+                    }
+                    Navigator.pop(context);
+                  }
+                }),
               ],
             ),
           ),

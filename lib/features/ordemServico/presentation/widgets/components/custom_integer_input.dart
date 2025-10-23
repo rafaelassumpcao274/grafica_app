@@ -94,7 +94,9 @@ class ThousandsFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
+
     String digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
     if (digitsOnly.isEmpty) return const TextEditingValue(text: '');
 
     String newText = ThousandsFormatNumber(digitsOnly);

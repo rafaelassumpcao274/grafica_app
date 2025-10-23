@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_btn.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_header_with_btn_back.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_obsevarcao_input.dart';
 
 import '../../../../domain/entities/viaCoresOrdemServico.dart';
@@ -25,6 +27,8 @@ class OrdemServicoForm extends ConsumerStatefulWidget {
 
 class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
   bool _loaded = false;
+
+
 
   @override
   void didChangeDependencies() {
@@ -55,7 +59,10 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
         body: SafeArea(
             child: Column(
           children: [
-            _buildHeader(),
+            CustomHeaderWithBtnBack(
+                text: widget.ordemId == null
+                    ? 'Nova Ordem de Serviço'
+                    : 'Editar Ordem de Serviço'),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(24),
@@ -105,15 +112,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                         icon: Icons.numbers,
                       ),
                       const SizedBox(height: 16),
-                      CustomSwitch(
-                        value: viewModel.possuiNumeracao,
-                        onChanged: (v) {
-                          setState(() {
-                            viewModel.possuiNumeracao = v;
-                          });
-                        },
-                        label: 'Possui numeração',
-                      ),
+                      _buildNumeracaoSwitch(viewModel),
                       if (viewModel.possuiNumeracao) ...[
                         const SizedBox(height: 16),
                         CustomIntegerInput(
@@ -128,12 +127,27 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                           hintText: 'Numeração Final',
                           useThousandsSeparator: true,
                           icon: Icons.numbers,
+                          validator: (value) {
+                            if (value != null) {
+                              final numIni =
+                                  viewModel.numeracaoInicialController.number;
+
+                              if (numIni != null && numIni! > 0) {
+                                return (int.parse(value) < numIni)
+                                    ? "Numeração final e menor que o inicial !!!"
+                                    : "";
+                              }
+                            }
+                            return "";
+                          },
                         ),
                       ],
                       SizedBox(height: 32),
                       _buildSectionTitle('Fornecedor'),
                       const SizedBox(height: 16),
-                      const FornecedorCustoAutocomplete(),
+                      FornecedorCustoAutocomplete(
+                        initialValue: viewModel.fornecedorCustoController,
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -149,16 +163,18 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                               child: CustomDecimalInput(
                             controller: viewModel.valorTotalController,
                             hintText: 'Valor Total',
-                                icon: Icons.account_balance_wallet_outlined,
+                            icon: Icons.account_balance_wallet_outlined,
                           ))
                         ],
                       ),
                       SizedBox(height: 32),
                       _buildSectionTitle('Observações'),
-                      // _buildObservacaoField(viewModel.observacaoController),
-                      CustomObservacaoInput(controller: viewModel.observacaoController),
+                      CustomObservacaoInput(
+                          controller: viewModel.observacaoController),
                       const SizedBox(height: 16),
-                      _buildSaveButton(viewModel)
+                      CustomBtn(
+                          text: 'Salvar Ordem de Serviço',
+                          onTap: () => _saveOrUpdate(viewModel))
                     ],
                   ),
                 ),
@@ -168,43 +184,54 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
         )));
   }
 
-  Widget _buildHeader() {
+  Widget _buildNumeracaoSwitch(OrdemServicoViewModel viewModel) {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryBlue.withValues(alpha: 0.06),
+            color: AppColors.primaryBlue.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.lightGray,
-                borderRadius: BorderRadius.circular(14),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.success.withValues(alpha: 0.15),
+                      AppColors.success.withValues(alpha: 0.1)
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.format_list_numbered,
+                    color: AppColors.success, size: 22),
               ),
-              child:
-                  Icon(Icons.arrow_back, color: AppColors.textDark, size: 22),
-            ),
+              SizedBox(width: 14),
+              Text('Possui numeração',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textDark)),
+            ],
           ),
-          SizedBox(width: 16),
-          Text(
-            widget.ordemId == null
-                ? 'Nova Ordem de Serviço'
-                : 'Editar Ordem de Serviço',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge
-                ?.copyWith(fontSize: 20),
+          Switch(
+            value: viewModel.possuiNumeracao,
+            onChanged: (value) =>
+                setState(() => viewModel.possuiNumeracao = value),
+            activeColor: AppColors.success,
+            activeTrackColor: AppColors.success.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -230,78 +257,5 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
       await viewModel.saveOrdem();
     }
     if (mounted) Navigator.pop(context);
-  }
-
-  Widget _buildSaveButton(OrdemServicoViewModel viewModel) {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primaryBlue, AppColors.accentPurple],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryBlue.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _saveOrUpdate(viewModel),
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: Text(
-              'Salvar Ordem de Serviço',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildObservacaoField(TextEditingController controller) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryBlue.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child:
-      TextFormField(
-        controller: controller,
-        maxLines: 4,
-        style:
-        TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textDark),
-        decoration: InputDecoration(
-          hintText: 'Observações adicionais...',
-          hintStyle: TextStyle(color: AppColors.textGray, fontSize: 15),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(16),
-        ),
-      ),
-    );
   }
 }

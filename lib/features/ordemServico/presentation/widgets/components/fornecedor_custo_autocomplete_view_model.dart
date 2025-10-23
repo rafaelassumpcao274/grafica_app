@@ -6,72 +6,70 @@ import '../../../domain/entities/fornecedor.dart';
 import '../../../domain/entities/fornecedorOrdemServico.dart';
 import '../../../domain/provider/providers.dart';
 import '../../../domain/repositories/fornecedor_repository.dart';
+import '../fornecedor/fornecedor_custo_controller.dart';
 
 /// Provider da ViewModel
 // Provider do ViewModel
-final fornecedorCustoViewModelProvider = StateNotifierProvider<
-    FornecedorCustoViewModel, List<FornecedorOrdemServico>>((ref) {
-  final repositoryAsync = ref.watch(fornecedorRepositoryProvider);
+final fornecedorCustoViewModelProvider =
+ChangeNotifierProvider.family<FornecedorCustoViewModel, FornecedorCustoController>(
+      (ref, fornecedorController) {
+    final notifier = ref.watch(fornecedorNotifierProvider.notifier);
+    final vm = FornecedorCustoViewModel(notifier,fornecedorController);
+    return vm;
+  },
+);
 
-  return repositoryAsync.when(
-    data: (repository) => FornecedorCustoViewModel(repository),
-    loading: () => FornecedorCustoViewModel(null), // sem repo ainda
-    error: (err, stack) => FornecedorCustoViewModel(null), // sem repo em caso de erro
-  );
-});
-
-
-class FornecedorCustoViewModel extends StateNotifier<List<FornecedorOrdemServico>> {
-  final FornecedorRepository? repository;
+class FornecedorCustoViewModel extends ChangeNotifier {
+  final FornecedorNotifier? repository;
   final Map<String, TextEditingController> _controllers = {};
+  final FornecedorCustoController fornecedorController;
 
-  FornecedorCustoViewModel(this.repository) : super([]);
 
-  double get totalCusto => state.fold(0.0, (a, b) => a + b.custo);
+  FornecedorCustoViewModel(this.repository,this.fornecedorController);
+
+
+
 
   void clear() {
-    state = [];
     _controllers.clear();
+
   }
 
   void setFornecedores(List<FornecedorOrdemServico> fornecedores) {
-    state = fornecedores;
+    fornecedorController.setFornecedores(fornecedores);
+
   }
 
   void addFornecedor(Fornecedor fornecedor) {
-    if (!state.any((f) => f.fornecedor?.id == fornecedor.id)) {
-      state = [...state, FornecedorOrdemServico(fornecedor: fornecedor)];
-    }
+    fornecedorController.addFornecedor(fornecedor);
+
   }
 
   void removeFornecedor(int index) {
-    final removed = state[index];
+    final removed = fornecedorController.value[index];
     _controllers.remove(removed.id);
-    state = [...state]..removeAt(index);
+    fornecedorController.removeFornecedor(index);
+
   }
 
   TextEditingController getController(FornecedorOrdemServico fornecedor) {
     return _controllers.putIfAbsent(
       fornecedor.id,
-          () => TextEditingController(
-        text: fornecedor.custo.toStringAsFixed(2),
-      ),
+          () =>
+          TextEditingController(
+            text: fornecedor.custo.toStringAsFixed(2),
+          ),
     );
   }
 
   void updateFornecedor(int index, String valor) {
-    final parsed = double.tryParse(valor.replaceAll(',', '.')) ?? 0.0;
-    final updated = [...state];
-    updated[index] = updated[index].copyWith(custo: parsed);
-    state = updated;
+    fornecedorController.updateFornecedor(index, valor);
   }
 
   /// 🔎 Busca fornecedores por nome direto no repository
   Future<List<Fornecedor>> searchFornecedores(String query) async {
-    if(repository == null) return [];
-    if (query.isEmpty) return await repository!.getFornecedores() ;
-    return repository!.getFornecedorPaginated(search: query);
+    if (repository == null) return [];
+    if (query.isEmpty) return await repository!.build();
+    return repository!.searchFornecedores(query);
   }
 }
-
-

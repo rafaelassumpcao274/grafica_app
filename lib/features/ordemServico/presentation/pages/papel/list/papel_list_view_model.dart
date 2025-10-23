@@ -17,7 +17,9 @@ class PapelListViewModel extends ChangeNotifier {
   List<Papel> _papeis = [];
   bool isLoading = false;
 
-  PapelListViewModel(this.notifier);
+  PapelListViewModel(this.notifier) : super() {
+    loadPapeis();
+  }
 
   List<Papel> get papeis => _papeis;
 

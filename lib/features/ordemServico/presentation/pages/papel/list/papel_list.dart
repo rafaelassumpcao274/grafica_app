@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/papel/list/papel_list_view_model.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/papel_card.dart';
 
 import '../edit/papel_form_page.dart';
 
@@ -21,11 +22,11 @@ class PapelList extends ConsumerStatefulWidget {
 class _PapelListState extends ConsumerState<PapelList> {
   String searchQuery = '';
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    ref.read(papelListViewModelProvider).loadPapeis();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   ref.read(papelListViewModelProvider).loadPapeis();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +66,8 @@ class _PapelListState extends ConsumerState<PapelList> {
               const SnackBar(content: Text('Papel excluído')),
             );
           },
-          child: Card(
-            child: ListTile(
-              leading: const Icon(Icons.article),
-              title: Text(papel.descricao),
-              subtitle: Text(papel.quantidadePapel.toString()),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PapelForm(papelId: papel.id),
-                  ),
-                );
-              },
-            ),
-          ),
+          child:
+          PapelCard(papel: papel),
         );
       },
     );

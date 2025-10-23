@@ -5,12 +5,15 @@ import 'package:unilith_app/features/ordemServico/presentation/pages/papel/edit/
 import 'package:unilith_app/features/ordemServico/presentation/pages/via_cores/edit/via_cores_form_page.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/via_cores/via_cores_filter_input.dart';
 
+import '../widgets/app_drawer.dart';
 import '../widgets/cliente/cliente_filter_input.dart';
+import '../widgets/components/custom_bottom_nav.dart';
 import '../widgets/components/custom_fab.dart';
 import '../widgets/fornecedor/fornecedor_filter_input.dart';
 import '../widgets/ordem_servico/ordem_servico_filter_input.dart';
 import '../widgets/papel/papel_filter_input.dart';
 import 'cliente/edit/client_form_page.dart';
+import 'drawer_page.dart';
 import 'ordem_servico/edit/ordem_servico_form_page.dart';
 
 class AppPage extends ConsumerStatefulWidget {
@@ -23,6 +26,19 @@ class AppPage extends ConsumerStatefulWidget {
 class _AppPageState extends ConsumerState<AppPage>
     with SingleTickerProviderStateMixin {
   int currentPageIndex = 0;
+
+  final List<Widget> _screens = [
+    OrdemServicoFilterInput(),
+    ClientFilterInput(),
+    FornecedorFilterInput(),
+    ViaCoresFilterInput(),
+    PapelFilterInput()
+  ];
+
+  final List<DrawerPage> _screensDrawer = [
+    DrawerPage(title: "Cores das vias", index: 3, icon: Icons.palette_outlined),
+    DrawerPage(title: "Papeis", index: 4, icon: Icons.layers_outlined)
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -46,123 +62,15 @@ class _AppPageState extends ConsumerState<AppPage>
       ),
 
       // 🔹 Drawer à direita com apenas Papel
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color.fromARGB(255, 40, 53, 71)),
-              child: Text('Menu',
-                  style: TextStyle(color: Colors.white, fontSize: 20)),
-            ),
-            ListTile(
-              leading: const Icon(Icons.note),
-              title: const Text('Papel'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => Scaffold(
-                      appBar: AppBar(title: const Text('Papeis')),
-                      body: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: PapelFilterInput(),
-                      ),
-                      floatingActionButton: CustomFloatingActionButton(
-                        icon: Icons.add,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const PapelForm()),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.note),
-              title: const Text('Cores '),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => Scaffold(
-                      appBar: AppBar(title: const Text('Cores')),
-                      body: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: ViaCoresFilterInput(),
-                      ),
-                      floatingActionButton: CustomFloatingActionButton(
-                        icon: Icons.add,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const ViaCoresForm()),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      endDrawer: AppDrawer(
+          screens: _screensDrawer,
+          onTap: (index) => setState(() => currentPageIndex = index)),
 
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          backgroundColor: const Color.fromARGB(255, 40, 53, 71),
-          indicatorColor: const Color.fromARGB(255, 37, 100, 235),
-          iconTheme:
-              WidgetStateProperty.all(const IconThemeData(color: Colors.white)),
-          labelTextStyle:
-              WidgetStateProperty.all(const TextStyle(color: Colors.white)),
-        ),
-        child: NavigationBar(
-          selectedIndex: currentPageIndex,
-          onDestinationSelected: (int index) =>
-              setState(() => currentPageIndex = index),
-          destinations: const [
-            NavigationDestination(
-              selectedIcon: Icon(Icons.description),
-              icon: Icon(Icons.description_outlined),
-              label: 'Ordem de Serviço',
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.people),
-              icon: Icon(Icons.people_outlined),
-              label: 'Clientes',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.business),
-              label: 'Fornecedores',
-            ),
-          ],
-        ),
+      body: _screens[currentPageIndex],
+      bottomNavigationBar: CustomBottomNav(
+        currentIndex: currentPageIndex,
+        onTap: (index) => setState(() => currentPageIndex = index),
       ),
-
-      body: <Widget>[
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(children: [Expanded(child: OrdemServicoFilterInput())]),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(children: [Expanded(child: ClientFilterInput())]),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(children: [Expanded(child: FornecedorFilterInput())]),
-        ),
-      ][currentPageIndex],
 
       floatingActionButton: CustomFloatingActionButton(
         onPressed: () {
@@ -175,6 +83,12 @@ class _AppPageState extends ConsumerState<AppPage>
           } else if (currentPageIndex == 2) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const FornecedorForm()));
+          } else if (currentPageIndex == 3) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const ViaCoresForm()));
+          } else if (currentPageIndex == 4) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const PapelForm()));
           }
         },
         icon: Icons.add,

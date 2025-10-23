@@ -24,13 +24,18 @@ class CurrencyInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    // Remove tudo que não for dígito
-    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
+    // Remove tudo que não for dígito ou vírgula/ponto
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d,\.]'), '');
+
     if (digitsOnly.isEmpty) {
       return const TextEditingValue(text: '');
     }
 
-    double value = double.parse(digitsOnly) / 100;
+    // Substitui vírgula por ponto para o parse
+    digitsOnly = digitsOnly.replaceAll(',', '.');
+
+    double value = double.tryParse(digitsOnly) ?? 0.0;
 
     String newText;
 
@@ -40,13 +45,11 @@ class CurrencyInputFormatter extends TextInputFormatter {
         break;
 
       case CurrencyFormatType.integerWithDecimal:
-      // Sem símbolo, mas com separador de milhares e vírgula decimal
         final formatter = NumberFormat("#,##0.${'0' * decimalDigits}", "pt_BR");
         newText = formatter.format(value);
         break;
 
       case CurrencyFormatType.full:
-      // Com símbolo de moeda
         final formatter = NumberFormat.currency(
           locale: 'pt_BR',
           symbol: symbol,
@@ -62,4 +65,5 @@ class CurrencyInputFormatter extends TextInputFormatter {
     );
   }
 }
+
 
