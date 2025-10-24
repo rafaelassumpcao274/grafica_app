@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../domain/entities/clientes.dart';
 import '../../../../domain/entities/formato.dart';
-import '../../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../../domain/entities/fornecedor_ordem_servico.dart';
 import '../../../../domain/entities/ordemservico.dart';
 import '../../../../domain/entities/papel.dart';
-import '../../../../domain/entities/viaCoresOrdemServico.dart';
+import '../../../../domain/entities/via_cores_ordem_servico.dart';
 import '../../../../domain/vos/tamanho.dart';
 import '../../../providers/ordemservico_provider.dart';
 import '../../../widgets/fornecedor/fornecedor_custo_controller.dart';

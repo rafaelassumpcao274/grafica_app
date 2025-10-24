@@ -5,7 +5,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_decimal_input.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/fornecedor/fornecedor_custo_controller.dart';
 import '../../../domain/entities/fornecedor.dart';
-import '../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../domain/entities/fornecedor_ordem_servico.dart';
 import '../../../domain/provider/providers.dart';
 import '../../core/formatter/currency_input_formatter.dart';
 import '../../core/theme.dart';

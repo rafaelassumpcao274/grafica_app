@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/providers/fornecedor_provider.dart';
 
 import '../../../domain/entities/fornecedor.dart';
-import '../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../domain/entities/fornecedor_ordem_servico.dart';
 import '../../../domain/provider/providers.dart';
 import '../../../domain/repositories/fornecedor_repository.dart';
 import '../fornecedor/fornecedor_custo_controller.dart';

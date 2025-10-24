@@ -4,7 +4,7 @@ import 'package:unilith_app/features/ordemServico/presentation/widgets/component
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_header_with_btn_back.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_obsevarcao_input.dart';
 
-import '../../../../domain/entities/viaCoresOrdemServico.dart';
+import '../../../../domain/entities/via_cores_ordem_servico.dart';
 import '../../../core/theme.dart';
 import '../../../widgets/cliente/cliente_autocomplete.dart';
 import '../../../widgets/components/custom_decimal_input.dart';

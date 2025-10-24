@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/viaCoresOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/via_cores_ordem_servico.dart';
 import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
 
-import '../../../domain/entities/fornecedorOrdemServico.dart';
+import '../../../domain/entities/fornecedor_ordem_servico.dart';
 import '../../../domain/entities/ordemservico.dart';
 import '../../../domain/entities/via_cores.dart';
 import '../../../domain/repositories/ordemservico_repository.dart';

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor_ordem_servico.dart';
 import 'package:unilith_app/features/ordemServico/domain/entities/papel.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/viaCoresOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/via_cores_ordem_servico.dart';
 import 'package:unilith_app/features/ordemServico/domain/vos/tamanho.dart';
 
 

@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/fornecedorOrdemServico.dart';
+import 'package:unilith_app/features/ordemServico/domain/entities/fornecedor_ordem_servico.dart';
 
 import '../../../domain/entities/fornecedor.dart';
 

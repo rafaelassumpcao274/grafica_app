@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/entities/fornecedorOrdemServico.dart';
+import '../../domain/entities/fornecedor_ordem_servico.dart';
 
 class FornecedorCustoNotifier extends StateNotifier<List<FornecedorOrdemServico>> {
   FornecedorCustoNotifier() : super([]);
