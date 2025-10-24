@@ -88,20 +88,4 @@ class PapelCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildInfoRow(IconData icon, String text) {
-  //   return Row(
-  //     children: [
-  //       Icon(icon, size: 16, color: AppColors.textGray),
-  //       SizedBox(width: 6),
-  //       Expanded(
-  //         child: Text(
-  //           text,
-  //           style: TextStyle(fontSize: 13, color: AppColors.textGray),
-  //           maxLines: 1,
-  //           overflow: TextOverflow.ellipsis,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 }

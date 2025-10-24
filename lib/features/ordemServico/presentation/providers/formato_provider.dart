@@ -4,15 +4,17 @@ import '../../domain/entities/formato.dart';
 import '../../domain/provider/providers.dart';
 import '../../domain/repositories/formato_repository.dart';
 
-class FormatoNotifier extends StateNotifier<List<Formato>> {
-  final FormatoRepository repository;
+class FormatoNotifier extends AsyncNotifier<List<Formato>> {
+  late FormatoRepository repository;
 
-  FormatoNotifier(this.repository) : super([]) {
-    loadFormatos();
+  @override
+  Future<List<Formato>> build() async {
+    repository = await ref.watch(formatoRepositoryProvider.future);
+    return await repository.getFormatos();
   }
 
   Future<void> loadFormatos() async {
-    state = await repository.getFormatos();
+    state = AsyncValue.data(await repository.getFormatos());
   }
 
   // MÉTODO CORRIGIDO: Use o parâmetro search do repository
@@ -30,7 +32,7 @@ class FormatoNotifier extends StateNotifier<List<Formato>> {
     }
   }
 
-  Future<Formato?> getClienteById(String id) async {
+  Future<Formato?> getFormatoById(String id) async {
     final formatos = await repository.getFormatos();
     try {
       return formatos.firstWhere((formato) => formato.id == id);
@@ -39,23 +41,21 @@ class FormatoNotifier extends StateNotifier<List<Formato>> {
     }
   }
 
-  Future<void> addCliente(Formato formato) async {
+  Future<void> addFormato(Formato formato) async {
     await repository.addFormato(formato);
     await loadFormatos();
   }
 
-  Future<void> updateCliente(Formato formato) async {
+  Future<void> updateFormato(Formato formato) async {
     await repository.updateFormato(formato);
     await loadFormatos();
   }
 
-  Future<void> deleteCliente(String id) async {
+  Future<void> deleteFormato(String id) async {
     await repository.deleteFormato(id);
     await loadFormatos();
   }
 }
 
-final formatoProvider = FutureProvider<FormatoNotifier>((ref) async {
-  final repository = await ref.watch(formatoRepositoryProvider.future);
-  return FormatoNotifier(repository);
-});
+final formatoProvider =
+    AsyncNotifierProvider<FormatoNotifier, List<Formato>>(FormatoNotifier.new);
