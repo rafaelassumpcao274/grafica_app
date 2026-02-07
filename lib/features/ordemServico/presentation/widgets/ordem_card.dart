@@ -57,7 +57,8 @@ class OrdemCard extends StatelessWidget {
                           Row(
                             children: [
                               Text('${ordem.id} - ', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                              Text(ordem.clientes!.nomeEmpresa, style: Theme.of(context).textTheme.titleMedium),
+                              Expanded(child:Text(ordem.clientes!.nomeEmpresa, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis,), )
+
                             ],
                           ),
                           SizedBox(height: 4),

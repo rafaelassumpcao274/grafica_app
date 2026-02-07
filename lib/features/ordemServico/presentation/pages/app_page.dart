@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/formato/edit/formato_form_page.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/fornecedor/edit/fornecedor_form_page.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/papel/edit/papel_form_page.dart';
+import 'package:unilith_app/features/ordemServico/presentation/pages/relatorio_financeiro/relatorio_financeiro.dart';
 import 'package:unilith_app/features/ordemServico/presentation/pages/via_cores/edit/via_cores_form_page.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/title_page.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/via_cores/via_cores_filter_input.dart';
 
 import '../widgets/app_drawer.dart';
@@ -35,24 +37,34 @@ class _AppPageState extends ConsumerState<AppPage>
     FornecedorFilterInput(),
     ViaCoresFilterInput(),
     PapelFilterInput(),
-    FormatoFilterInput()
+    FormatoFilterInput(),
+    RelatorioScreen()
   ];
 
-  final List<DrawerPage> _screensDrawer = [
-    DrawerPage(title: "Cores das vias", index: 3, icon: Icons.palette_outlined),
-    DrawerPage(title: "Papeis", index: 4, icon: Icons.layers_outlined),
-    DrawerPage(title: "Formato", index: 5, icon: Icons.straighten_outlined),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
+    final List<DrawerPage> _screensDrawer = [
+      DrawerPage(title: "Cores das vias", index: _screens.indexOf(ViaCoresFilterInput()), icon: Icons.palette_outlined),
+      DrawerPage(title: "Papeis", index: 4, icon: Icons.layers_outlined),
+      DrawerPage(title: "Formato", index: 5, icon: Icons.straighten_outlined),
+      DrawerPage(title: "Relatório Financeiro", index: 6, icon: Icons.article),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.print),
-            SizedBox(width: 8),
-            Text('Unilith App'),
+            if(currentPageIndex < 3)...[
+              Icon(Icons.print),
+              SizedBox(width: 8),
+              Text('Unilith App'),
+            ] else ...[
+              Icon(_screensDrawer[currentPageIndex - 3].icon),
+              SizedBox(width: 8),
+              Text(_screensDrawer[currentPageIndex - 3].title),
+            ]
           ],
         ),
         actions: [
@@ -76,7 +88,7 @@ class _AppPageState extends ConsumerState<AppPage>
         onTap: (index) => setState(() => currentPageIndex = index),
       ),
 
-      floatingActionButton: CustomFloatingActionButton(
+      floatingActionButton: currentPageIndex != 6 ? CustomFloatingActionButton(
         onPressed: () {
           if (currentPageIndex == 0) {
             Navigator.push(context,
@@ -99,7 +111,7 @@ class _AppPageState extends ConsumerState<AppPage>
           }
         },
         icon: Icons.add,
-      ),
+      ): null,
     );
   }
 }

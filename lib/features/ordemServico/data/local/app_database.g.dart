@@ -1711,13 +1711,14 @@ class $OrdemServicoTableTable extends OrdemServicoTable
   late final GeneratedColumn<String> tamanhoImagem = GeneratedColumn<String>(
       'tamanho_imagem', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
   @override
-  late final GeneratedColumnWithTypeConverter<DateTime, String> createdAt =
-      GeneratedColumn<String>('created_at', aliasedName, false,
-              type: DriftSqlType.string,
-              requiredDuringInsert: false,
-              defaultValue: const Constant('CURRENT_TIMESTAMP'))
-          .withConverter<DateTime>($OrdemServicoTableTable.$convertercreatedAt);
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1841,6 +1842,10 @@ class $OrdemServicoTableTable extends OrdemServicoTable
     } else if (isInserting) {
       context.missing(_tamanhoImagemMeta);
     }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
     return context;
   }
 
@@ -1880,9 +1885,8 @@ class $OrdemServicoTableTable extends OrdemServicoTable
           .read(DriftSqlType.double, data['${effectivePrefix}valor_total'])!,
       tamanhoImagem: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}tamanho_imagem'])!,
-      createdAt: $OrdemServicoTableTable.$convertercreatedAt.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}created_at'])!),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -1890,9 +1894,6 @@ class $OrdemServicoTableTable extends OrdemServicoTable
   $OrdemServicoTableTable createAlias(String alias) {
     return $OrdemServicoTableTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<DateTime, String> $convertercreatedAt =
-      const SqliteDateTimeConverter();
 }
 
 class OrdemServicoTableData extends DataClass
@@ -1952,10 +1953,7 @@ class OrdemServicoTableData extends DataClass
     map['valor_custo'] = Variable<double>(valorCusto);
     map['valor_total'] = Variable<double>(valorTotal);
     map['tamanho_imagem'] = Variable<String>(tamanhoImagem);
-    {
-      map['created_at'] = Variable<String>(
-          $OrdemServicoTableTable.$convertercreatedAt.toSql(createdAt));
-    }
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -2239,7 +2237,7 @@ class OrdemServicoTableCompanion
     Expression<double>? valorCusto,
     Expression<double>? valorTotal,
     Expression<String>? tamanhoImagem,
-    Expression<String>? createdAt,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2347,8 +2345,7 @@ class OrdemServicoTableCompanion
       map['tamanho_imagem'] = Variable<String>(tamanhoImagem.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<String>(
-          $OrdemServicoTableTable.$convertercreatedAt.toSql(createdAt.value));
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     return map;
   }
@@ -4550,10 +4547,8 @@ class $$OrdemServicoTableTableFilterComposer
   ColumnFilters<String> get tamanhoImagem => $composableBuilder(
       column: $table.tamanhoImagem, builder: (column) => ColumnFilters(column));
 
-  ColumnWithTypeConverterFilters<DateTime, DateTime, String> get createdAt =>
-      $composableBuilder(
-          column: $table.createdAt,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
 
   $$ClientesTableTableFilterComposer get clienteId {
     final $$ClientesTableTableFilterComposer composer = $composerBuilder(
@@ -4714,7 +4709,7 @@ class $$OrdemServicoTableTableOrderingComposer
       column: $table.tamanhoImagem,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get createdAt => $composableBuilder(
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
   $$ClientesTableTableOrderingComposer get clienteId {
@@ -4823,7 +4818,7 @@ class $$OrdemServicoTableTableAnnotationComposer
   GeneratedColumn<String> get tamanhoImagem => $composableBuilder(
       column: $table.tamanhoImagem, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<DateTime, String> get createdAt =>
+  GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   $$ClientesTableTableAnnotationComposer get clienteId {

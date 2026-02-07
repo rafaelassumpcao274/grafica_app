@@ -119,6 +119,8 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
       final clienteData = row.readTableOrNull(db.clientesTable);
       final formatoData = row.readTableOrNull(db.formatoTable);
       final papelData = row.readTableOrNull(db.papelTable);
+      print(ordemData.createdAt.runtimeType);
+      print(ordemData.createdAt);
 
       return OrdemServico(
         id: ordemData.id,

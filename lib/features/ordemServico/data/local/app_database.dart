@@ -65,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion =>
-      1; // Não será usado, já que vamos aplicar migrações manuais
+      2; // Não será usado, já que vamos aplicar migrações manuais
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -77,9 +77,28 @@ class AppDatabase extends _$AppDatabase {
     },
     onUpgrade: (Migrator m, int from, int to) async {
       // Exemplo: migrações automáticas
-      if (from == 1) {
+      if (from < 2) {
         // await m.addColumn(papelTable, papelTable.novaColuna);
         // await m.createTable(novaTabelaTable);
+      }
+
+      if (from < 3) {
+        // 1️⃣ Normaliza valores inválidos (defensivo)
+        await customStatement('''
+              UPDATE ordem_servico_table
+              SET created_at = datetime('now')
+              WHERE created_at IS NULL
+                 OR created_at = ''
+                 OR created_at = 'CURRENT_TIMESTAMP';
+            ''');
+
+        // 2️⃣ Recria a tabela para alinhar o tipo DateTime
+        await m.alterTable(
+          TableMigration(
+            ordemServicoTable,
+            newColumns: [ordemServicoTable.createdAt],
+          ),
+        );
       }
     },
   );

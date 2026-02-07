@@ -36,7 +36,8 @@ class OrdemServicoTable extends Table {
 
   TextColumn get tamanhoImagem => text()();
 
-  TextColumn get createdAt => text()
-      .map(const SqliteDateTimeConverter())
-      .withDefault(const Constant('CURRENT_TIMESTAMP'))();
+  DateTimeColumn get createdAt =>
+      dateTime()
+      .withDefault(currentDateAndTime)();
+
 }
