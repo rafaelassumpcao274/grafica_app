@@ -1,7 +1,7 @@
 name: unilith_app
 description: App for control of services  application with Clean Architecture and Riverpod.
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
