@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_btn.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_header_with_btn_back.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/components/custom_obsevarcao_input.dart';
+import 'package:unilith_app/features/ordemServico/presentation/widgets/papel/papel_bottom_sheet.dart';
 
 import '../../../../domain/entities/via_cores_ordem_servico.dart';
 import '../../../core/theme.dart';
 import '../../../widgets/cliente/cliente_autocomplete.dart';
+import '../../../widgets/cliente/cliente_bottom_sheet_autocomplete.dart';
 import '../../../widgets/components/custom_decimal_input.dart';
 import '../../../widgets/components/custom_integer_input.dart';
 import '../../../widgets/components/custom_switch.dart';
 import '../../../widgets/components/custom_text_input.dart';
-import '../../../widgets/components/fornecedor_custo_autocomplete.dart';
 import '../../../widgets/components/papel_autocomplete.dart';
+import '../../../widgets/fornecedor/fornecedor_custo_bottom_sheet.dart';
 import '../../../widgets/via_cores/chips_via_cores.dart';
 import 'ordem_servico_form_view_model.dart';
 
@@ -71,7 +73,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionTitle('Informações do Cliente'),
-                      ClienteAutocomplete(
+                      ClienteBootomSheetAutocomplete(
                         initialValue: viewModel.selectedCliente,
                         onSelected: (c) => viewModel.selectedCliente = c,
                       ),
@@ -90,7 +92,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                         icon: Icons.straighten_outlined,
                       ),
                       const SizedBox(height: 16),
-                      PapelAutocomplete(
+                      PapelBottomSheetAutocomplete(
                         initialValue: viewModel.selectedPapel,
                         onSelected: (p) =>
                             setState(() => viewModel.selectedPapel = p),
@@ -145,7 +147,7 @@ class _OrdemServicoFormPageState extends ConsumerState<OrdemServicoForm> {
                       SizedBox(height: 32),
                       _buildSectionTitle('Fornecedor'),
                       const SizedBox(height: 16),
-                      FornecedorCustoAutocomplete(
+                      FornecedorCustoBottomSheet(
                         initialValue: viewModel.fornecedorCustoController,
                       ),
                       const SizedBox(height: 16),

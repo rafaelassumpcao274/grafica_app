@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../domain/entities/via_cores.dart';
 import '../../core/theme.dart';
-import '../../providers/via_cores_provider.dart';
+import '../components/custom_text_input.dart' show CustomTextInput;
+import 'via_cores_bottom_sheet.dart';
 
-class ChipsInputVia extends ConsumerStatefulWidget {
+class ChipsInputVia extends StatefulWidget {
   final List<ViaCores> initialItems;
   final ValueChanged<List<ViaCores>> onChanged;
 
@@ -17,11 +17,13 @@ class ChipsInputVia extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChipsInputVia> createState() => _ChipsInputViaState();
+  State<ChipsInputVia> createState() => _ChipsInputViaState();
 }
 
-class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
+class _ChipsInputViaState extends State<ChipsInputVia> {
   late List<ViaCores> _viasSelecionadas;
+
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
   @override
   void didUpdateWidget(covariant ChipsInputVia oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.initialItems != widget.initialItems) {
       setState(() {
         _viasSelecionadas = List.from(widget.initialItems);
@@ -39,21 +42,34 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
     }
   }
 
-  void _addItem(ViaCores value) {
-    final exists = _viasSelecionadas
-        .any((v) => v.descricao.toLowerCase() == value.descricao.toLowerCase());
-    if (!exists) {
-      setState(() {
-        _viasSelecionadas.add(value);
-      });
-      widget.onChanged(_viasSelecionadas);
+  Future<void> _abrirSelecao() async {
+    final resultado = await showModalBottomSheet<List<ViaCores>>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return ViaCoresBottomSheet(
+          initialItems: _viasSelecionadas,
+        );
+      },
+    );
+
+    if (resultado == null) {
+      return;
     }
+
+    setState(() {
+      _viasSelecionadas = resultado;
+    });
+
+    widget.onChanged(_viasSelecionadas);
   }
 
   void _removeItem(ViaCores via) {
     setState(() {
       _viasSelecionadas.remove(via);
     });
+
     widget.onChanged(_viasSelecionadas);
   }
 
@@ -62,84 +78,39 @@ class _ChipsInputViaState extends ConsumerState<ChipsInputVia> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
-        Autocomplete<ViaCores>(
-          optionsBuilder: (TextEditingValue textEditingValue) async {
-            if (textEditingValue.text.isEmpty) {
-              return const Iterable<ViaCores>.empty();
-            }
-            final results = await ref
-                .read(viacoresProvider.notifier)
-                .getViaByNome(textEditingValue.text);
-            return results;
-          },
-          displayStringForOption: (via) => via.descricao,
-          fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-            return Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.mediumGray.withValues(alpha: 0.3)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryBlue.withValues(alpha: 0.04),
-                      blurRadius: 12,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child:
-                TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  enabled: _viasSelecionadas.length < 4,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textDark),
-                  decoration: InputDecoration(
-                    labelText: 'Vias',
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: Icon(Icons.layers_outlined, color: AppColors.textGray, size: 20),
-                    prefixStyle: TextStyle(color: AppColors.textDark, fontSize: 15, fontWeight: FontWeight.w600),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    suffixIcon: controller.text.isNotEmpty
-                        ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          controller.clear();
-                        });
-                      },
-                    )
-                        : null,
-                  ),
-                )
-            );
-          },
-          onSelected: (via) {
-            _addItem(via);
-            // aqui já limpa o campo automaticamente
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              // garante que o clear acontece depois do addItem
-              FocusScope.of(context).unfocus();
-              // se quiser fechar o teclado
-            });
-          },
+        CustomTextInput(
+          controller: _controller,
+          hintText: 'Vias',
+          icon: Symbols.layers,
+          readOnly: true,
+          showBottomSheetIcon: true,
+          onTap: _abrirSelecao,
         ),
+
         const SizedBox(height: 8),
+
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: _viasSelecionadas
-              .map((via) => Chip(
-            label: Text(via.descricao),
-            deleteIcon: const Icon(Icons.close),
-            onDeleted: () => _removeItem(via),
-          ))
+              .map(
+                (via) => Chip(
+              label: Text(via.descricao),
+              deleteIcon: const Icon(Icons.close),
+              onDeleted: () => _removeItem(via),
+            ),
+          )
               .toList(),
         ),
+
         const SizedBox(height: 8),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
