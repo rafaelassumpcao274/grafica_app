@@ -13,6 +13,7 @@ import 'package:unilith_app/features/ordemServico/data/local/tables/vias_ordem_s
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/enums/TipoServico.dart';
 import 'config/sqlite_date_time_converter.dart';
+import 'config/sqlite_epoch_ms_date_time_converter.dart';
 import 'config/sqlite_tipo_servico_converter.dart';
 import 'migration/master.dart';
 import 'tables/fornecedor_table.dart';
@@ -22,6 +23,11 @@ import 'tables/papel_table.dart';
 import 'tables/uf_table.dart';
 import 'tables/clientes_table.dart';
 import 'tables/ordemservico_table.dart';
+import 'tables/fatura_table.dart';
+import 'tables/parcela_table.dart';
+import 'tables/recebimento_table.dart';
+import 'tables/despesa_table.dart';
+import 'tables/forma_pagamento_table.dart';
 
 part 'app_database.g.dart';
 
@@ -42,7 +48,13 @@ LazyDatabase _openConnection() {
   ClientesTable,
   OrdemServicoTable,
   FornecedorOrdemServicoTable,
-  ViaCoresOrdemServicoTable
+  ViaCoresOrdemServicoTable,
+  // Financeiro
+  FaturaTable,
+  ParcelaTable,
+  RecebimentoTable,
+  DespesaTable,
+  FormaPagamentoTable
 ])
 class AppDatabase extends _$AppDatabase {
   // ignore: use_super_parameters
@@ -65,7 +77,7 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion =>
-      2; // Não será usado, já que vamos aplicar migrações manuais
+      4; // v4: adiciona a coluna parcela_table.data_emissao
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -99,6 +111,19 @@ class AppDatabase extends _$AppDatabase {
             newColumns: [ordemServicoTable.createdAt],
           ),
         );
+
+        // 3️⃣ Cria tabelas do módulo financeiro
+        await m.createTable(faturaTable);
+        await m.createTable(parcelaTable);
+        await m.createTable(recebimentoTable);
+        await m.createTable(despesaTable);
+        await m.createTable(formaPagamentoTable);
+      }
+
+      if (from < 4) {
+        // parcela_table.dataEmissao foi adicionada após a criação inicial
+        // das tabelas financeiras (quem já estava na v3 não tem a coluna).
+        await m.addColumn(parcelaTable, parcelaTable.dataEmissao);
       }
     },
   );

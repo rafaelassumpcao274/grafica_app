@@ -2949,6 +2949,1541 @@ class ViaCoresOrdemServicoTableCompanion
   }
 }
 
+class $FaturaTableTable extends FaturaTable
+    with TableInfo<$FaturaTableTable, FaturaTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FaturaTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _ordemServicoIdMeta =
+      const VerificationMeta('ordemServicoId');
+  @override
+  late final GeneratedColumn<int> ordemServicoId = GeneratedColumn<int>(
+      'ordem_servico_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES ordem_servico_table (id)'));
+  static const VerificationMeta _descricaoMeta =
+      const VerificationMeta('descricao');
+  @override
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
+      'descricao', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _valorTotalMeta =
+      const VerificationMeta('valorTotal');
+  @override
+  late final GeneratedColumn<double> valorTotal = GeneratedColumn<double>(
+      'valor_total', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('ABERTA'));
+  @override
+  late final GeneratedColumnWithTypeConverter<DateTime, int> createdAt =
+      GeneratedColumn<int>('created_at', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<DateTime>($FaturaTableTable.$convertercreatedAt);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, ordemServicoId, descricao, valorTotal, status, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fatura_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<FaturaTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('ordem_servico_id')) {
+      context.handle(
+          _ordemServicoIdMeta,
+          ordemServicoId.isAcceptableOrUnknown(
+              data['ordem_servico_id']!, _ordemServicoIdMeta));
+    }
+    if (data.containsKey('descricao')) {
+      context.handle(_descricaoMeta,
+          descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));
+    }
+    if (data.containsKey('valor_total')) {
+      context.handle(
+          _valorTotalMeta,
+          valorTotal.isAcceptableOrUnknown(
+              data['valor_total']!, _valorTotalMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FaturaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FaturaTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      ordemServicoId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ordem_servico_id']),
+      descricao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao']),
+      valorTotal: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}valor_total'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      createdAt: $FaturaTableTable.$convertercreatedAt.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}created_at'])!),
+    );
+  }
+
+  @override
+  $FaturaTableTable createAlias(String alias) {
+    return $FaturaTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<DateTime, int> $convertercreatedAt =
+      const SqliteEpochMsDateTimeConverter();
+}
+
+class FaturaTableData extends DataClass implements Insertable<FaturaTableData> {
+  final int id;
+  final int? ordemServicoId;
+  final String? descricao;
+  final double valorTotal;
+  final String status;
+  final DateTime createdAt;
+  const FaturaTableData(
+      {required this.id,
+      this.ordemServicoId,
+      this.descricao,
+      required this.valorTotal,
+      required this.status,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || ordemServicoId != null) {
+      map['ordem_servico_id'] = Variable<int>(ordemServicoId);
+    }
+    if (!nullToAbsent || descricao != null) {
+      map['descricao'] = Variable<String>(descricao);
+    }
+    map['valor_total'] = Variable<double>(valorTotal);
+    map['status'] = Variable<String>(status);
+    {
+      map['created_at'] =
+          Variable<int>($FaturaTableTable.$convertercreatedAt.toSql(createdAt));
+    }
+    return map;
+  }
+
+  FaturaTableCompanion toCompanion(bool nullToAbsent) {
+    return FaturaTableCompanion(
+      id: Value(id),
+      ordemServicoId: ordemServicoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ordemServicoId),
+      descricao: descricao == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descricao),
+      valorTotal: Value(valorTotal),
+      status: Value(status),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory FaturaTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FaturaTableData(
+      id: serializer.fromJson<int>(json['id']),
+      ordemServicoId: serializer.fromJson<int?>(json['ordemServicoId']),
+      descricao: serializer.fromJson<String?>(json['descricao']),
+      valorTotal: serializer.fromJson<double>(json['valorTotal']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'ordemServicoId': serializer.toJson<int?>(ordemServicoId),
+      'descricao': serializer.toJson<String?>(descricao),
+      'valorTotal': serializer.toJson<double>(valorTotal),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  FaturaTableData copyWith(
+          {int? id,
+          Value<int?> ordemServicoId = const Value.absent(),
+          Value<String?> descricao = const Value.absent(),
+          double? valorTotal,
+          String? status,
+          DateTime? createdAt}) =>
+      FaturaTableData(
+        id: id ?? this.id,
+        ordemServicoId:
+            ordemServicoId.present ? ordemServicoId.value : this.ordemServicoId,
+        descricao: descricao.present ? descricao.value : this.descricao,
+        valorTotal: valorTotal ?? this.valorTotal,
+        status: status ?? this.status,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  FaturaTableData copyWithCompanion(FaturaTableCompanion data) {
+    return FaturaTableData(
+      id: data.id.present ? data.id.value : this.id,
+      ordemServicoId: data.ordemServicoId.present
+          ? data.ordemServicoId.value
+          : this.ordemServicoId,
+      descricao: data.descricao.present ? data.descricao.value : this.descricao,
+      valorTotal:
+          data.valorTotal.present ? data.valorTotal.value : this.valorTotal,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FaturaTableData(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('descricao: $descricao, ')
+          ..write('valorTotal: $valorTotal, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, ordemServicoId, descricao, valorTotal, status, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FaturaTableData &&
+          other.id == this.id &&
+          other.ordemServicoId == this.ordemServicoId &&
+          other.descricao == this.descricao &&
+          other.valorTotal == this.valorTotal &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt);
+}
+
+class FaturaTableCompanion extends UpdateCompanion<FaturaTableData> {
+  final Value<int> id;
+  final Value<int?> ordemServicoId;
+  final Value<String?> descricao;
+  final Value<double> valorTotal;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  const FaturaTableCompanion({
+    this.id = const Value.absent(),
+    this.ordemServicoId = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.valorTotal = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  FaturaTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.ordemServicoId = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.valorTotal = const Value.absent(),
+    this.status = const Value.absent(),
+    required DateTime createdAt,
+  }) : createdAt = Value(createdAt);
+  static Insertable<FaturaTableData> custom({
+    Expression<int>? id,
+    Expression<int>? ordemServicoId,
+    Expression<String>? descricao,
+    Expression<double>? valorTotal,
+    Expression<String>? status,
+    Expression<int>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ordemServicoId != null) 'ordem_servico_id': ordemServicoId,
+      if (descricao != null) 'descricao': descricao,
+      if (valorTotal != null) 'valor_total': valorTotal,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  FaturaTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int?>? ordemServicoId,
+      Value<String?>? descricao,
+      Value<double>? valorTotal,
+      Value<String>? status,
+      Value<DateTime>? createdAt}) {
+    return FaturaTableCompanion(
+      id: id ?? this.id,
+      ordemServicoId: ordemServicoId ?? this.ordemServicoId,
+      descricao: descricao ?? this.descricao,
+      valorTotal: valorTotal ?? this.valorTotal,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (ordemServicoId.present) {
+      map['ordem_servico_id'] = Variable<int>(ordemServicoId.value);
+    }
+    if (descricao.present) {
+      map['descricao'] = Variable<String>(descricao.value);
+    }
+    if (valorTotal.present) {
+      map['valor_total'] = Variable<double>(valorTotal.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(
+          $FaturaTableTable.$convertercreatedAt.toSql(createdAt.value));
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FaturaTableCompanion(')
+          ..write('id: $id, ')
+          ..write('ordemServicoId: $ordemServicoId, ')
+          ..write('descricao: $descricao, ')
+          ..write('valorTotal: $valorTotal, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ParcelaTableTable extends ParcelaTable
+    with TableInfo<$ParcelaTableTable, ParcelaTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParcelaTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _faturaIdMeta =
+      const VerificationMeta('faturaId');
+  @override
+  late final GeneratedColumn<int> faturaId = GeneratedColumn<int>(
+      'fatura_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES fatura_table (id)'));
+  static const VerificationMeta _numeroMeta = const VerificationMeta('numero');
+  @override
+  late final GeneratedColumn<int> numero = GeneratedColumn<int>(
+      'numero', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _valorMeta = const VerificationMeta('valor');
+  @override
+  late final GeneratedColumn<double> valor = GeneratedColumn<double>(
+      'valor', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  @override
+  late final GeneratedColumnWithTypeConverter<DateTime, int> dataEmissao =
+      GeneratedColumn<int>('data_emissao', aliasedName, false,
+              type: DriftSqlType.int,
+              requiredDuringInsert: false,
+              defaultValue: Constant(DateTime.now().millisecondsSinceEpoch))
+          .withConverter<DateTime>($ParcelaTableTable.$converterdataEmissao);
+  @override
+  late final GeneratedColumnWithTypeConverter<DateTime, int> vencimento =
+      GeneratedColumn<int>('vencimento', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<DateTime>($ParcelaTableTable.$convertervencimento);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('ABERTA'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, faturaId, numero, valor, dataEmissao, vencimento, status];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'parcela_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<ParcelaTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('fatura_id')) {
+      context.handle(_faturaIdMeta,
+          faturaId.isAcceptableOrUnknown(data['fatura_id']!, _faturaIdMeta));
+    } else if (isInserting) {
+      context.missing(_faturaIdMeta);
+    }
+    if (data.containsKey('numero')) {
+      context.handle(_numeroMeta,
+          numero.isAcceptableOrUnknown(data['numero']!, _numeroMeta));
+    }
+    if (data.containsKey('valor')) {
+      context.handle(
+          _valorMeta, valor.isAcceptableOrUnknown(data['valor']!, _valorMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ParcelaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ParcelaTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      faturaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}fatura_id'])!,
+      numero: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}numero'])!,
+      valor: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}valor'])!,
+      dataEmissao: $ParcelaTableTable.$converterdataEmissao.fromSql(
+          attachedDatabase.typeMapping
+              .read(DriftSqlType.int, data['${effectivePrefix}data_emissao'])!),
+      vencimento: $ParcelaTableTable.$convertervencimento.fromSql(
+          attachedDatabase.typeMapping
+              .read(DriftSqlType.int, data['${effectivePrefix}vencimento'])!),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+    );
+  }
+
+  @override
+  $ParcelaTableTable createAlias(String alias) {
+    return $ParcelaTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<DateTime, int> $converterdataEmissao =
+      const SqliteEpochMsDateTimeConverter();
+  static TypeConverter<DateTime, int> $convertervencimento =
+      const SqliteEpochMsDateTimeConverter();
+}
+
+class ParcelaTableData extends DataClass
+    implements Insertable<ParcelaTableData> {
+  final int id;
+  final int faturaId;
+  final int numero;
+  final double valor;
+  final DateTime dataEmissao;
+  final DateTime vencimento;
+  final String status;
+  const ParcelaTableData(
+      {required this.id,
+      required this.faturaId,
+      required this.numero,
+      required this.valor,
+      required this.dataEmissao,
+      required this.vencimento,
+      required this.status});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['fatura_id'] = Variable<int>(faturaId);
+    map['numero'] = Variable<int>(numero);
+    map['valor'] = Variable<double>(valor);
+    {
+      map['data_emissao'] = Variable<int>(
+          $ParcelaTableTable.$converterdataEmissao.toSql(dataEmissao));
+    }
+    {
+      map['vencimento'] = Variable<int>(
+          $ParcelaTableTable.$convertervencimento.toSql(vencimento));
+    }
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  ParcelaTableCompanion toCompanion(bool nullToAbsent) {
+    return ParcelaTableCompanion(
+      id: Value(id),
+      faturaId: Value(faturaId),
+      numero: Value(numero),
+      valor: Value(valor),
+      dataEmissao: Value(dataEmissao),
+      vencimento: Value(vencimento),
+      status: Value(status),
+    );
+  }
+
+  factory ParcelaTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ParcelaTableData(
+      id: serializer.fromJson<int>(json['id']),
+      faturaId: serializer.fromJson<int>(json['faturaId']),
+      numero: serializer.fromJson<int>(json['numero']),
+      valor: serializer.fromJson<double>(json['valor']),
+      dataEmissao: serializer.fromJson<DateTime>(json['dataEmissao']),
+      vencimento: serializer.fromJson<DateTime>(json['vencimento']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'faturaId': serializer.toJson<int>(faturaId),
+      'numero': serializer.toJson<int>(numero),
+      'valor': serializer.toJson<double>(valor),
+      'dataEmissao': serializer.toJson<DateTime>(dataEmissao),
+      'vencimento': serializer.toJson<DateTime>(vencimento),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  ParcelaTableData copyWith(
+          {int? id,
+          int? faturaId,
+          int? numero,
+          double? valor,
+          DateTime? dataEmissao,
+          DateTime? vencimento,
+          String? status}) =>
+      ParcelaTableData(
+        id: id ?? this.id,
+        faturaId: faturaId ?? this.faturaId,
+        numero: numero ?? this.numero,
+        valor: valor ?? this.valor,
+        dataEmissao: dataEmissao ?? this.dataEmissao,
+        vencimento: vencimento ?? this.vencimento,
+        status: status ?? this.status,
+      );
+  ParcelaTableData copyWithCompanion(ParcelaTableCompanion data) {
+    return ParcelaTableData(
+      id: data.id.present ? data.id.value : this.id,
+      faturaId: data.faturaId.present ? data.faturaId.value : this.faturaId,
+      numero: data.numero.present ? data.numero.value : this.numero,
+      valor: data.valor.present ? data.valor.value : this.valor,
+      dataEmissao:
+          data.dataEmissao.present ? data.dataEmissao.value : this.dataEmissao,
+      vencimento:
+          data.vencimento.present ? data.vencimento.value : this.vencimento,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParcelaTableData(')
+          ..write('id: $id, ')
+          ..write('faturaId: $faturaId, ')
+          ..write('numero: $numero, ')
+          ..write('valor: $valor, ')
+          ..write('dataEmissao: $dataEmissao, ')
+          ..write('vencimento: $vencimento, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, faturaId, numero, valor, dataEmissao, vencimento, status);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ParcelaTableData &&
+          other.id == this.id &&
+          other.faturaId == this.faturaId &&
+          other.numero == this.numero &&
+          other.valor == this.valor &&
+          other.dataEmissao == this.dataEmissao &&
+          other.vencimento == this.vencimento &&
+          other.status == this.status);
+}
+
+class ParcelaTableCompanion extends UpdateCompanion<ParcelaTableData> {
+  final Value<int> id;
+  final Value<int> faturaId;
+  final Value<int> numero;
+  final Value<double> valor;
+  final Value<DateTime> dataEmissao;
+  final Value<DateTime> vencimento;
+  final Value<String> status;
+  const ParcelaTableCompanion({
+    this.id = const Value.absent(),
+    this.faturaId = const Value.absent(),
+    this.numero = const Value.absent(),
+    this.valor = const Value.absent(),
+    this.dataEmissao = const Value.absent(),
+    this.vencimento = const Value.absent(),
+    this.status = const Value.absent(),
+  });
+  ParcelaTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int faturaId,
+    this.numero = const Value.absent(),
+    this.valor = const Value.absent(),
+    this.dataEmissao = const Value.absent(),
+    required DateTime vencimento,
+    this.status = const Value.absent(),
+  })  : faturaId = Value(faturaId),
+        vencimento = Value(vencimento);
+  static Insertable<ParcelaTableData> custom({
+    Expression<int>? id,
+    Expression<int>? faturaId,
+    Expression<int>? numero,
+    Expression<double>? valor,
+    Expression<int>? dataEmissao,
+    Expression<int>? vencimento,
+    Expression<String>? status,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (faturaId != null) 'fatura_id': faturaId,
+      if (numero != null) 'numero': numero,
+      if (valor != null) 'valor': valor,
+      if (dataEmissao != null) 'data_emissao': dataEmissao,
+      if (vencimento != null) 'vencimento': vencimento,
+      if (status != null) 'status': status,
+    });
+  }
+
+  ParcelaTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? faturaId,
+      Value<int>? numero,
+      Value<double>? valor,
+      Value<DateTime>? dataEmissao,
+      Value<DateTime>? vencimento,
+      Value<String>? status}) {
+    return ParcelaTableCompanion(
+      id: id ?? this.id,
+      faturaId: faturaId ?? this.faturaId,
+      numero: numero ?? this.numero,
+      valor: valor ?? this.valor,
+      dataEmissao: dataEmissao ?? this.dataEmissao,
+      vencimento: vencimento ?? this.vencimento,
+      status: status ?? this.status,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (faturaId.present) {
+      map['fatura_id'] = Variable<int>(faturaId.value);
+    }
+    if (numero.present) {
+      map['numero'] = Variable<int>(numero.value);
+    }
+    if (valor.present) {
+      map['valor'] = Variable<double>(valor.value);
+    }
+    if (dataEmissao.present) {
+      map['data_emissao'] = Variable<int>(
+          $ParcelaTableTable.$converterdataEmissao.toSql(dataEmissao.value));
+    }
+    if (vencimento.present) {
+      map['vencimento'] = Variable<int>(
+          $ParcelaTableTable.$convertervencimento.toSql(vencimento.value));
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParcelaTableCompanion(')
+          ..write('id: $id, ')
+          ..write('faturaId: $faturaId, ')
+          ..write('numero: $numero, ')
+          ..write('valor: $valor, ')
+          ..write('dataEmissao: $dataEmissao, ')
+          ..write('vencimento: $vencimento, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RecebimentoTableTable extends RecebimentoTable
+    with TableInfo<$RecebimentoTableTable, RecebimentoTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecebimentoTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _parcelaIdMeta =
+      const VerificationMeta('parcelaId');
+  @override
+  late final GeneratedColumn<int> parcelaId = GeneratedColumn<int>(
+      'parcela_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES parcela_table (id)'));
+  static const VerificationMeta _valorMeta = const VerificationMeta('valor');
+  @override
+  late final GeneratedColumn<double> valor = GeneratedColumn<double>(
+      'valor', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  @override
+  late final GeneratedColumnWithTypeConverter<DateTime, int> dataPagamento =
+      GeneratedColumn<int>('data_pagamento', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<DateTime>(
+              $RecebimentoTableTable.$converterdataPagamento);
+  static const VerificationMeta _formaPagamentoMeta =
+      const VerificationMeta('formaPagamento');
+  @override
+  late final GeneratedColumn<String> formaPagamento = GeneratedColumn<String>(
+      'forma_pagamento', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, parcelaId, valor, dataPagamento, formaPagamento];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recebimento_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<RecebimentoTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('parcela_id')) {
+      context.handle(_parcelaIdMeta,
+          parcelaId.isAcceptableOrUnknown(data['parcela_id']!, _parcelaIdMeta));
+    } else if (isInserting) {
+      context.missing(_parcelaIdMeta);
+    }
+    if (data.containsKey('valor')) {
+      context.handle(
+          _valorMeta, valor.isAcceptableOrUnknown(data['valor']!, _valorMeta));
+    }
+    if (data.containsKey('forma_pagamento')) {
+      context.handle(
+          _formaPagamentoMeta,
+          formaPagamento.isAcceptableOrUnknown(
+              data['forma_pagamento']!, _formaPagamentoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecebimentoTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecebimentoTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      parcelaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}parcela_id'])!,
+      valor: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}valor'])!,
+      dataPagamento: $RecebimentoTableTable.$converterdataPagamento.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.int, data['${effectivePrefix}data_pagamento'])!),
+      formaPagamento: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}forma_pagamento']),
+    );
+  }
+
+  @override
+  $RecebimentoTableTable createAlias(String alias) {
+    return $RecebimentoTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<DateTime, int> $converterdataPagamento =
+      const SqliteEpochMsDateTimeConverter();
+}
+
+class RecebimentoTableData extends DataClass
+    implements Insertable<RecebimentoTableData> {
+  final int id;
+  final int parcelaId;
+  final double valor;
+  final DateTime dataPagamento;
+  final String? formaPagamento;
+  const RecebimentoTableData(
+      {required this.id,
+      required this.parcelaId,
+      required this.valor,
+      required this.dataPagamento,
+      this.formaPagamento});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['parcela_id'] = Variable<int>(parcelaId);
+    map['valor'] = Variable<double>(valor);
+    {
+      map['data_pagamento'] = Variable<int>(
+          $RecebimentoTableTable.$converterdataPagamento.toSql(dataPagamento));
+    }
+    if (!nullToAbsent || formaPagamento != null) {
+      map['forma_pagamento'] = Variable<String>(formaPagamento);
+    }
+    return map;
+  }
+
+  RecebimentoTableCompanion toCompanion(bool nullToAbsent) {
+    return RecebimentoTableCompanion(
+      id: Value(id),
+      parcelaId: Value(parcelaId),
+      valor: Value(valor),
+      dataPagamento: Value(dataPagamento),
+      formaPagamento: formaPagamento == null && nullToAbsent
+          ? const Value.absent()
+          : Value(formaPagamento),
+    );
+  }
+
+  factory RecebimentoTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecebimentoTableData(
+      id: serializer.fromJson<int>(json['id']),
+      parcelaId: serializer.fromJson<int>(json['parcelaId']),
+      valor: serializer.fromJson<double>(json['valor']),
+      dataPagamento: serializer.fromJson<DateTime>(json['dataPagamento']),
+      formaPagamento: serializer.fromJson<String?>(json['formaPagamento']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'parcelaId': serializer.toJson<int>(parcelaId),
+      'valor': serializer.toJson<double>(valor),
+      'dataPagamento': serializer.toJson<DateTime>(dataPagamento),
+      'formaPagamento': serializer.toJson<String?>(formaPagamento),
+    };
+  }
+
+  RecebimentoTableData copyWith(
+          {int? id,
+          int? parcelaId,
+          double? valor,
+          DateTime? dataPagamento,
+          Value<String?> formaPagamento = const Value.absent()}) =>
+      RecebimentoTableData(
+        id: id ?? this.id,
+        parcelaId: parcelaId ?? this.parcelaId,
+        valor: valor ?? this.valor,
+        dataPagamento: dataPagamento ?? this.dataPagamento,
+        formaPagamento:
+            formaPagamento.present ? formaPagamento.value : this.formaPagamento,
+      );
+  RecebimentoTableData copyWithCompanion(RecebimentoTableCompanion data) {
+    return RecebimentoTableData(
+      id: data.id.present ? data.id.value : this.id,
+      parcelaId: data.parcelaId.present ? data.parcelaId.value : this.parcelaId,
+      valor: data.valor.present ? data.valor.value : this.valor,
+      dataPagamento: data.dataPagamento.present
+          ? data.dataPagamento.value
+          : this.dataPagamento,
+      formaPagamento: data.formaPagamento.present
+          ? data.formaPagamento.value
+          : this.formaPagamento,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecebimentoTableData(')
+          ..write('id: $id, ')
+          ..write('parcelaId: $parcelaId, ')
+          ..write('valor: $valor, ')
+          ..write('dataPagamento: $dataPagamento, ')
+          ..write('formaPagamento: $formaPagamento')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, parcelaId, valor, dataPagamento, formaPagamento);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecebimentoTableData &&
+          other.id == this.id &&
+          other.parcelaId == this.parcelaId &&
+          other.valor == this.valor &&
+          other.dataPagamento == this.dataPagamento &&
+          other.formaPagamento == this.formaPagamento);
+}
+
+class RecebimentoTableCompanion extends UpdateCompanion<RecebimentoTableData> {
+  final Value<int> id;
+  final Value<int> parcelaId;
+  final Value<double> valor;
+  final Value<DateTime> dataPagamento;
+  final Value<String?> formaPagamento;
+  const RecebimentoTableCompanion({
+    this.id = const Value.absent(),
+    this.parcelaId = const Value.absent(),
+    this.valor = const Value.absent(),
+    this.dataPagamento = const Value.absent(),
+    this.formaPagamento = const Value.absent(),
+  });
+  RecebimentoTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int parcelaId,
+    this.valor = const Value.absent(),
+    required DateTime dataPagamento,
+    this.formaPagamento = const Value.absent(),
+  })  : parcelaId = Value(parcelaId),
+        dataPagamento = Value(dataPagamento);
+  static Insertable<RecebimentoTableData> custom({
+    Expression<int>? id,
+    Expression<int>? parcelaId,
+    Expression<double>? valor,
+    Expression<int>? dataPagamento,
+    Expression<String>? formaPagamento,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (parcelaId != null) 'parcela_id': parcelaId,
+      if (valor != null) 'valor': valor,
+      if (dataPagamento != null) 'data_pagamento': dataPagamento,
+      if (formaPagamento != null) 'forma_pagamento': formaPagamento,
+    });
+  }
+
+  RecebimentoTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? parcelaId,
+      Value<double>? valor,
+      Value<DateTime>? dataPagamento,
+      Value<String?>? formaPagamento}) {
+    return RecebimentoTableCompanion(
+      id: id ?? this.id,
+      parcelaId: parcelaId ?? this.parcelaId,
+      valor: valor ?? this.valor,
+      dataPagamento: dataPagamento ?? this.dataPagamento,
+      formaPagamento: formaPagamento ?? this.formaPagamento,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (parcelaId.present) {
+      map['parcela_id'] = Variable<int>(parcelaId.value);
+    }
+    if (valor.present) {
+      map['valor'] = Variable<double>(valor.value);
+    }
+    if (dataPagamento.present) {
+      map['data_pagamento'] = Variable<int>($RecebimentoTableTable
+          .$converterdataPagamento
+          .toSql(dataPagamento.value));
+    }
+    if (formaPagamento.present) {
+      map['forma_pagamento'] = Variable<String>(formaPagamento.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecebimentoTableCompanion(')
+          ..write('id: $id, ')
+          ..write('parcelaId: $parcelaId, ')
+          ..write('valor: $valor, ')
+          ..write('dataPagamento: $dataPagamento, ')
+          ..write('formaPagamento: $formaPagamento')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DespesaTableTable extends DespesaTable
+    with TableInfo<$DespesaTableTable, DespesaTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DespesaTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _descricaoMeta =
+      const VerificationMeta('descricao');
+  @override
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
+      'descricao', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _valorMeta = const VerificationMeta('valor');
+  @override
+  late final GeneratedColumn<double> valor = GeneratedColumn<double>(
+      'valor', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  @override
+  late final GeneratedColumnWithTypeConverter<DateTime, int> data =
+      GeneratedColumn<int>('data', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<DateTime>($DespesaTableTable.$converterdata);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('ABERTA'));
+  @override
+  List<GeneratedColumn> get $columns => [id, descricao, valor, data, status];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'despesa_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<DespesaTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('descricao')) {
+      context.handle(_descricaoMeta,
+          descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));
+    } else if (isInserting) {
+      context.missing(_descricaoMeta);
+    }
+    if (data.containsKey('valor')) {
+      context.handle(
+          _valorMeta, valor.isAcceptableOrUnknown(data['valor']!, _valorMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DespesaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DespesaTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      descricao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao'])!,
+      valor: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}valor'])!,
+      data: $DespesaTableTable.$converterdata.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}data'])!),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+    );
+  }
+
+  @override
+  $DespesaTableTable createAlias(String alias) {
+    return $DespesaTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<DateTime, int> $converterdata =
+      const SqliteEpochMsDateTimeConverter();
+}
+
+class DespesaTableData extends DataClass
+    implements Insertable<DespesaTableData> {
+  final int id;
+  final String descricao;
+  final double valor;
+  final DateTime data;
+  final String status;
+  const DespesaTableData(
+      {required this.id,
+      required this.descricao,
+      required this.valor,
+      required this.data,
+      required this.status});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['descricao'] = Variable<String>(descricao);
+    map['valor'] = Variable<double>(valor);
+    {
+      map['data'] =
+          Variable<int>($DespesaTableTable.$converterdata.toSql(data));
+    }
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  DespesaTableCompanion toCompanion(bool nullToAbsent) {
+    return DespesaTableCompanion(
+      id: Value(id),
+      descricao: Value(descricao),
+      valor: Value(valor),
+      data: Value(data),
+      status: Value(status),
+    );
+  }
+
+  factory DespesaTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DespesaTableData(
+      id: serializer.fromJson<int>(json['id']),
+      descricao: serializer.fromJson<String>(json['descricao']),
+      valor: serializer.fromJson<double>(json['valor']),
+      data: serializer.fromJson<DateTime>(json['data']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'descricao': serializer.toJson<String>(descricao),
+      'valor': serializer.toJson<double>(valor),
+      'data': serializer.toJson<DateTime>(data),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  DespesaTableData copyWith(
+          {int? id,
+          String? descricao,
+          double? valor,
+          DateTime? data,
+          String? status}) =>
+      DespesaTableData(
+        id: id ?? this.id,
+        descricao: descricao ?? this.descricao,
+        valor: valor ?? this.valor,
+        data: data ?? this.data,
+        status: status ?? this.status,
+      );
+  DespesaTableData copyWithCompanion(DespesaTableCompanion data) {
+    return DespesaTableData(
+      id: data.id.present ? data.id.value : this.id,
+      descricao: data.descricao.present ? data.descricao.value : this.descricao,
+      valor: data.valor.present ? data.valor.value : this.valor,
+      data: data.data.present ? data.data.value : this.data,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DespesaTableData(')
+          ..write('id: $id, ')
+          ..write('descricao: $descricao, ')
+          ..write('valor: $valor, ')
+          ..write('data: $data, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, descricao, valor, data, status);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DespesaTableData &&
+          other.id == this.id &&
+          other.descricao == this.descricao &&
+          other.valor == this.valor &&
+          other.data == this.data &&
+          other.status == this.status);
+}
+
+class DespesaTableCompanion extends UpdateCompanion<DespesaTableData> {
+  final Value<int> id;
+  final Value<String> descricao;
+  final Value<double> valor;
+  final Value<DateTime> data;
+  final Value<String> status;
+  const DespesaTableCompanion({
+    this.id = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.valor = const Value.absent(),
+    this.data = const Value.absent(),
+    this.status = const Value.absent(),
+  });
+  DespesaTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String descricao,
+    this.valor = const Value.absent(),
+    required DateTime data,
+    this.status = const Value.absent(),
+  })  : descricao = Value(descricao),
+        data = Value(data);
+  static Insertable<DespesaTableData> custom({
+    Expression<int>? id,
+    Expression<String>? descricao,
+    Expression<double>? valor,
+    Expression<int>? data,
+    Expression<String>? status,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (descricao != null) 'descricao': descricao,
+      if (valor != null) 'valor': valor,
+      if (data != null) 'data': data,
+      if (status != null) 'status': status,
+    });
+  }
+
+  DespesaTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? descricao,
+      Value<double>? valor,
+      Value<DateTime>? data,
+      Value<String>? status}) {
+    return DespesaTableCompanion(
+      id: id ?? this.id,
+      descricao: descricao ?? this.descricao,
+      valor: valor ?? this.valor,
+      data: data ?? this.data,
+      status: status ?? this.status,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (descricao.present) {
+      map['descricao'] = Variable<String>(descricao.value);
+    }
+    if (valor.present) {
+      map['valor'] = Variable<double>(valor.value);
+    }
+    if (data.present) {
+      map['data'] =
+          Variable<int>($DespesaTableTable.$converterdata.toSql(data.value));
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DespesaTableCompanion(')
+          ..write('id: $id, ')
+          ..write('descricao: $descricao, ')
+          ..write('valor: $valor, ')
+          ..write('data: $data, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FormaPagamentoTableTable extends FormaPagamentoTable
+    with TableInfo<$FormaPagamentoTableTable, FormaPagamentoTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FormaPagamentoTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 32),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _descricaoMeta =
+      const VerificationMeta('descricao');
+  @override
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
+      'descricao', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 64),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, descricao];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'forma_pagamento_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<FormaPagamentoTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('descricao')) {
+      context.handle(_descricaoMeta,
+          descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));
+    } else if (isInserting) {
+      context.missing(_descricaoMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FormaPagamentoTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FormaPagamentoTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      descricao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao'])!,
+    );
+  }
+
+  @override
+  $FormaPagamentoTableTable createAlias(String alias) {
+    return $FormaPagamentoTableTable(attachedDatabase, alias);
+  }
+}
+
+class FormaPagamentoTableData extends DataClass
+    implements Insertable<FormaPagamentoTableData> {
+  final String id;
+  final String descricao;
+  const FormaPagamentoTableData({required this.id, required this.descricao});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['descricao'] = Variable<String>(descricao);
+    return map;
+  }
+
+  FormaPagamentoTableCompanion toCompanion(bool nullToAbsent) {
+    return FormaPagamentoTableCompanion(
+      id: Value(id),
+      descricao: Value(descricao),
+    );
+  }
+
+  factory FormaPagamentoTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FormaPagamentoTableData(
+      id: serializer.fromJson<String>(json['id']),
+      descricao: serializer.fromJson<String>(json['descricao']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'descricao': serializer.toJson<String>(descricao),
+    };
+  }
+
+  FormaPagamentoTableData copyWith({String? id, String? descricao}) =>
+      FormaPagamentoTableData(
+        id: id ?? this.id,
+        descricao: descricao ?? this.descricao,
+      );
+  FormaPagamentoTableData copyWithCompanion(FormaPagamentoTableCompanion data) {
+    return FormaPagamentoTableData(
+      id: data.id.present ? data.id.value : this.id,
+      descricao: data.descricao.present ? data.descricao.value : this.descricao,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FormaPagamentoTableData(')
+          ..write('id: $id, ')
+          ..write('descricao: $descricao')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, descricao);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FormaPagamentoTableData &&
+          other.id == this.id &&
+          other.descricao == this.descricao);
+}
+
+class FormaPagamentoTableCompanion
+    extends UpdateCompanion<FormaPagamentoTableData> {
+  final Value<String> id;
+  final Value<String> descricao;
+  final Value<int> rowid;
+  const FormaPagamentoTableCompanion({
+    this.id = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FormaPagamentoTableCompanion.insert({
+    required String id,
+    required String descricao,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        descricao = Value(descricao);
+  static Insertable<FormaPagamentoTableData> custom({
+    Expression<String>? id,
+    Expression<String>? descricao,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (descricao != null) 'descricao': descricao,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FormaPagamentoTableCompanion copyWith(
+      {Value<String>? id, Value<String>? descricao, Value<int>? rowid}) {
+    return FormaPagamentoTableCompanion(
+      id: id ?? this.id,
+      descricao: descricao ?? this.descricao,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (descricao.present) {
+      map['descricao'] = Variable<String>(descricao.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FormaPagamentoTableCompanion(')
+          ..write('id: $id, ')
+          ..write('descricao: $descricao, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2965,6 +4500,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $FornecedorOrdemServicoTableTable(this);
   late final $ViaCoresOrdemServicoTableTable viaCoresOrdemServicoTable =
       $ViaCoresOrdemServicoTableTable(this);
+  late final $FaturaTableTable faturaTable = $FaturaTableTable(this);
+  late final $ParcelaTableTable parcelaTable = $ParcelaTableTable(this);
+  late final $RecebimentoTableTable recebimentoTable =
+      $RecebimentoTableTable(this);
+  late final $DespesaTableTable despesaTable = $DespesaTableTable(this);
+  late final $FormaPagamentoTableTable formaPagamentoTable =
+      $FormaPagamentoTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2978,7 +4520,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         clientesTable,
         ordemServicoTable,
         fornecedorOrdemServicoTable,
-        viaCoresOrdemServicoTable
+        viaCoresOrdemServicoTable,
+        faturaTable,
+        parcelaTable,
+        recebimentoTable,
+        despesaTable,
+        formaPagamentoTable
       ];
 }
 
@@ -4496,6 +6043,21 @@ final class $$OrdemServicoTableTableReferences extends BaseReferences<
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$FaturaTableTable, List<FaturaTableData>>
+      _faturaTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.faturaTable,
+              aliasName: $_aliasNameGenerator(
+                  db.ordemServicoTable.id, db.faturaTable.ordemServicoId));
+
+  $$FaturaTableTableProcessedTableManager get faturaTableRefs {
+    final manager = $$FaturaTableTableTableManager($_db, $_db.faturaTable)
+        .filter((f) => f.ordemServicoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_faturaTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$OrdemServicoTableTableFilterComposer
@@ -4655,6 +6217,27 @@ class $$OrdemServicoTableTableFilterComposer
                   $removeJoinBuilderFromRootComposer:
                       $removeJoinBuilderFromRootComposer,
                 ));
+    return f(composer);
+  }
+
+  Expression<bool> faturaTableRefs(
+      Expression<bool> Function($$FaturaTableTableFilterComposer f) f) {
+    final $$FaturaTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.faturaTable,
+        getReferencedColumn: (t) => t.ordemServicoId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FaturaTableTableFilterComposer(
+              $db: $db,
+              $table: $db.faturaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
     return f(composer);
   }
 }
@@ -4928,6 +6511,27 @@ class $$OrdemServicoTableTableAnnotationComposer
                 ));
     return f(composer);
   }
+
+  Expression<T> faturaTableRefs<T extends Object>(
+      Expression<T> Function($$FaturaTableTableAnnotationComposer a) f) {
+    final $$FaturaTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.faturaTable,
+        getReferencedColumn: (t) => t.ordemServicoId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FaturaTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.faturaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$OrdemServicoTableTableTableManager extends RootTableManager<
@@ -4946,7 +6550,8 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
         bool formatoId,
         bool papelId,
         bool fornecedorOrdemServicoTableRefs,
-        bool viaCoresOrdemServicoTableRefs})> {
+        bool viaCoresOrdemServicoTableRefs,
+        bool faturaTableRefs})> {
   $$OrdemServicoTableTableTableManager(
       _$AppDatabase db, $OrdemServicoTableTable table)
       : super(TableManagerState(
@@ -5042,13 +6647,15 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
               formatoId = false,
               papelId = false,
               fornecedorOrdemServicoTableRefs = false,
-              viaCoresOrdemServicoTableRefs = false}) {
+              viaCoresOrdemServicoTableRefs = false,
+              faturaTableRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
                 if (fornecedorOrdemServicoTableRefs)
                   db.fornecedorOrdemServicoTable,
-                if (viaCoresOrdemServicoTableRefs) db.viaCoresOrdemServicoTable
+                if (viaCoresOrdemServicoTableRefs) db.viaCoresOrdemServicoTable,
+                if (faturaTableRefs) db.faturaTable
               ],
               addJoins: <
                   T extends TableManagerState<
@@ -5129,6 +6736,19 @@ class $$OrdemServicoTableTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems
                                 .where((e) => e.ordemServicoId == item.id),
+                        typedResults: items),
+                  if (faturaTableRefs)
+                    await $_getPrefetchedData<OrdemServicoTableData,
+                            $OrdemServicoTableTable, FaturaTableData>(
+                        currentTable: table,
+                        referencedTable: $$OrdemServicoTableTableReferences
+                            ._faturaTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$OrdemServicoTableTableReferences(db, table, p0)
+                                .faturaTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.ordemServicoId == item.id),
                         typedResults: items)
                 ];
               },
@@ -5153,7 +6773,8 @@ typedef $$OrdemServicoTableTableProcessedTableManager = ProcessedTableManager<
         bool formatoId,
         bool papelId,
         bool fornecedorOrdemServicoTableRefs,
-        bool viaCoresOrdemServicoTableRefs})>;
+        bool viaCoresOrdemServicoTableRefs,
+        bool faturaTableRefs})>;
 typedef $$FornecedorOrdemServicoTableTableCreateCompanionBuilder
     = FornecedorOrdemServicoTableCompanion Function({
   Value<String> id,
@@ -5867,6 +7488,1328 @@ typedef $$ViaCoresOrdemServicoTableTableProcessedTableManager
         ),
         ViaCoresOrdemServicoTableData,
         PrefetchHooks Function({bool ordemServicoId, bool viaCoresId})>;
+typedef $$FaturaTableTableCreateCompanionBuilder = FaturaTableCompanion
+    Function({
+  Value<int> id,
+  Value<int?> ordemServicoId,
+  Value<String?> descricao,
+  Value<double> valorTotal,
+  Value<String> status,
+  required DateTime createdAt,
+});
+typedef $$FaturaTableTableUpdateCompanionBuilder = FaturaTableCompanion
+    Function({
+  Value<int> id,
+  Value<int?> ordemServicoId,
+  Value<String?> descricao,
+  Value<double> valorTotal,
+  Value<String> status,
+  Value<DateTime> createdAt,
+});
+
+final class $$FaturaTableTableReferences
+    extends BaseReferences<_$AppDatabase, $FaturaTableTable, FaturaTableData> {
+  $$FaturaTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $OrdemServicoTableTable _ordemServicoIdTable(_$AppDatabase db) =>
+      db.ordemServicoTable.createAlias($_aliasNameGenerator(
+          db.faturaTable.ordemServicoId, db.ordemServicoTable.id));
+
+  $$OrdemServicoTableTableProcessedTableManager? get ordemServicoId {
+    final $_column = $_itemColumn<int>('ordem_servico_id');
+    if ($_column == null) return null;
+    final manager =
+        $$OrdemServicoTableTableTableManager($_db, $_db.ordemServicoTable)
+            .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ordemServicoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$ParcelaTableTable, List<ParcelaTableData>>
+      _parcelaTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.parcelaTable,
+              aliasName: $_aliasNameGenerator(
+                  db.faturaTable.id, db.parcelaTable.faturaId));
+
+  $$ParcelaTableTableProcessedTableManager get parcelaTableRefs {
+    final manager = $$ParcelaTableTableTableManager($_db, $_db.parcelaTable)
+        .filter((f) => f.faturaId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_parcelaTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$FaturaTableTableFilterComposer
+    extends Composer<_$AppDatabase, $FaturaTableTable> {
+  $$FaturaTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get valorTotal => $composableBuilder(
+      column: $table.valorTotal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<DateTime, DateTime, int> get createdAt =>
+      $composableBuilder(
+          column: $table.createdAt,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  $$OrdemServicoTableTableFilterComposer get ordemServicoId {
+    final $$OrdemServicoTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableFilterComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> parcelaTableRefs(
+      Expression<bool> Function($$ParcelaTableTableFilterComposer f) f) {
+    final $$ParcelaTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.parcelaTable,
+        getReferencedColumn: (t) => t.faturaId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ParcelaTableTableFilterComposer(
+              $db: $db,
+              $table: $db.parcelaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$FaturaTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $FaturaTableTable> {
+  $$FaturaTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get valorTotal => $composableBuilder(
+      column: $table.valorTotal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  $$OrdemServicoTableTableOrderingComposer get ordemServicoId {
+    final $$OrdemServicoTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ordemServicoId,
+        referencedTable: $db.ordemServicoTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$OrdemServicoTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.ordemServicoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$FaturaTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FaturaTableTable> {
+  $$FaturaTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get descricao =>
+      $composableBuilder(column: $table.descricao, builder: (column) => column);
+
+  GeneratedColumn<double> get valorTotal => $composableBuilder(
+      column: $table.valorTotal, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DateTime, int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$OrdemServicoTableTableAnnotationComposer get ordemServicoId {
+    final $$OrdemServicoTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.ordemServicoId,
+            referencedTable: $db.ordemServicoTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$OrdemServicoTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.ordemServicoTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return composer;
+  }
+
+  Expression<T> parcelaTableRefs<T extends Object>(
+      Expression<T> Function($$ParcelaTableTableAnnotationComposer a) f) {
+    final $$ParcelaTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.parcelaTable,
+        getReferencedColumn: (t) => t.faturaId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ParcelaTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.parcelaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$FaturaTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $FaturaTableTable,
+    FaturaTableData,
+    $$FaturaTableTableFilterComposer,
+    $$FaturaTableTableOrderingComposer,
+    $$FaturaTableTableAnnotationComposer,
+    $$FaturaTableTableCreateCompanionBuilder,
+    $$FaturaTableTableUpdateCompanionBuilder,
+    (FaturaTableData, $$FaturaTableTableReferences),
+    FaturaTableData,
+    PrefetchHooks Function({bool ordemServicoId, bool parcelaTableRefs})> {
+  $$FaturaTableTableTableManager(_$AppDatabase db, $FaturaTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FaturaTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FaturaTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FaturaTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> ordemServicoId = const Value.absent(),
+            Value<String?> descricao = const Value.absent(),
+            Value<double> valorTotal = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              FaturaTableCompanion(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            descricao: descricao,
+            valorTotal: valorTotal,
+            status: status,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> ordemServicoId = const Value.absent(),
+            Value<String?> descricao = const Value.absent(),
+            Value<double> valorTotal = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            required DateTime createdAt,
+          }) =>
+              FaturaTableCompanion.insert(
+            id: id,
+            ordemServicoId: ordemServicoId,
+            descricao: descricao,
+            valorTotal: valorTotal,
+            status: status,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$FaturaTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {ordemServicoId = false, parcelaTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (parcelaTableRefs) db.parcelaTable],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (ordemServicoId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.ordemServicoId,
+                    referencedTable:
+                        $$FaturaTableTableReferences._ordemServicoIdTable(db),
+                    referencedColumn: $$FaturaTableTableReferences
+                        ._ordemServicoIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (parcelaTableRefs)
+                    await $_getPrefetchedData<FaturaTableData,
+                            $FaturaTableTable, ParcelaTableData>(
+                        currentTable: table,
+                        referencedTable: $$FaturaTableTableReferences
+                            ._parcelaTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$FaturaTableTableReferences(db, table, p0)
+                                .parcelaTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.faturaId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$FaturaTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $FaturaTableTable,
+    FaturaTableData,
+    $$FaturaTableTableFilterComposer,
+    $$FaturaTableTableOrderingComposer,
+    $$FaturaTableTableAnnotationComposer,
+    $$FaturaTableTableCreateCompanionBuilder,
+    $$FaturaTableTableUpdateCompanionBuilder,
+    (FaturaTableData, $$FaturaTableTableReferences),
+    FaturaTableData,
+    PrefetchHooks Function({bool ordemServicoId, bool parcelaTableRefs})>;
+typedef $$ParcelaTableTableCreateCompanionBuilder = ParcelaTableCompanion
+    Function({
+  Value<int> id,
+  required int faturaId,
+  Value<int> numero,
+  Value<double> valor,
+  Value<DateTime> dataEmissao,
+  required DateTime vencimento,
+  Value<String> status,
+});
+typedef $$ParcelaTableTableUpdateCompanionBuilder = ParcelaTableCompanion
+    Function({
+  Value<int> id,
+  Value<int> faturaId,
+  Value<int> numero,
+  Value<double> valor,
+  Value<DateTime> dataEmissao,
+  Value<DateTime> vencimento,
+  Value<String> status,
+});
+
+final class $$ParcelaTableTableReferences extends BaseReferences<_$AppDatabase,
+    $ParcelaTableTable, ParcelaTableData> {
+  $$ParcelaTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $FaturaTableTable _faturaIdTable(_$AppDatabase db) =>
+      db.faturaTable.createAlias(
+          $_aliasNameGenerator(db.parcelaTable.faturaId, db.faturaTable.id));
+
+  $$FaturaTableTableProcessedTableManager get faturaId {
+    final $_column = $_itemColumn<int>('fatura_id')!;
+
+    final manager = $$FaturaTableTableTableManager($_db, $_db.faturaTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_faturaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$RecebimentoTableTable, List<RecebimentoTableData>>
+      _recebimentoTableRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.recebimentoTable,
+              aliasName: $_aliasNameGenerator(
+                  db.parcelaTable.id, db.recebimentoTable.parcelaId));
+
+  $$RecebimentoTableTableProcessedTableManager get recebimentoTableRefs {
+    final manager =
+        $$RecebimentoTableTableTableManager($_db, $_db.recebimentoTable)
+            .filter((f) => f.parcelaId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_recebimentoTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$ParcelaTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ParcelaTableTable> {
+  $$ParcelaTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get numero => $composableBuilder(
+      column: $table.numero, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<DateTime, DateTime, int> get dataEmissao =>
+      $composableBuilder(
+          column: $table.dataEmissao,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<DateTime, DateTime, int> get vencimento =>
+      $composableBuilder(
+          column: $table.vencimento,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  $$FaturaTableTableFilterComposer get faturaId {
+    final $$FaturaTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.faturaId,
+        referencedTable: $db.faturaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FaturaTableTableFilterComposer(
+              $db: $db,
+              $table: $db.faturaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> recebimentoTableRefs(
+      Expression<bool> Function($$RecebimentoTableTableFilterComposer f) f) {
+    final $$RecebimentoTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.recebimentoTable,
+        getReferencedColumn: (t) => t.parcelaId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$RecebimentoTableTableFilterComposer(
+              $db: $db,
+              $table: $db.recebimentoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ParcelaTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ParcelaTableTable> {
+  $$ParcelaTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get numero => $composableBuilder(
+      column: $table.numero, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get dataEmissao => $composableBuilder(
+      column: $table.dataEmissao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get vencimento => $composableBuilder(
+      column: $table.vencimento, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  $$FaturaTableTableOrderingComposer get faturaId {
+    final $$FaturaTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.faturaId,
+        referencedTable: $db.faturaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FaturaTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.faturaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ParcelaTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ParcelaTableTable> {
+  $$ParcelaTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get numero =>
+      $composableBuilder(column: $table.numero, builder: (column) => column);
+
+  GeneratedColumn<double> get valor =>
+      $composableBuilder(column: $table.valor, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DateTime, int> get dataEmissao =>
+      $composableBuilder(
+          column: $table.dataEmissao, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DateTime, int> get vencimento =>
+      $composableBuilder(
+          column: $table.vencimento, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$FaturaTableTableAnnotationComposer get faturaId {
+    final $$FaturaTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.faturaId,
+        referencedTable: $db.faturaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$FaturaTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.faturaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> recebimentoTableRefs<T extends Object>(
+      Expression<T> Function($$RecebimentoTableTableAnnotationComposer a) f) {
+    final $$RecebimentoTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.recebimentoTable,
+        getReferencedColumn: (t) => t.parcelaId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$RecebimentoTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.recebimentoTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ParcelaTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ParcelaTableTable,
+    ParcelaTableData,
+    $$ParcelaTableTableFilterComposer,
+    $$ParcelaTableTableOrderingComposer,
+    $$ParcelaTableTableAnnotationComposer,
+    $$ParcelaTableTableCreateCompanionBuilder,
+    $$ParcelaTableTableUpdateCompanionBuilder,
+    (ParcelaTableData, $$ParcelaTableTableReferences),
+    ParcelaTableData,
+    PrefetchHooks Function({bool faturaId, bool recebimentoTableRefs})> {
+  $$ParcelaTableTableTableManager(_$AppDatabase db, $ParcelaTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ParcelaTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ParcelaTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ParcelaTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> faturaId = const Value.absent(),
+            Value<int> numero = const Value.absent(),
+            Value<double> valor = const Value.absent(),
+            Value<DateTime> dataEmissao = const Value.absent(),
+            Value<DateTime> vencimento = const Value.absent(),
+            Value<String> status = const Value.absent(),
+          }) =>
+              ParcelaTableCompanion(
+            id: id,
+            faturaId: faturaId,
+            numero: numero,
+            valor: valor,
+            dataEmissao: dataEmissao,
+            vencimento: vencimento,
+            status: status,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int faturaId,
+            Value<int> numero = const Value.absent(),
+            Value<double> valor = const Value.absent(),
+            Value<DateTime> dataEmissao = const Value.absent(),
+            required DateTime vencimento,
+            Value<String> status = const Value.absent(),
+          }) =>
+              ParcelaTableCompanion.insert(
+            id: id,
+            faturaId: faturaId,
+            numero: numero,
+            valor: valor,
+            dataEmissao: dataEmissao,
+            vencimento: vencimento,
+            status: status,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$ParcelaTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {faturaId = false, recebimentoTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (recebimentoTableRefs) db.recebimentoTable
+              ],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (faturaId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.faturaId,
+                    referencedTable:
+                        $$ParcelaTableTableReferences._faturaIdTable(db),
+                    referencedColumn:
+                        $$ParcelaTableTableReferences._faturaIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (recebimentoTableRefs)
+                    await $_getPrefetchedData<ParcelaTableData,
+                            $ParcelaTableTable, RecebimentoTableData>(
+                        currentTable: table,
+                        referencedTable: $$ParcelaTableTableReferences
+                            ._recebimentoTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ParcelaTableTableReferences(db, table, p0)
+                                .recebimentoTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.parcelaId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ParcelaTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ParcelaTableTable,
+    ParcelaTableData,
+    $$ParcelaTableTableFilterComposer,
+    $$ParcelaTableTableOrderingComposer,
+    $$ParcelaTableTableAnnotationComposer,
+    $$ParcelaTableTableCreateCompanionBuilder,
+    $$ParcelaTableTableUpdateCompanionBuilder,
+    (ParcelaTableData, $$ParcelaTableTableReferences),
+    ParcelaTableData,
+    PrefetchHooks Function({bool faturaId, bool recebimentoTableRefs})>;
+typedef $$RecebimentoTableTableCreateCompanionBuilder
+    = RecebimentoTableCompanion Function({
+  Value<int> id,
+  required int parcelaId,
+  Value<double> valor,
+  required DateTime dataPagamento,
+  Value<String?> formaPagamento,
+});
+typedef $$RecebimentoTableTableUpdateCompanionBuilder
+    = RecebimentoTableCompanion Function({
+  Value<int> id,
+  Value<int> parcelaId,
+  Value<double> valor,
+  Value<DateTime> dataPagamento,
+  Value<String?> formaPagamento,
+});
+
+final class $$RecebimentoTableTableReferences extends BaseReferences<
+    _$AppDatabase, $RecebimentoTableTable, RecebimentoTableData> {
+  $$RecebimentoTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $ParcelaTableTable _parcelaIdTable(_$AppDatabase db) =>
+      db.parcelaTable.createAlias($_aliasNameGenerator(
+          db.recebimentoTable.parcelaId, db.parcelaTable.id));
+
+  $$ParcelaTableTableProcessedTableManager get parcelaId {
+    final $_column = $_itemColumn<int>('parcela_id')!;
+
+    final manager = $$ParcelaTableTableTableManager($_db, $_db.parcelaTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_parcelaIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$RecebimentoTableTableFilterComposer
+    extends Composer<_$AppDatabase, $RecebimentoTableTable> {
+  $$RecebimentoTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<DateTime, DateTime, int> get dataPagamento =>
+      $composableBuilder(
+          column: $table.dataPagamento,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<String> get formaPagamento => $composableBuilder(
+      column: $table.formaPagamento,
+      builder: (column) => ColumnFilters(column));
+
+  $$ParcelaTableTableFilterComposer get parcelaId {
+    final $$ParcelaTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parcelaId,
+        referencedTable: $db.parcelaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ParcelaTableTableFilterComposer(
+              $db: $db,
+              $table: $db.parcelaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$RecebimentoTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $RecebimentoTableTable> {
+  $$RecebimentoTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get dataPagamento => $composableBuilder(
+      column: $table.dataPagamento,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get formaPagamento => $composableBuilder(
+      column: $table.formaPagamento,
+      builder: (column) => ColumnOrderings(column));
+
+  $$ParcelaTableTableOrderingComposer get parcelaId {
+    final $$ParcelaTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parcelaId,
+        referencedTable: $db.parcelaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ParcelaTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.parcelaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$RecebimentoTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RecebimentoTableTable> {
+  $$RecebimentoTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get valor =>
+      $composableBuilder(column: $table.valor, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DateTime, int> get dataPagamento =>
+      $composableBuilder(
+          column: $table.dataPagamento, builder: (column) => column);
+
+  GeneratedColumn<String> get formaPagamento => $composableBuilder(
+      column: $table.formaPagamento, builder: (column) => column);
+
+  $$ParcelaTableTableAnnotationComposer get parcelaId {
+    final $$ParcelaTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parcelaId,
+        referencedTable: $db.parcelaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ParcelaTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.parcelaTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$RecebimentoTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $RecebimentoTableTable,
+    RecebimentoTableData,
+    $$RecebimentoTableTableFilterComposer,
+    $$RecebimentoTableTableOrderingComposer,
+    $$RecebimentoTableTableAnnotationComposer,
+    $$RecebimentoTableTableCreateCompanionBuilder,
+    $$RecebimentoTableTableUpdateCompanionBuilder,
+    (RecebimentoTableData, $$RecebimentoTableTableReferences),
+    RecebimentoTableData,
+    PrefetchHooks Function({bool parcelaId})> {
+  $$RecebimentoTableTableTableManager(
+      _$AppDatabase db, $RecebimentoTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecebimentoTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecebimentoTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RecebimentoTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> parcelaId = const Value.absent(),
+            Value<double> valor = const Value.absent(),
+            Value<DateTime> dataPagamento = const Value.absent(),
+            Value<String?> formaPagamento = const Value.absent(),
+          }) =>
+              RecebimentoTableCompanion(
+            id: id,
+            parcelaId: parcelaId,
+            valor: valor,
+            dataPagamento: dataPagamento,
+            formaPagamento: formaPagamento,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int parcelaId,
+            Value<double> valor = const Value.absent(),
+            required DateTime dataPagamento,
+            Value<String?> formaPagamento = const Value.absent(),
+          }) =>
+              RecebimentoTableCompanion.insert(
+            id: id,
+            parcelaId: parcelaId,
+            valor: valor,
+            dataPagamento: dataPagamento,
+            formaPagamento: formaPagamento,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$RecebimentoTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({parcelaId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (parcelaId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.parcelaId,
+                    referencedTable:
+                        $$RecebimentoTableTableReferences._parcelaIdTable(db),
+                    referencedColumn: $$RecebimentoTableTableReferences
+                        ._parcelaIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$RecebimentoTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $RecebimentoTableTable,
+    RecebimentoTableData,
+    $$RecebimentoTableTableFilterComposer,
+    $$RecebimentoTableTableOrderingComposer,
+    $$RecebimentoTableTableAnnotationComposer,
+    $$RecebimentoTableTableCreateCompanionBuilder,
+    $$RecebimentoTableTableUpdateCompanionBuilder,
+    (RecebimentoTableData, $$RecebimentoTableTableReferences),
+    RecebimentoTableData,
+    PrefetchHooks Function({bool parcelaId})>;
+typedef $$DespesaTableTableCreateCompanionBuilder = DespesaTableCompanion
+    Function({
+  Value<int> id,
+  required String descricao,
+  Value<double> valor,
+  required DateTime data,
+  Value<String> status,
+});
+typedef $$DespesaTableTableUpdateCompanionBuilder = DespesaTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> descricao,
+  Value<double> valor,
+  Value<DateTime> data,
+  Value<String> status,
+});
+
+class $$DespesaTableTableFilterComposer
+    extends Composer<_$AppDatabase, $DespesaTableTable> {
+  $$DespesaTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<DateTime, DateTime, int> get data =>
+      $composableBuilder(
+          column: $table.data,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+}
+
+class $$DespesaTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $DespesaTableTable> {
+  $$DespesaTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get valor => $composableBuilder(
+      column: $table.valor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get data => $composableBuilder(
+      column: $table.data, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+}
+
+class $$DespesaTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DespesaTableTable> {
+  $$DespesaTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get descricao =>
+      $composableBuilder(column: $table.descricao, builder: (column) => column);
+
+  GeneratedColumn<double> get valor =>
+      $composableBuilder(column: $table.valor, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DateTime, int> get data =>
+      $composableBuilder(column: $table.data, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $$DespesaTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $DespesaTableTable,
+    DespesaTableData,
+    $$DespesaTableTableFilterComposer,
+    $$DespesaTableTableOrderingComposer,
+    $$DespesaTableTableAnnotationComposer,
+    $$DespesaTableTableCreateCompanionBuilder,
+    $$DespesaTableTableUpdateCompanionBuilder,
+    (
+      DespesaTableData,
+      BaseReferences<_$AppDatabase, $DespesaTableTable, DespesaTableData>
+    ),
+    DespesaTableData,
+    PrefetchHooks Function()> {
+  $$DespesaTableTableTableManager(_$AppDatabase db, $DespesaTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DespesaTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DespesaTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DespesaTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> descricao = const Value.absent(),
+            Value<double> valor = const Value.absent(),
+            Value<DateTime> data = const Value.absent(),
+            Value<String> status = const Value.absent(),
+          }) =>
+              DespesaTableCompanion(
+            id: id,
+            descricao: descricao,
+            valor: valor,
+            data: data,
+            status: status,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String descricao,
+            Value<double> valor = const Value.absent(),
+            required DateTime data,
+            Value<String> status = const Value.absent(),
+          }) =>
+              DespesaTableCompanion.insert(
+            id: id,
+            descricao: descricao,
+            valor: valor,
+            data: data,
+            status: status,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$DespesaTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $DespesaTableTable,
+    DespesaTableData,
+    $$DespesaTableTableFilterComposer,
+    $$DespesaTableTableOrderingComposer,
+    $$DespesaTableTableAnnotationComposer,
+    $$DespesaTableTableCreateCompanionBuilder,
+    $$DespesaTableTableUpdateCompanionBuilder,
+    (
+      DespesaTableData,
+      BaseReferences<_$AppDatabase, $DespesaTableTable, DespesaTableData>
+    ),
+    DespesaTableData,
+    PrefetchHooks Function()>;
+typedef $$FormaPagamentoTableTableCreateCompanionBuilder
+    = FormaPagamentoTableCompanion Function({
+  required String id,
+  required String descricao,
+  Value<int> rowid,
+});
+typedef $$FormaPagamentoTableTableUpdateCompanionBuilder
+    = FormaPagamentoTableCompanion Function({
+  Value<String> id,
+  Value<String> descricao,
+  Value<int> rowid,
+});
+
+class $$FormaPagamentoTableTableFilterComposer
+    extends Composer<_$AppDatabase, $FormaPagamentoTableTable> {
+  $$FormaPagamentoTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnFilters(column));
+}
+
+class $$FormaPagamentoTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $FormaPagamentoTableTable> {
+  $$FormaPagamentoTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get descricao => $composableBuilder(
+      column: $table.descricao, builder: (column) => ColumnOrderings(column));
+}
+
+class $$FormaPagamentoTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FormaPagamentoTableTable> {
+  $$FormaPagamentoTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get descricao =>
+      $composableBuilder(column: $table.descricao, builder: (column) => column);
+}
+
+class $$FormaPagamentoTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $FormaPagamentoTableTable,
+    FormaPagamentoTableData,
+    $$FormaPagamentoTableTableFilterComposer,
+    $$FormaPagamentoTableTableOrderingComposer,
+    $$FormaPagamentoTableTableAnnotationComposer,
+    $$FormaPagamentoTableTableCreateCompanionBuilder,
+    $$FormaPagamentoTableTableUpdateCompanionBuilder,
+    (
+      FormaPagamentoTableData,
+      BaseReferences<_$AppDatabase, $FormaPagamentoTableTable,
+          FormaPagamentoTableData>
+    ),
+    FormaPagamentoTableData,
+    PrefetchHooks Function()> {
+  $$FormaPagamentoTableTableTableManager(
+      _$AppDatabase db, $FormaPagamentoTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FormaPagamentoTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FormaPagamentoTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FormaPagamentoTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> descricao = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              FormaPagamentoTableCompanion(
+            id: id,
+            descricao: descricao,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String descricao,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              FormaPagamentoTableCompanion.insert(
+            id: id,
+            descricao: descricao,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$FormaPagamentoTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $FormaPagamentoTableTable,
+    FormaPagamentoTableData,
+    $$FormaPagamentoTableTableFilterComposer,
+    $$FormaPagamentoTableTableOrderingComposer,
+    $$FormaPagamentoTableTableAnnotationComposer,
+    $$FormaPagamentoTableTableCreateCompanionBuilder,
+    $$FormaPagamentoTableTableUpdateCompanionBuilder,
+    (
+      FormaPagamentoTableData,
+      BaseReferences<_$AppDatabase, $FormaPagamentoTableTable,
+          FormaPagamentoTableData>
+    ),
+    FormaPagamentoTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5892,4 +8835,14 @@ class $AppDatabaseManager {
   $$ViaCoresOrdemServicoTableTableTableManager get viaCoresOrdemServicoTable =>
       $$ViaCoresOrdemServicoTableTableTableManager(
           _db, _db.viaCoresOrdemServicoTable);
+  $$FaturaTableTableTableManager get faturaTable =>
+      $$FaturaTableTableTableManager(_db, _db.faturaTable);
+  $$ParcelaTableTableTableManager get parcelaTable =>
+      $$ParcelaTableTableTableManager(_db, _db.parcelaTable);
+  $$RecebimentoTableTableTableManager get recebimentoTable =>
+      $$RecebimentoTableTableTableManager(_db, _db.recebimentoTable);
+  $$DespesaTableTableTableManager get despesaTable =>
+      $$DespesaTableTableTableManager(_db, _db.despesaTable);
+  $$FormaPagamentoTableTableTableManager get formaPagamentoTable =>
+      $$FormaPagamentoTableTableTableManager(_db, _db.formaPagamentoTable);
 }

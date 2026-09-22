@@ -3,11 +3,24 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../pages/drawer_page.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   final List<DrawerPage> screens;
+  final List<DrawerPage>? financialPages;
   final Function(int) onTap;
 
-  const AppDrawer({super.key, required this.screens, required this.onTap});
+  const AppDrawer({
+    super.key,
+    required this.screens,
+    required this.onTap,
+    this.financialPages,
+  });
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  bool _expandFinancial = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +31,51 @@ class AppDrawer extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text('Configurações de Catálogo',
+              child: Text('Menu',
                   style: Theme.of(context).textTheme.titleLarge),
             ),
             const Divider(),
             Expanded(
               child: ListView(
-                children: List.generate(
-                  screens.length,
-                  (index) => _DrawerItem(
-                    icon: screens[index].icon,
-                    label: screens[index].title,
-                    onTap: () {
-                      Navigator.of(context).pop();
-
-                      // ✅ adia o setState para depois do frame atual
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        onTap(screens[index].index);
-                      });
-                    },
+                children: [
+                  ...List.generate(
+                    widget.screens.length - 1, // Remove a última seção (Financeiro placeholder)
+                    (index) => _DrawerItem(
+                      icon: widget.screens[index].icon,
+                      label: widget.screens[index].title,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          widget.onTap(widget.screens[index].index);
+                        });
+                      },
+                    ),
                   ),
-                ),
+                  // Seção Financeiro com submenu
+                  if (widget.financialPages != null)
+                    ExpansionTile(
+                      leading: Icon(Icons.attach_money, color: AppColors.primaryBlue),
+                      title: Text('Financeiro', style: Theme.of(context).textTheme.bodyLarge),
+                      children: List.generate(
+                        widget.financialPages!.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: _DrawerItem(
+                            icon: widget.financialPages![index].icon,
+                            label: widget.financialPages![index].title,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                widget.onTap(widget.financialPages![index].index);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-            const Spacer(),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text('FieldCraft',

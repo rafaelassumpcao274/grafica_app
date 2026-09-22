@@ -14,12 +14,18 @@ class GenericSelectorBottomSheet<T> extends ConsumerStatefulWidget {
 
   final bool Function(T item, String query)? filter;
 
+  final Comparator<T>? sortComparator;
+
+  final bool initialSortDescending;
+
   const GenericSelectorBottomSheet({
     super.key,
     required this.provider,
     required this.displayItem,
     this.subtitleItem,
     this.filter,
+    this.sortComparator,
+    this.initialSortDescending = false,
     this.hintText = 'Filtrar',
   });
 
@@ -35,28 +41,45 @@ class _GenericSelectorBottomSheetState<T>
 
   List<T> _items = [];
   List<T> _allItems = [];
+  late bool _sortDescending = widget.initialSortDescending;
+
+  List<T> _ordenar(List<T> items) {
+    final comparator = widget.sortComparator;
+    if (comparator == null) return items;
+
+    final ordenado = List<T>.of(items)..sort(comparator);
+    if (_sortDescending) return ordenado.reversed.toList();
+    return ordenado;
+  }
 
   void _filtrar(String texto) {
     final query = texto.trim().toLowerCase();
 
     setState(() {
       if (query.isEmpty) {
-        _items = _allItems;
+        _items = _ordenar(_allItems);
         return;
       }
 
       if (widget.filter != null) {
-        _items = _allItems
-            .where((item) => widget.filter!(item, query))
-            .toList();
+        _items = _ordenar(
+          _allItems.where((item) => widget.filter!(item, query)).toList(),
+        );
       } else {
-        _items = _allItems.where((item) {
-          return widget
-              .displayItem(item)
-              .toLowerCase()
-              .contains(query);
-        }).toList();
+        _items = _ordenar(
+          _allItems
+              .where((item) =>
+                  widget.displayItem(item).toLowerCase().contains(query))
+              .toList(),
+        );
       }
+    });
+  }
+
+  void _alternarOrdenacao() {
+    setState(() {
+      _sortDescending = !_sortDescending;
+      _items = _ordenar(_items);
     });
   }
 
@@ -85,7 +108,7 @@ class _GenericSelectorBottomSheetState<T>
           _allItems = items;
 
           if (_controller.text.isEmpty) {
-            _items = items;
+            _items = _ordenar(items);
           }
         }
 
@@ -95,11 +118,32 @@ class _GenericSelectorBottomSheetState<T>
             child: Column(
               children: [
 
-                CustomTextInput(
-                  controller: _controller,
-                  hintText: widget.hintText,
-                  icon: Icons.search,
-                  onChange: _filtrar,
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextInput(
+                        controller: _controller,
+                        hintText: widget.hintText,
+                        icon: Icons.search,
+                        onChange: _filtrar,
+                      ),
+                    ),
+
+                    if (widget.sortComparator != null) ...[
+                      const SizedBox(width: 8),
+                      IconButton(
+                        tooltip: _sortDescending
+                            ? 'Mais recentes primeiro'
+                            : 'Mais antigos primeiro',
+                        icon: Icon(
+                          _sortDescending
+                              ? Icons.arrow_downward
+                              : Icons.arrow_upward,
+                        ),
+                        onPressed: _alternarOrdenacao,
+                      ),
+                    ],
+                  ],
                 ),
 
                 const SizedBox(height: 16),

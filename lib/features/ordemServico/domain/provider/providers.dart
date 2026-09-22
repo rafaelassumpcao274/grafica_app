@@ -1,15 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unilith_app/features/ordemServico/data/local/repositories/ordemservico_repository_impl.dart';
-import 'package:unilith_app/features/ordemServico/domain/entities/via_cores.dart';
 import 'package:unilith_app/features/ordemServico/domain/repositories/ordemservico_repository.dart';
 
 import '../../data/local/app_database.dart';
 import '../../data/local/repositories/clientes_repository_impl.dart';
+import '../../data/local/repositories/finance_dao.dart';
+import '../../data/local/repositories/financeiro_repository_impl.dart';
 import '../../data/local/repositories/formato_repository_impl.dart';
 import '../../data/local/repositories/fornecedor_repository_impl.dart';
 import '../../data/local/repositories/papel_repository_impl.dart';
 import '../../data/local/repositories/viacores_repository_impl.dart';
 import '../repositories/clientes_repository.dart';
+import '../repositories/financeiro_repository.dart';
 import '../repositories/formato_repository.dart';
 import '../repositories/fornecedor_repository.dart';
 import '../repositories/papel_repository.dart';
@@ -55,4 +57,11 @@ final viaCoresRepositoryProvider =
 FutureProvider<ViaCoresRepository>((ref) async {
   final db = await ref.watch(dbProvider.future);
   return ViaCoresRepositoryImpl(db);
+});
+
+final financeiroRepositoryProvider =
+FutureProvider<FinanceiroRepository>((ref) async {
+  final db = await ref.watch(dbProvider.future);
+  final financeDao = FinanceDao(db);
+  return FinanceiroRepositoryImpl(financeDao);
 });

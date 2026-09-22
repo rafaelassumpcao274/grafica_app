@@ -7,6 +7,7 @@ import '../../../../domain/entities/fornecedor_ordem_servico.dart';
 import '../../../../domain/entities/ordemservico.dart';
 import '../../../../domain/entities/papel.dart';
 import '../../../../domain/entities/via_cores_ordem_servico.dart';
+import '../../../../domain/provider/providers.dart';
 import '../../../../domain/vos/tamanho.dart';
 import '../../../providers/ordemservico_provider.dart';
 import '../../../widgets/fornecedor/fornecedor_custo_controller.dart';
@@ -54,6 +55,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
   NumberEditingController valorTotalController = NumberEditingController<double>(value: 0.0);
 
   bool isLoading = false;
+  DateTime? _createdAtOriginal;
 
   Future<void> loadOrdem(int? ordemId) async {
     isLoading = true;
@@ -62,6 +64,9 @@ class OrdemServicoViewModel extends ChangeNotifier {
    if(ordemId != null){
      final ordem = await ordemNotifier.getById(ordemId);
      if (ordem != null) {
+
+       // Preserva a data de criação original para não sobrescrevê-la ao editar
+       _createdAtOriginal = ordem.createdAt;
 
        // Campos principais
        selectedCliente = ordem.clientes;
@@ -131,6 +136,7 @@ class OrdemServicoViewModel extends ChangeNotifier {
       tamanhoImagem: tamanhoImagemController.text.isNotEmpty
           ? Tamanho(tamanhoImagemController.text)
           : null,
+      createdAt: ordemId != null ? _createdAtOriginal : null,
     );
   }
 
@@ -146,6 +152,39 @@ class OrdemServicoViewModel extends ChangeNotifier {
     OrdemServico os = buildOrdem(ordemId: ordemId);
 
     return ordemNotifier.updateOS(os);
+  }
+
+  /// Gera múltiplas faturas para a ordem de serviço com data e quantidade
+  Future<void> generateInvoicesWithDate({
+    required int ordemServicoId,
+    required DateTime dataFatura,
+    required DateTime dataVencimento,
+    required int quantidadeFaturas,
+  }) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final financeiroRepository =
+          await ref.watch(financeiroRepositoryProvider.future);
+      
+      final valorUnitario = (double.tryParse(valorTotalController.text) ?? 0.0) / quantidadeFaturas;
+
+      await financeiroRepository.criarMultiplasFaturasParaOS(
+        ordemServicoId: ordemServicoId,
+        quantidadeFaturas: quantidadeFaturas,
+        valorUnitario: valorUnitario,
+        dataEmissao: dataFatura,
+        descricao: materialController.text,
+      );
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
   }
 
 }

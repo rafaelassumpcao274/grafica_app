@@ -1,34 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:unilith_app/features/ordemServico/presentation/providers/ordemservico_provider.dart';
 
-import '../../../domain/entities/ordemservico.dart';
+import '../../../domain/ordem_servico_financeiro_resumo_dto.dart';
 import '../../core/theme.dart';
+import '../../providers/relatorio_ordens_financeiro_provider.dart';
+import 'relatorio_filtros_bottom_sheet.dart';
 
-class RelatorioScreen extends ConsumerStatefulWidget {
+class RelatorioScreen extends ConsumerWidget {
   const RelatorioScreen({super.key});
 
-  @override
-  ConsumerState<RelatorioScreen> createState() => _RelatorioScreenState();
-}
+  Future<void> _selecionarPeriodo(BuildContext context, WidgetRef ref, DateTimeRange atual) async {
+    final hoje = DateTime.now();
+    final novo = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020, 1, 1),
+      lastDate: DateTime(hoje.year + 1, 12, 31),
+      initialDateRange: atual,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.primaryBlue,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (novo != null) {
+      final start = DateTime(novo.start.year, novo.start.month, novo.start.day);
+      final end = DateTime(
+          novo.end.year, novo.end.month, novo.end.day, 23, 59, 59, 999);
+      ref.read(relatorioFiltroProvider.notifier).update(
+            (f) => f.copyWith(periodo: DateTimeRange(start: start, end: end)),
+          );
+    }
+  }
 
-class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
-  late DateTimeRange _range;
+  Future<void> _abrirFiltros(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => const RelatorioFiltrosBottomSheet(),
+    );
+  }
 
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    final startOfMonth = DateTime(now.year, now.month, 1);
-    _range = DateTimeRange(start: startOfMonth, end: now);
+  _Totais _calcularTotais(List<OrdemServicoFinanceiroResumoDto> ordens) {
+    double contratado = 0;
+    double faturado = 0;
+    double recebido = 0;
+    for (final o in ordens) {
+      contratado += o.contratado;
+      faturado += o.faturado;
+      recebido += o.recebido;
+    }
+    return _Totais(contratado: contratado, faturado: faturado, recebido: recebido);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final _service = ref.read(ordemServicoProvider);
-    final ordens = _filtrarOrdensPorPeriodo(_service.value!, _range);
-    final totais = _calcularTotais(ordens);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filtro = ref.watch(relatorioFiltroProvider);
+    final resumoAsync = ref.watch(relatorioOrdensFinanceiroProvider);
+    final semOsAsync = ref.watch(relatorioFaturamentoSemOSProvider);
     final currency = NumberFormat.simpleCurrency(locale: 'pt_BR');
     final dateFmt = DateFormat('dd/MM/yyyy');
 
@@ -37,51 +72,31 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildPeriodoSelector(dateFmt),
+            _buildPeriodoSelector(context, ref, filtro, dateFmt),
+            _buildFiltrosAtivos(context, ref, filtro),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: Column(
-                  children: [
-                    _ResumoCard(
-                      title: 'Custo',
-                      value: currency.format(totais.custoTotal),
-                      icon: Icons.trending_down,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF9AA2), Color(0xFFFF6B6B)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+              child: resumoAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Center(child: Text('Erro ao carregar relatório: $error')),
+                data: (ordens) {
+                  final totais = _calcularTotais(ordens);
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Column(
+                      children: [
+                        _buildResumoCards(totais, currency),
+                        const SizedBox(height: 24),
+                        _buildListaOrdens(context, ref, ordens, currency, dateFmt),
+                        semOsAsync.maybeWhen(
+                          data: (semOs) => semOs.quantidade > 0
+                              ? _buildRodapeSemOS(semOs, currency)
+                              : const SizedBox.shrink(),
+                          orElse: () => const SizedBox.shrink(),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    _ResumoCard(
-                      title: 'Receita',
-                      value: currency.format(totais.receitaTotal),
-                      icon: Icons.trending_up,
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primaryBlue, AppColors.accentPurple],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _ResumoCard(
-                      title: 'Lucro',
-                      value: currency.format(totais.lucroTotal),
-                      subtitle: totais.receitaTotal > 0
-                          ? '${(totais.lucroTotal / totais.receitaTotal * 100).toStringAsFixed(1)}% margem'
-                          : null,
-                      icon: Icons.attach_money,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF34D399), Color(0xFF10B981)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildListaOrdens(ordens, currency, dateFmt),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],
@@ -90,27 +105,10 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildPeriodoSelector(
+      BuildContext context, WidgetRef ref, RelatorioFiltro filtro, DateFormat dateFmt) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              const SizedBox(width: 16),
-              Text('Relatório Financeiro',
-                  style: Theme.of(context).textTheme.displaySmall),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPeriodoSelector(DateFormat dateFmt) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -125,17 +123,16 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.date_range,
-              color: AppColors.textGray.withValues(alpha: 0.9)),
+          Icon(Icons.date_range, color: AppColors.textGray.withValues(alpha: 0.9)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '${dateFmt.format(_range.start)} — ${dateFmt.format(_range.end)}',
+              '${dateFmt.format(filtro.periodo.start)} — ${dateFmt.format(filtro.periodo.end)}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           TextButton(
-            onPressed: _selecionarPeriodo,
+            onPressed: () => _selecionarPeriodo(context, ref, filtro.periodo),
             child: const Text('Alterar'),
           ),
         ],
@@ -143,65 +140,115 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
     );
   }
 
-  Future<void> _selecionarPeriodo() async {
-    final hoje = DateTime.now();
-    final novo = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020, 1, 1),
-      lastDate: DateTime(hoje.year + 1, 12, 31),
-      initialDateRange: _range,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: AppColors.primaryBlue,
-                ),
+  Widget _buildFiltrosAtivos(BuildContext context, WidgetRef ref, RelatorioFiltro filtro) {
+    final chips = <Widget>[];
+
+    if (filtro.ordemServicoId != null) {
+      chips.add(Chip(
+        label: Text('OS #${filtro.ordemServicoId}'),
+        onDeleted: () => ref
+            .read(relatorioFiltroProvider.notifier)
+            .update((f) => f.copyWith(limparOrdemServico: true)),
+      ));
+    }
+    if (filtro.faturaId != null) {
+      chips.add(Chip(
+        label: Text('Fatura #${filtro.faturaId}'),
+        onDeleted: () => ref
+            .read(relatorioFiltroProvider.notifier)
+            .update((f) => f.copyWith(limparFatura: true)),
+      ));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          ActionChip(
+            avatar: const Icon(Icons.filter_list, size: 18),
+            label: const Text('Filtros'),
+            onPressed: () => _abrirFiltros(context),
           ),
-          child: child!,
-        );
-      },
-    );
-    if (novo != null) {
-      setState(() => _range = DateTimeRange(
-          start: _atStartOfDay(novo.start), end: _atEndOfDay(novo.end)));
-    }
-  }
-
-  List<OrdemServico> _filtrarOrdensPorPeriodo(
-      List<OrdemServico> ordens, DateTimeRange range) {
-    final start = _atStartOfDay(range.start);
-    final end = _atEndOfDay(range.end);
-    return ordens.where((o) {
-      final d = o.createdAt;
-      final afterStart = !d!.isBefore(start); // >= start
-      final beforeEnd = !d!.isAfter(end); // <= end
-      return afterStart && beforeEnd;
-    }).toList();
-  }
-
-  _Totais _calcularTotais(List<OrdemServico> ordens) {
-    double custo = 0;
-    double receita = 0;
-    for (final o in ordens) {
-      custo += (o.valorCusto ?? 0);
-      receita += (o.valorTotal ?? 0);
-    }
-    return _Totais(
-      custoTotal: custo,
-      receitaTotal: receita,
-      lucroTotal: receita - custo,
+          ...chips,
+        ],
+      ),
     );
   }
 
-  DateTime _atStartOfDay(DateTime d) => DateTime(d.year, d.month, d.day);
+  Widget _buildResumoCards(_Totais totais, NumberFormat currency) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _ResumoCard(
+                title: 'Contratado',
+                value: currency.format(totais.contratado),
+                icon: Icons.description_outlined,
+                gradient: const LinearGradient(
+                  colors: [AppColors.primaryBlue, AppColors.accentPurple],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _ResumoCard(
+                title: 'Faturado',
+                value: currency.format(totais.faturado),
+                icon: Icons.receipt_long_outlined,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFBBF77), Color(0xFFF59E0B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _ResumoCard(
+                title: 'Recebido',
+                value: currency.format(totais.recebido),
+                icon: Icons.attach_money,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF34D399), Color(0xFF10B981)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _ResumoCard(
+                title: 'Saldo a receber',
+                value: currency.format(totais.faturado - totais.recebido),
+                icon: Icons.hourglass_bottom,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF9AA2), Color(0xFFFF6B6B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
-  DateTime _atEndOfDay(DateTime d) =>
-      DateTime(d.year, d.month, d.day, 23, 59, 59, 999);
-
-  Widget _buildListaOrdens(
-      List<OrdemServico> ordens, NumberFormat currency, DateFormat dateFmt) {
+  Widget _buildListaOrdens(BuildContext context, WidgetRef ref, List<OrdemServicoFinanceiroResumoDto> ordens,
+      NumberFormat currency, DateFormat dateFmt) {
     if (ordens.isEmpty) {
       return Container(
+        margin: const EdgeInsets.only(top: 8),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -215,7 +262,7 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
           ],
         ),
         child: Center(
-          child: Text('Nenhuma ordem no período selecionado',
+          child: Text('Nenhuma ordem no período/filtro selecionado',
               style: Theme.of(context).textTheme.bodyMedium),
         ),
       );
@@ -230,12 +277,42 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
               style: Theme.of(context).textTheme.titleLarge),
         ),
         const SizedBox(height: 12),
-        ...ordens
-            .map((o) =>
-                _OrdemTile(ordem: o, currency: currency, dateFmt: dateFmt))
-            .toList(),
+        ...ordens.map((o) => _OrdemTile(
+              resumo: o,
+              currency: currency,
+              dateFmt: dateFmt,
+              onTap: () => ref
+                  .read(relatorioFiltroProvider.notifier)
+                  .update((f) => f.copyWith(ordemServicoId: o.ordemServicoId)),
+            )),
         const SizedBox(height: 12),
       ],
+    );
+  }
+
+  Widget _buildRodapeSemOS(
+      ({double faturado, double recebido, int quantidade}) semOs, NumberFormat currency) {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.mediumGray.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: AppColors.textGray, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Faturas sem OS vinculada: ${semOs.quantidade} • '
+              'Faturado ${currency.format(semOs.faturado)} • '
+              'Recebido ${currency.format(semOs.recebido)}',
+              style: const TextStyle(color: AppColors.textGray, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -243,7 +320,6 @@ class _RelatorioScreenState extends ConsumerState<RelatorioScreen> {
 class _ResumoCard extends StatelessWidget {
   final String title;
   final String value;
-  final String? subtitle;
   final IconData icon;
   final Gradient gradient;
 
@@ -252,14 +328,13 @@ class _ResumoCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.gradient,
-    this.subtitle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -271,43 +346,26 @@ class _ResumoCard extends StatelessWidget {
         ],
         gradient: gradient,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge
-                        ?.copyWith(color: Colors.white)),
-                const SizedBox(height: 6),
-                Text(value,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayLarge
-                        ?.copyWith(color: Colors.white, fontSize: 24)),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
-                  Text(subtitle!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(color: Colors.white)),
-                ]
-              ],
-            ),
-          )
+          const SizedBox(height: 12),
+          Text(title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white)),
+          const SizedBox(height: 4),
+          Text(value,
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.copyWith(color: Colors.white, fontSize: 18)),
         ],
       ),
     );
@@ -315,88 +373,104 @@ class _ResumoCard extends StatelessWidget {
 }
 
 class _OrdemTile extends StatelessWidget {
-  final OrdemServico ordem;
+  final OrdemServicoFinanceiroResumoDto resumo;
   final NumberFormat currency;
   final DateFormat dateFmt;
+  final VoidCallback onTap;
 
-  const _OrdemTile(
-      {required this.ordem, required this.currency, required this.dateFmt});
+  const _OrdemTile({
+    required this.resumo,
+    required this.currency,
+    required this.dateFmt,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final custo = currency.format(ordem.valorCusto ?? 0);
-    final total = currency.format(ordem.valorTotal ?? 0);
-    final lucro = (ordem.valorTotal ?? 0) - (ordem.valorCusto ?? 0);
-    final lucroStr = currency.format(lucro);
+    final saldo = resumo.saldo;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryBlue.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryBlue.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: const Icon(Icons.description_outlined,
-                color: AppColors.primaryBlue),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.description_outlined, color: AppColors.primaryBlue),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${resumo.ordemServicoId} • ${resumo.clienteNome ?? "Cliente não informado"}',
+                      style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 4),
+                  Text(
+                    resumo.ordemServicoCreatedAt != null
+                        ? dateFmt.format(resumo.ordemServicoCreatedAt!)
+                        : '—',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text('${resumo.quantidadeFaturas} fatura(s)',
+                      style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('${ordem.id} • ${ordem.clientes!.nomeEmpresa}',
-                    style: Theme.of(context).textTheme.titleSmall),
+                Text('Contratado ${currency.format(resumo.contratado)}',
+                    style: Theme.of(context).textTheme.labelMedium),
                 const SizedBox(height: 4),
-                Text(dateFmt.format(ordem.createdAt!),
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text('Faturado ${currency.format(resumo.faturado)}',
+                    style: Theme.of(context).textTheme.labelMedium),
+                const SizedBox(height: 4),
+                Text('Recebido ${currency.format(resumo.recebido)}',
+                    style: Theme.of(context).textTheme.labelMedium),
+                const SizedBox(height: 6),
+                Text(
+                  'Saldo ${currency.format(saldo)}',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: saldo <= 0 ? AppColors.success : AppColors.warning,
+                      ),
+                ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('Custo $custo',
-                  style: Theme.of(context).textTheme.labelMedium),
-              const SizedBox(height: 4),
-              Text('Receita $total',
-                  style: Theme.of(context).textTheme.labelMedium),
-              const SizedBox(height: 6),
-              Text(
-                'Lucro $lucroStr',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: lucro >= 0 ? AppColors.success : AppColors.error,
-                    ),
-              ),
-            ],
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class _Totais {
-  final double custoTotal;
-  final double receitaTotal;
-  final double lucroTotal;
+  final double contratado;
+  final double faturado;
+  final double recebido;
 
-  const _Totais(
-      {required this.custoTotal,
-      required this.receitaTotal,
-      required this.lucroTotal});
+  const _Totais({
+    required this.contratado,
+    required this.faturado,
+    required this.recebido,
+  });
 }
