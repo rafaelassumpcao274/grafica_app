@@ -54,8 +54,6 @@ class _OrdemServicoListState extends ConsumerState<OrdemServicoList> {
           itemCount: filtered.length,
           itemBuilder: (context, index) {
             final ordemServico = filtered[index];
-            print(ordemServico.createdAt.runtimeType);
-            print(ordemServico.createdAt);
 
             final createdAtFormatted = ordemServico.createdAt != null
                 ? DateFormat('dd/MM/yyyy HH:mm').format(ordemServico.createdAt!)

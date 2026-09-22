@@ -35,7 +35,13 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return NativeDatabase(file);
+    return NativeDatabase(
+      file,
+      setup: (rawDb) {
+        rawDb.execute('PRAGMA journal_mode=WAL;');
+        rawDb.execute('PRAGMA synchronous=NORMAL;');
+      },
+    );
   });
 }
 
@@ -77,12 +83,35 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion =>
-      4; // v4: adiciona a coluna parcela_table.data_emissao
+      5; // v5: adiciona índices de performance nas colunas de FK
+
+  /// Índices nas colunas de FK usadas nos JOINs/WHEREs de
+  /// ordemservico_repository_impl.dart e finance_dao.dart. SQLite não
+  /// indexa FKs automaticamente. SQL puro (sem @TableIndex) para não
+  /// depender de regenerar o código gerado pelo drift.
+  Future<void> _createPerformanceIndexes() async {
+    const statements = [
+      'CREATE INDEX IF NOT EXISTS idx_ordem_servico_cliente_id ON ordem_servico_table(cliente_id);',
+      'CREATE INDEX IF NOT EXISTS idx_ordem_servico_formato_id ON ordem_servico_table(formato_id);',
+      'CREATE INDEX IF NOT EXISTS idx_ordem_servico_papel_id ON ordem_servico_table(papel_id);',
+      'CREATE INDEX IF NOT EXISTS idx_fornecedor_ordem_servico_ordem_id ON fornecedor_ordem_servico_table(ordem_servico_id);',
+      'CREATE INDEX IF NOT EXISTS idx_fornecedor_ordem_servico_fornecedor_id ON fornecedor_ordem_servico_table(fornecedor_id);',
+      'CREATE INDEX IF NOT EXISTS idx_via_cores_ordem_servico_ordem_id ON via_cores_ordem_servico_table(ordem_servico_id);',
+      'CREATE INDEX IF NOT EXISTS idx_via_cores_ordem_servico_via_id ON via_cores_ordem_servico_table(via_cores_id);',
+      'CREATE INDEX IF NOT EXISTS idx_fatura_ordem_servico_id ON fatura_table(ordem_servico_id);',
+      'CREATE INDEX IF NOT EXISTS idx_parcela_fatura_id ON parcela_table(fatura_id);',
+      'CREATE INDEX IF NOT EXISTS idx_recebimento_parcela_id ON recebimento_table(parcela_id);',
+    ];
+    for (final stmt in statements) {
+      await customStatement(stmt);
+    }
+  }
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll(); // cria todas as tabelas automaticamente
+      await _createPerformanceIndexes();
 
       // Insere seeds apenas na criação
       await insertSeedData(this);
@@ -124,6 +153,10 @@ class AppDatabase extends _$AppDatabase {
         // parcela_table.dataEmissao foi adicionada após a criação inicial
         // das tabelas financeiras (quem já estava na v3 não tem a coluna).
         await m.addColumn(parcelaTable, parcelaTable.dataEmissao);
+      }
+
+      if (from < 5) {
+        await _createPerformanceIndexes();
       }
     },
   );

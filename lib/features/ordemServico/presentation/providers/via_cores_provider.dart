@@ -37,8 +37,6 @@ class ViaCoresNotifier extends AsyncNotifier<List<ViaCores>> {
   }
 
   Future<List<ViaCores>> getViaByNome(String nomeParcial) async {
-    print('🔍 Buscando por: "$nomeParcial"');
-
     try {
 
       final papeis = await repository.getViaCoresPaginated(
@@ -49,7 +47,6 @@ class ViaCoresNotifier extends AsyncNotifier<List<ViaCores>> {
       return papeis;
 
     } catch (e) {
-      print('❌ Erro na busca: $e');
       rethrow;
     }
   }

@@ -16,6 +16,11 @@ class ClientesNotifier extends AsyncNotifier<List<Clientes>> {
 
 
 
+  /// Restaura a lista completa (sem filtro), ex.: ao limpar a busca.
+  Future<void> loadClientes() async {
+    state = AsyncValue.data(await repository.getClientes());
+  }
+
   Future<void> getClientesByNomeEmpresa(String nomeParcial) async {
     try {
       state = AsyncValue.data(await repository.getClientesPaginated(
@@ -23,7 +28,6 @@ class ClientesNotifier extends AsyncNotifier<List<Clientes>> {
          pageSize: 20,
        ));
     } catch (e) {
-      print('❌ Erro na busca: $e'); // Debug
       rethrow;
     }
   }

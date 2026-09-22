@@ -8,7 +8,6 @@ class FornecedorListViewModel extends ChangeNotifier {
   final FornecedorNotifier notifier;
 
   List<Fornecedor> fornecedores = [];
-  List<Fornecedor> fornecedoresFiltrados = [];
   bool isLoading = false;
 
   FornecedorListViewModel(this.notifier) {
@@ -20,17 +19,18 @@ class FornecedorListViewModel extends ChangeNotifier {
     notifyListeners();
 
     fornecedores = [...?notifier.state.value ?? []];
-    fornecedoresFiltrados = [...fornecedores];
 
     isLoading = false;
     notifyListeners();
   }
 
-  void applyFilter(String filtro) {
-    fornecedoresFiltrados = fornecedores
+  /// Filtro puro (não muta estado nem notifica) — seguro para chamar
+  /// direto no build().
+  List<Fornecedor> filter(String filtro) {
+    if (filtro.isEmpty) return fornecedores;
+    return fornecedores
         .where((f) => f.nome.toLowerCase().contains(filtro.toLowerCase()))
         .toList();
-    notifyListeners();
   }
 
   Future<void> deleteFornecedor(String id) async {

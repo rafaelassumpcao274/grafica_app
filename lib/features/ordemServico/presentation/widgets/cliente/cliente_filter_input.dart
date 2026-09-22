@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
@@ -14,6 +16,13 @@ class ClientFilterInput extends StatefulWidget {
 
 class _ClientFilterInputState extends State<ClientFilterInput> {
   String _filter = '';
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +43,16 @@ class _ClientFilterInputState extends State<ClientFilterInput> {
           ),
           child: TextField(
             onChanged: (value) {
-              setState(() {
-                _filter = value;
+              _debounce?.cancel();
+              _debounce = Timer(const Duration(milliseconds: 300), () {
+                setState(() {
+                  _filter = value;
+                });
               });
             },
             style: Theme.of(context).textTheme.bodyLarge,
             decoration: InputDecoration(
-              hintText: 'Buscar fornecedor...',
+              hintText: 'Buscar cliente...',
               hintStyle: Theme.of(context).textTheme.bodyMedium,
               prefixIcon: Icon(Icons.search, color: AppColors.textGray, size: 22),
               border: InputBorder.none,

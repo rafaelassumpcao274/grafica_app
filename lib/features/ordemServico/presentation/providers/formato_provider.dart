@@ -19,15 +19,12 @@ class FormatoNotifier extends AsyncNotifier<List<Formato>> {
 
   // MÉTODO CORRIGIDO: Use o parâmetro search do repository
   Future<List<Formato>> getFormatoByDescricao(String descricao) async {
-    print('🔍 Buscando por: "$descricao"'); // Debug
-
     try {
       final formatos = await repository.getFormatosPaginated(
           search: descricao, pageSize: 50);
 
       return formatos;
     } catch (e) {
-      print('❌ Erro na busca: $e'); // Debug
       rethrow;
     }
   }

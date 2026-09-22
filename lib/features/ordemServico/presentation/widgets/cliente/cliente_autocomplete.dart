@@ -90,45 +90,52 @@ class _ClienteAutocompleteState extends ConsumerState<ClienteAutocomplete> {
 
   @override
   Widget build(BuildContext context) {
-    final clientesNotifierAsync = ref.watch(clientesNotifierProvider);
+    // Só observa isLoading/erro, não a lista inteira — evita reconstruir
+    // este autocomplete sempre que qualquer cliente é criado/editado/removido
+    // em qualquer lugar do app.
+    final clientesState = ref.watch(clientesNotifierProvider.select(
+      (s) => (isLoading: s.isLoading, error: s.error),
+    ));
     final clienteNotifier = ref.read(clientesNotifierProvider.notifier);
 
-    return clientesNotifierAsync.when(
-      data: (notifier) {
-        return AutoCompleteSelector<Clientes>(
-          key: widget.key,
-          prefixIcon: Icon(Icons.person_outline, color: AppColors.primaryBlue, size: 20),
-          placeholder: "Informe um cliente ",
-          suggestionsCallback: (query) =>
-              clienteNotifier.getClientesByNomeEmpresaAlternativo(query),
-          itemBuilder: (p0, item) =>
-              ListTile(
-            title: Text(item.nomeEmpresa),
-            subtitle: Text(item.documento),
-          ),
-          isEnabled: widget.enabled,
-          isMultiple: false,
-          displayItem: (item) => item.nomeEmpresa,
-          selectedItem: _selectedCliente,
-          onSelect: (item) {
-            setState(() {
-              _selectedCliente = item;
-              _controller.text = item?.nomeEmpresa ?? '';
-            });
-            widget.onSelected?.call(item);
-          },
-        ) as Widget;
-      },
-      loading: () => const Center(
+    if (clientesState.error != null) {
+      return Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Text('Erro ao carregar clientes: ${clientesState.error}'),
+      );
+    }
+
+    if (clientesState.isLoading) {
+      return const Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: CircularProgressIndicator(),
         ),
+      );
+    }
+
+    return AutoCompleteSelector<Clientes>(
+      key: widget.key,
+      prefixIcon: Icon(Icons.person_outline, color: AppColors.primaryBlue, size: 20),
+      placeholder: "Informe um cliente ",
+      suggestionsCallback: (query) =>
+          clienteNotifier.getClientesByNomeEmpresaAlternativo(query),
+      itemBuilder: (p0, item) =>
+          ListTile(
+        title: Text(item.nomeEmpresa),
+        subtitle: Text(item.documento),
       ),
-      error: (error, stackTrace) => Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Text('Erro ao carregar clientes: $error'),
-      ),
+      isEnabled: widget.enabled,
+      isMultiple: false,
+      displayItem: (item) => item.nomeEmpresa,
+      selectedItem: _selectedCliente,
+      onSelect: (item) {
+        setState(() {
+          _selectedCliente = item;
+          _controller.text = item?.nomeEmpresa ?? '';
+        });
+        widget.onSelected?.call(item);
+      },
     );
   }
 }

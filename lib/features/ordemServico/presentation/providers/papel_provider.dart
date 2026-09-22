@@ -18,7 +18,7 @@ AsyncNotifierProvider<PapelNotifier, List<Papel>>(
 
 // Provider para busca dinâmica de papeis
 final searchPapelProvider =
-FutureProvider.family<List<Papel>, String>((ref, query) async {
+FutureProvider.autoDispose.family<List<Papel>, String>((ref, query) async {
 
 
   // Isso dispara o build e inicializa o _repository
@@ -55,8 +55,6 @@ class PapelNotifier extends AsyncNotifier<List<Papel>> {
   }
 
   Future<List<Papel>> getPapeisByNome(String nomeParcial) async {
-    print('🔍 Buscando por: "$nomeParcial"');
-
     try {
 
       final papeis = await repository.getPapelPaginated(
@@ -67,7 +65,6 @@ class PapelNotifier extends AsyncNotifier<List<Papel>> {
       return papeis;
 
     } catch (e) {
-      print('❌ Erro na busca: $e');
       rethrow;
     }
   }

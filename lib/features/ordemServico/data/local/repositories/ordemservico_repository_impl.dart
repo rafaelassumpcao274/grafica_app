@@ -62,20 +62,18 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     for (final row in fornecedoresResult) {
 
       final fornecedorOdemServico = row.readTable(db.fornecedorOrdemServicoTable);
-      final fornecedoresResult = await (db.select(db.fornecedorTable)
-        ..where((tbl) => tbl.id.equals(fornecedorOdemServico.fornecedorId))
-      ).get();
-      if(fornecedoresResult.isNotEmpty){
+      final fornecedorRow = row.readTableOrNull(db.fornecedorTable);
+      if (fornecedorRow != null) {
 
-        final fornecedorData = fornecedoresResult.map((mp) => Fornecedor(
-            id: mp.id,
-            nome: mp.nome,
-            tipoServico: mp.tipoServico,
-            email: mp.email,
-            telefone: mp.telefone,
-            contato: mp.contato,
-            observacao: mp.observacao
-        )).single;
+        final fornecedorData = Fornecedor(
+            id: fornecedorRow.id,
+            nome: fornecedorRow.nome,
+            tipoServico: fornecedorRow.tipoServico,
+            email: fornecedorRow.email,
+            telefone: fornecedorRow.telefone,
+            contato: fornecedorRow.contato,
+            observacao: fornecedorRow.observacao
+        );
 
 
         fornecedoresPorOrdem.putIfAbsent(fornecedorOdemServico.ordemServicoId, () => []);
@@ -92,15 +90,13 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     for (final row in viasResult) {
 
       final viasOdemServico = row.readTable(db.viaCoresOrdemServicoTable);
-      final viaResult = await (db.select(db.viaCoresTable)
-        ..where((tbl) => tbl.id.equals(viasOdemServico.viaCoresId))
-      ).get();
-      if(viaResult.isNotEmpty){
+      final viaRow = row.readTableOrNull(db.viaCoresTable);
+      if (viaRow != null) {
 
-        final viaData = viaResult.map((mp) => ViaCores(
-            id: mp.id,
-          descricao: mp.descricao
-        )).single;
+        final viaData = ViaCores(
+            id: viaRow.id,
+          descricao: viaRow.descricao
+        );
 
 
         viasPorOrdem.putIfAbsent(viasOdemServico.ordemServicoId, () => []);
@@ -119,8 +115,6 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
       final clienteData = row.readTableOrNull(db.clientesTable);
       final formatoData = row.readTableOrNull(db.formatoTable);
       final papelData = row.readTableOrNull(db.papelTable);
-      print(ordemData.createdAt.runtimeType);
-      print(ordemData.createdAt);
 
       return OrdemServico(
         id: ordemData.id,

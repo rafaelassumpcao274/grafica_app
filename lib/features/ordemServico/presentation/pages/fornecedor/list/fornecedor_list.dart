@@ -51,12 +51,9 @@ class FornecedorList extends ConsumerWidget {
         final viewModel =
         ref.watch(fornecedorListViewModelProvider(fornecedorNotifier));
 
-        // Aplica filtro se necessário
-        var listaFiltrada = fornecedores;
-        if (filter.isNotEmpty) {
-          viewModel.applyFilter(filter);
-          listaFiltrada = viewModel.fornecedores;
-        }
+        // Aplica filtro (função pura, sem notifyListeners — segura no build)
+        final listaFiltrada =
+            filter.isEmpty ? fornecedores : viewModel.filter(filter);
 
         if (viewModel.isLoading) {
           return ListView.builder(

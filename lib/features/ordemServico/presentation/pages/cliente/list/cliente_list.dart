@@ -42,9 +42,10 @@ class ClientList extends ConsumerWidget {
     final clientesNotifierAsync = ref.watch(clientesNotifierProvider);
     final clienteNotifier = ref.read(clientesNotifierProvider.notifier);
     final viewModel = ref.watch(clientListViewModelProvider(clienteNotifier));
-    if(filter.isNotEmpty){
-      viewModel.applyFilter(filter);
-    }
+    // Chamado sempre (mesmo com filtro vazio) para restaurar a lista
+    // completa ao limpar a busca — applyFilter ignora chamadas repetidas
+    // com o mesmo valor, então isso não gera loop nem query redundante.
+    viewModel.applyFilter(filter);
 
     return clientesNotifierAsync.when(
       loading: () => ListView.builder(

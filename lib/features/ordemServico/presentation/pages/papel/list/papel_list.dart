@@ -1,11 +1,9 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:unilith_app/features/ordemServico/presentation/pages/papel/list/papel_list_view_model.dart';
 import 'package:unilith_app/features/ordemServico/presentation/widgets/papel_card.dart';
 
-import '../edit/papel_form_page.dart';
+import '../../../providers/papel_provider.dart';
 
 class PapelList extends ConsumerStatefulWidget {
   final String filter;
@@ -20,56 +18,55 @@ class PapelList extends ConsumerStatefulWidget {
 }
 
 class _PapelListState extends ConsumerState<PapelList> {
-  String searchQuery = '';
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   ref.read(papelListViewModelProvider).loadPapeis();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(papelListViewModelProvider);
+    final asyncPapeis = ref.watch(papelProvider);
+    final papelNotifier = ref.read(papelProvider.notifier);
 
-    final filtered = widget.filter.isEmpty
-        ? viewModel.papeis
-        : viewModel.filter(widget.filter);
+    return asyncPapeis.when(
+      data: (papeis) {
+        final filtered = widget.filter.isEmpty
+            ? papeis
+            : papeis
+                .where((p) => p.descricao
+                    .toLowerCase()
+                    .contains(widget.filter.toLowerCase()))
+                .toList();
 
-    if (viewModel.isLoading) {
-      return ListView.builder(
+        return ListView.builder(
+          itemCount: filtered.length,
+          itemBuilder: (context, index) {
+            final papel = filtered[index];
+            return Dismissible(
+              key: Key(papel.id),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              onDismissed: (direction) async {
+                await papelNotifier.delete(papel.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Papel excluído')),
+                );
+              },
+              child:
+              PapelCard(papel: papel),
+            );
+          },
+        );
+      },
+      loading: () => ListView.builder(
         itemCount: 5,
         itemBuilder: (_, __) => const ListTile(
           leading: CircleAvatar(backgroundColor: Colors.grey),
           title: SizedBox(height: 10, width: double.infinity, child: DecoratedBox(decoration: BoxDecoration(color: Colors.grey))),
           subtitle: SizedBox(height: 10, width: double.infinity, child: DecoratedBox(decoration: BoxDecoration(color: Colors.grey))),
         ),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: filtered.length,
-      itemBuilder: (context, index) {
-        final papel = filtered[index];
-        return Dismissible(
-          key: Key(papel.id),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            color: Colors.red,
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: const Icon(Icons.delete, color: Colors.white),
-          ),
-          onDismissed: (direction) async {
-            await viewModel.deletePapel(papel.id);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Papel excluído')),
-            );
-          },
-          child:
-          PapelCard(papel: papel),
-        );
-      },
+      ),
+      error: (err, stack) => Center(child: Text('Erro: $err')),
     );
   }
 }

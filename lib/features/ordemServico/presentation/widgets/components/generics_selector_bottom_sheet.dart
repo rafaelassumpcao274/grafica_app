@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,6 +44,7 @@ class _GenericSelectorBottomSheetState<T>
   List<T> _items = [];
   List<T> _allItems = [];
   late bool _sortDescending = widget.initialSortDescending;
+  Timer? _debounce;
 
   List<T> _ordenar(List<T> items) {
     final comparator = widget.sortComparator;
@@ -50,6 +53,11 @@ class _GenericSelectorBottomSheetState<T>
     final ordenado = List<T>.of(items)..sort(comparator);
     if (_sortDescending) return ordenado.reversed.toList();
     return ordenado;
+  }
+
+  void _onSearchChanged(String texto) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 150), () => _filtrar(texto));
   }
 
   void _filtrar(String texto) {
@@ -125,7 +133,7 @@ class _GenericSelectorBottomSheetState<T>
                         controller: _controller,
                         hintText: widget.hintText,
                         icon: Icons.search,
-                        onChange: _filtrar,
+                        onChange: _onSearchChanged,
                       ),
                     ),
 
@@ -183,6 +191,7 @@ class _GenericSelectorBottomSheetState<T>
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }

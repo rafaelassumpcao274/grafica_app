@@ -40,7 +40,7 @@ class _FormatoFilterInputState extends State<FormatoFilterInput> {
             },
             style: Theme.of(context).textTheme.bodyLarge,
             decoration: InputDecoration(
-              hintText: 'Buscar Papeis ...',
+              hintText: 'Buscar Formato ...',
               hintStyle: Theme.of(context).textTheme.bodyMedium,
               prefixIcon: Icon(Icons.search, color: AppColors.textGray, size: 22),
               border: InputBorder.none,

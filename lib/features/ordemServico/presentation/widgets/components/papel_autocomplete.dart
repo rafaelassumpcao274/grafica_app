@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,6 +25,7 @@ class _PapelAutocompleteState extends ConsumerState<PapelAutocomplete> {
   late TextEditingController _controller;
   String _query = '';
   bool _showOptions = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -34,6 +37,12 @@ class _PapelAutocompleteState extends ConsumerState<PapelAutocomplete> {
     }
 
     _query = widget.initialValue?.descricao ?? '';
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -74,8 +83,14 @@ class _PapelAutocompleteState extends ConsumerState<PapelAutocomplete> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    _query = value;
                     _showOptions = value.isNotEmpty;
+                  });
+                  _debounce?.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 300), () {
+                    if (!mounted) return;
+                    setState(() {
+                      _query = value;
+                    });
                   });
                 },
               ),

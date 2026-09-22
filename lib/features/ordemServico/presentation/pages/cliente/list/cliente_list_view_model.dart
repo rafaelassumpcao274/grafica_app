@@ -22,6 +22,7 @@ class ClientListViewModel extends ChangeNotifier {
   List<Clientes> get clientes => _clientes;
 
   bool isLoading = false;
+  String _lastFilter = '';
 
 
   // Carrega clientes do notifier
@@ -35,8 +36,18 @@ class ClientListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Filtra clientes por query
+  // Filtra clientes por query. Ignora chamadas repetidas com o mesmo valor
+  // para evitar disparar uma nova busca no banco a cada rebuild.
   Future<void> applyFilter(String query) async {
+    if (query == _lastFilter) return;
+    _lastFilter = query;
+
+    if (query.isEmpty) {
+      // Campo de busca limpo: restaura a lista completa.
+      await clienteNotifier.loadClientes();
+      await loadClientes();
+      return;
+    }
 
     query = query.toLowerCase();
     await clienteNotifier.getClientesByNomeEmpresa(query);
