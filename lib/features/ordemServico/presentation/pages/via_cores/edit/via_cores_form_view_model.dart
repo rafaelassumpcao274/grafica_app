@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/entities/via_cores.dart';
 import '../../../providers/via_cores_provider.dart';
 
-final viaCoresViewModelProvider = ChangeNotifierProvider<ViaCoresFormViewModel>((ref) {
+final viaCoresViewModelProvider = ChangeNotifierProvider.autoDispose<ViaCoresFormViewModel>((ref) {
   final notifier = ref.watch(viacoresProvider.notifier); // Seu notifier do ViaCores
   return ViaCoresFormViewModel(notifier);
 });
@@ -17,7 +17,14 @@ class ViaCoresFormViewModel extends ChangeNotifier {
 
   ViaCoresFormViewModel(this.notifier);
 
-
+  /// Carrega uma via de cores existente para edição
+  Future<void> loadViaCores(String id) async {
+    final via = await notifier.getById(id);
+    if (via != null) {
+      descricao.text = via.descricao;
+      notifyListeners();
+    }
+  }
 
   bool validar() {
     if (descricao.text.isEmpty) {
@@ -37,6 +44,12 @@ class ViaCoresFormViewModel extends ChangeNotifier {
     descricao.clear();
     errorMessage = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    descricao.dispose();
+    super.dispose();
   }
 }
 

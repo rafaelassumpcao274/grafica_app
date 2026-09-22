@@ -5,7 +5,7 @@ import '../../../../domain/entities/formato.dart';
 import '../../../providers/formato_provider.dart';
 
 final formatoViewModelProvider =
-    ChangeNotifierProvider<FormatoFormViewModel>((ref) {
+    ChangeNotifierProvider.autoDispose<FormatoFormViewModel>((ref) {
   final notifier =
       ref.watch(formatoProvider.notifier); // Seu notifier do Formato
   return FormatoFormViewModel(notifier);
@@ -17,6 +17,15 @@ class FormatoFormViewModel extends ChangeNotifier {
   String? errorMessage;
 
   FormatoFormViewModel(this.notifier);
+
+  /// Carrega um formato existente para edição
+  Future<void> loadFormato(String id) async {
+    final formato = await notifier.getFormatoById(id);
+    if (formato != null) {
+      descricao.text = formato.descricao;
+      notifyListeners();
+    }
+  }
 
   bool validar() {
     if (descricao.text.isEmpty) {
@@ -36,5 +45,11 @@ class FormatoFormViewModel extends ChangeNotifier {
     descricao.clear();
     errorMessage = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    descricao.dispose();
+    super.dispose();
   }
 }

@@ -19,17 +19,13 @@ class _PapelFormState extends ConsumerState<PapelForm> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadPapelIfEditing();
-  }
-
-  Future<void> _loadPapelIfEditing() async {
+  void initState() {
+    super.initState();
     if (widget.papelId != null) {
-      final viewModel = ref.read(papelFormViewModelProvider);
-      await viewModel.loadPapel(widget.papelId!);
-    } else {
-      ref.read(papelFormViewModelProvider).clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(papelFormViewModelProvider).loadPapel(widget.papelId!);
+      });
     }
   }
 

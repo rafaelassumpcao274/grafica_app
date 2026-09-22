@@ -203,7 +203,8 @@ class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
           valorCusto: Value(ordemServico.valorCusto),
           valorTotal: Value(ordemServico.valorTotal),
           observacao: Value(ordemServico.observacao),
-          tamanhoImagem: Value(ordemServico.tamanhoImagem != null ? ordemServico.tamanhoImagem.toString(): '')
+          tamanhoImagem: Value(ordemServico.tamanhoImagem != null ? ordemServico.tamanhoImagem.toString(): ''),
+          createdAt: Value(ordemServico.createdAt!),
         ),
       );
 

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/entities/clientes.dart';
 import '../../../providers/clientes_provider_refactored.dart';
 
-final clientFormViewModelProvider = ChangeNotifierProvider.family<ClientFormViewModel, String?>((ref, clienteId) {
+final clientFormViewModelProvider = ChangeNotifierProvider.autoDispose.family<ClientFormViewModel, String?>((ref, clienteId) {
   final notifier = ref.watch(clientesNotifierProvider.notifier);
   final vm = ClientFormViewModel(notifier);
   if(clienteId != null && clienteId.isNotEmpty){
@@ -83,5 +83,18 @@ class ClientFormViewModel extends ChangeNotifier {
     } else {
       await clienteNotifier.addCliente(cliente);
     }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    cpfController.dispose();
+    telefoneController.dispose();
+    enderecoController.dispose();
+    cidadeController.dispose();
+    estadoController.dispose();
+    cepController.dispose();
+    super.dispose();
   }
 }

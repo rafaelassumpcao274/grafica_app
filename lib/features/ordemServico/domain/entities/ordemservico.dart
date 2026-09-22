@@ -87,7 +87,7 @@ class OrdemServico extends Equatable {
       fornecedores: fornecedores ?? this.fornecedores,
       vias: vias ?? this.vias,
         tamanhoImagem: tamanhoImagem ?? this.tamanhoImagem,
-        createdAt: createdAt ?? DateTime.now()
+        createdAt: createdAt ?? this.createdAt
     );
   }
 

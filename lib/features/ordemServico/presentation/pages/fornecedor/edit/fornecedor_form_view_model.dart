@@ -7,12 +7,11 @@ import '../../../providers/fornecedor_provider.dart';
 
 // Provider para o form, recebe o Notifier
 final fornecedorFormViewModelProvider =
-ChangeNotifierProvider.family<FornecedorFormViewModel, String?>(
+ChangeNotifierProvider.autoDispose.family<FornecedorFormViewModel, String?>(
       (ref, fornecedorId) {
     final notifier = ref.watch(fornecedorNotifierProvider.notifier);
     final vm = FornecedorFormViewModel(notifier);
 
-    vm.clearFields();
     if (fornecedorId != null) {
       vm.loadFornecedor(fornecedorId);
     }

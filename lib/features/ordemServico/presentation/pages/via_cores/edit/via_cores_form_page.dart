@@ -17,35 +17,20 @@ class ViaCoresForm extends ConsumerStatefulWidget {
 }
 
 class _ViaCoresFormState extends ConsumerState<ViaCoresForm> {
-  late final viewModel = ref.read(viaCoresViewModelProvider);
-
-  @override
-  void dispose() {
-    viewModel.clear(); // Limpa os controllers
-    super.dispose();
-  }
-
   @override
   void initState() {
     super.initState();
     if (widget.viacoresId != null) {
-      _loadViaCores();
-    }
-  }
-
-  Future<void> _loadViaCores() async {
-    final notifierAsync = ref.read(viacoresProvider.notifier);
-    final via = await notifierAsync.getById(widget.viacoresId!);
-    if (via != null) {
-      setState(() {
-        viewModel.descricao.text = via.descricao;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(viaCoresViewModelProvider).loadViaCores(widget.viacoresId!);
       });
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(viaCoresViewModelProvider);
     final notifierAsync = ref.read(viacoresProvider.notifier);
 
     return Scaffold(
@@ -80,8 +65,7 @@ class _ViaCoresFormState extends ConsumerState<ViaCoresForm> {
                     } else {
                       await notifierAsync.add(viaCores);
                     }
-                    viewModel.clear(); // limpa o controller
-                    Navigator.pop(context);
+                    if (context.mounted) Navigator.pop(context);
                   }
                 }),
               ],

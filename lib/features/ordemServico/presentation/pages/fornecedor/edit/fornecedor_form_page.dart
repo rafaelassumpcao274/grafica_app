@@ -21,10 +21,6 @@ class FornecedorForm extends ConsumerWidget {
       data: (fornecedorNotifier) {
         final vm = ref.watch(fornecedorFormViewModelProvider(fornecedorId));
 
-        if (fornecedorId == null || fornecedorId!.isEmpty) {
-          vm.clearFields();
-        }
-
         if (vm.isLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),

@@ -16,16 +16,20 @@ class FormatoForm extends ConsumerStatefulWidget {
 }
 
 class _FormatoFormState extends ConsumerState<FormatoForm> {
-  late final viewModel = ref.read(formatoViewModelProvider);
-
   @override
-  void dispose() {
-    viewModel.clear(); // Limpa os controllers
-    super.dispose();
+  void initState() {
+    super.initState();
+    if (widget.formatoId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(formatoViewModelProvider).loadFormato(widget.formatoId!);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(formatoViewModelProvider);
     final notifierAsync = ref.read(formatoProvider.notifier);
 
     return Scaffold(
@@ -64,8 +68,7 @@ class _FormatoFormState extends ConsumerState<FormatoForm> {
                         } else {
                           await notifierAsync.addFormato(formato);
                         }
-                        viewModel.clear(); // limpa o controller
-                        Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                       }
                     }),
               ],

@@ -8,7 +8,7 @@ import '../../../widgets/number_editing_controller.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final papelFormViewModelProvider = ChangeNotifierProvider<PapelFormViewModel>((ref) {
+final papelFormViewModelProvider = ChangeNotifierProvider.autoDispose<PapelFormViewModel>((ref) {
   final notifier = ref.read(papelProvider.notifier);
   return PapelFormViewModel(notifier);
 });
